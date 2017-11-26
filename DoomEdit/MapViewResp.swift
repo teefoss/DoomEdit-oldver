@@ -84,25 +84,15 @@ extension MapView {
 		path.move(to: self.startPoint)
 		path.addLine(to: endPoint)
 		self.shapeLayer.path = path
-		
-		print("point: = \(endPoint)")
-		let pointConv = convert(endPoint, to: superview)
-		print("point in world coord: \(pointConv)")
-		
-		let newPoint1 = TestPoint(coord: startPoint)
-		let newPoint2 = TestPoint(coord: endPoint)
-		let newLine = TestLine(pt1: newPoint1, pt2: newPoint2)
-		
-		world.points.append(newPoint1)
-		world.points.append(newPoint2)
-		world.lines.append(newLine)
-		
-		world.boundsDirty = true
+
 	}
 	
 	override func mouseUp(with event: NSEvent) {
-		frame = world.updateBounds()
+		let pt1 = convert(startPoint, to: superview)
+		let pt2 = convert(endPoint, to: superview)
+		world.newLine(from: pt1, to: pt2)
 
+		frame = world.updateBounds()
 	}
 
 }

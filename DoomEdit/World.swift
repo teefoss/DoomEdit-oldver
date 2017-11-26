@@ -23,6 +23,7 @@ class World {
 	var dirty: Bool = true
 	var boundsDirty: Bool = false
 	var dirtyRect: NSRect = NSRect.zero
+	var dirtyPoints: Bool = false
 	
 	// TODO: change this to [Point] and [Line] eventually
 	var points: [TestPoint] = []
@@ -78,13 +79,50 @@ class World {
 		return bounds
 	}
 
+	
+	
+	// ===========================
+	// MARK: - New Data Allocation
+	// ===========================
+
 	// add a point to the 'points' storage array
-	func addPoint() {
+	private func newPoint(_ point: NSPoint) {
 		
+		boundsDirty = true
+		dirtyPoints = true
+		
+		let roundedPtx = Int(point.x)
+		let roundedPty = Int(point.y)
+
+		let newPoint = TestPoint(coord: NSPoint(x: roundedPtx, y: roundedPty))
+		
+		// TODO: ref
+		//var highestRef: Int = -1
+		/* reference count not implemented yet
+		for pt in points {
+			if pt.ref > highestRef {
+				highestRef = pt.ref
+			}
+		}
+		*/
+		
+		//newPoint.ref = highestRef + 1
+		
+		points.append(newPoint)
 	}
 	
 	// add a line to 'lines' storage array
-	func addLine() {
+	func newLine(from pt1: NSPoint, to pt2: NSPoint) {
+		
+		newPoint(pt1)
+		newPoint(pt2)
+		
+		let newPt1 = TestPoint(coord: pt1)
+		let newPt2 = TestPoint(coord: pt2)
+
+		lines.append(TestLine(pt1: newPt1, pt2: newPt2))
+		
+		dirtyPoints = true
 	}
 
 	

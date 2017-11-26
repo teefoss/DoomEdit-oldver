@@ -14,7 +14,6 @@ extension NSNib.Name {
 
 protocol MapViewDelegate {
 	func zoom(to point: NSPoint, with scale: CGFloat)
-//	func updateBounds()
 }
 
 
@@ -25,8 +24,6 @@ class MapWindowController: NSWindowController, MapViewDelegate {
 	var delegate: NSWindowDelegate?
 	var oldScreenOrigin = NSPoint()
 	var preResizeOrigin = NSPoint()
-	var newDocTopLeft = NSPoint()
-	var oldDocTopLeft = NSPoint()
 
 	@IBOutlet weak var scrollView: NSScrollView!
 	
@@ -47,8 +44,8 @@ class MapWindowController: NSWindowController, MapViewDelegate {
 		scrollView.documentView = mapView
 		scrollView.allowsMagnification = true
 		// FIXME: scroll to center of map on load
-		let centerx = scrollView.documentVisibleRect.maxX / 4
-		let centery = scrollView.documentVisibleRect.maxY / 4
+		let centerx = scrollView.documentVisibleRect.maxX / 2
+		let centery = scrollView.documentVisibleRect.maxY / 2
 		scrollView.scroll(NSPoint(x: centerx, y: centery))
 		zoom(to: NSPoint.zero, with: 1.0)
     }
@@ -60,6 +57,10 @@ class MapWindowController: NSWindowController, MapViewDelegate {
 }
 
 
+
+// ================================
+// MARK: - NSWindowDelegate Methods
+// ================================
 
 extension MapWindowController: NSWindowDelegate {
 	

@@ -5,7 +5,7 @@
 //  Created by Thomas Foster on 9/16/17.
 //  Copyright © 2017 Thomas Foster. All rights reserved.
 //
-//  View that display the map
+//  View that displays the map
 //
 
 import Cocoa
