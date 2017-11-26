@@ -7,18 +7,40 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		30E827E31FC9FC7B00992422 /* e4m1.dwd in Resources */ = {isa = PBXBuildFile; fileRef = 30E827E21FC9FC7B00992422 /* e4m1.dwd */; };
 		30FBF6371FC52D500035671D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30FBF6361FC52D500035671D /* AppDelegate.swift */; };
 		30FBF6391FC52D500035671D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 30FBF6381FC52D500035671D /* Assets.xcassets */; };
 		30FBF63C1FC52D500035671D /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 30FBF63A1FC52D500035671D /* MainMenu.xib */; };
+		30FBF6461FC52DB70035671D /* MapWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30FBF6441FC52DB70035671D /* MapWindowController.swift */; };
+		30FBF6471FC52DB70035671D /* MapWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 30FBF6451FC52DB70035671D /* MapWindowController.xib */; };
+		30FBF64C1FC52F6A0035671D /* WorldObjects.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30FBF6481FC52F690035671D /* WorldObjects.swift */; };
+		30FBF64D1FC52F6A0035671D /* World.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30FBF6491FC52F690035671D /* World.swift */; };
+		30FBF64E1FC52F6A0035671D /* Geometry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30FBF64A1FC52F6A0035671D /* Geometry.swift */; };
+		30FBF6591FC52F8A0035671D /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30FBF6531FC52F8A0035671D /* MapView.swift */; };
+		30FBF65A1FC52F8A0035671D /* MapViewDraw.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30FBF6541FC52F8A0035671D /* MapViewDraw.swift */; };
+		30FBF65C1FC52F8A0035671D /* MapViewResp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30FBF6561FC52F8A0035671D /* MapViewResp.swift */; };
+		30FBF65E1FC52F930035671D /* e1m1.dwd in Resources */ = {isa = PBXBuildFile; fileRef = 30FBF65D1FC52F930035671D /* e1m1.dwd */; };
+		30FBF6601FC533C90035671D /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30FBF65F1FC533C90035671D /* Constants.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		30E827E21FC9FC7B00992422 /* e4m1.dwd */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = e4m1.dwd; sourceTree = "<group>"; };
 		30FBF6331FC52D500035671D /* DoomEdit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DoomEdit.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		30FBF6361FC52D500035671D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		30FBF6381FC52D500035671D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		30FBF63B1FC52D500035671D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		30FBF63D1FC52D500035671D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		30FBF63E1FC52D500035671D /* DoomEdit.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = DoomEdit.entitlements; sourceTree = "<group>"; };
+		30FBF6441FC52DB70035671D /* MapWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapWindowController.swift; sourceTree = "<group>"; };
+		30FBF6451FC52DB70035671D /* MapWindowController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MapWindowController.xib; sourceTree = "<group>"; };
+		30FBF6481FC52F690035671D /* WorldObjects.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WorldObjects.swift; sourceTree = "<group>"; };
+		30FBF6491FC52F690035671D /* World.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = World.swift; sourceTree = "<group>"; };
+		30FBF64A1FC52F6A0035671D /* Geometry.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Geometry.swift; sourceTree = "<group>"; };
+		30FBF6531FC52F8A0035671D /* MapView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapView.swift; sourceTree = "<group>"; };
+		30FBF6541FC52F8A0035671D /* MapViewDraw.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapViewDraw.swift; sourceTree = "<group>"; };
+		30FBF6561FC52F8A0035671D /* MapViewResp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapViewResp.swift; sourceTree = "<group>"; };
+		30FBF65D1FC52F930035671D /* e1m1.dwd */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = e1m1.dwd; sourceTree = "<group>"; };
+		30FBF65F1FC533C90035671D /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -52,8 +74,19 @@
 			isa = PBXGroup;
 			children = (
 				30FBF6361FC52D500035671D /* AppDelegate.swift */,
+				30FBF65F1FC533C90035671D /* Constants.swift */,
+				30FBF64A1FC52F6A0035671D /* Geometry.swift */,
+				30FBF6441FC52DB70035671D /* MapWindowController.swift */,
+				30FBF6531FC52F8A0035671D /* MapView.swift */,
+				30FBF6541FC52F8A0035671D /* MapViewDraw.swift */,
+				30FBF6561FC52F8A0035671D /* MapViewResp.swift */,
+				30FBF6491FC52F690035671D /* World.swift */,
+				30FBF6481FC52F690035671D /* WorldObjects.swift */,
+				30FBF65D1FC52F930035671D /* e1m1.dwd */,
+				30E827E21FC9FC7B00992422 /* e4m1.dwd */,
 				30FBF6381FC52D500035671D /* Assets.xcassets */,
 				30FBF63A1FC52D500035671D /* MainMenu.xib */,
+				30FBF6451FC52DB70035671D /* MapWindowController.xib */,
 				30FBF63D1FC52D500035671D /* Info.plist */,
 				30FBF63E1FC52D500035671D /* DoomEdit.entitlements */,
 			);
@@ -119,6 +152,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				30E827E31FC9FC7B00992422 /* e4m1.dwd in Resources */,
+				30FBF6471FC52DB70035671D /* MapWindowController.xib in Resources */,
+				30FBF65E1FC52F930035671D /* e1m1.dwd in Resources */,
 				30FBF6391FC52D500035671D /* Assets.xcassets in Resources */,
 				30FBF63C1FC52D500035671D /* MainMenu.xib in Resources */,
 			);
@@ -131,7 +167,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				30FBF6461FC52DB70035671D /* MapWindowController.swift in Sources */,
+				30FBF6601FC533C90035671D /* Constants.swift in Sources */,
+				30FBF64C1FC52F6A0035671D /* WorldObjects.swift in Sources */,
+				30FBF65C1FC52F8A0035671D /* MapViewResp.swift in Sources */,
+				30FBF65A1FC52F8A0035671D /* MapViewDraw.swift in Sources */,
+				30FBF64D1FC52F6A0035671D /* World.swift in Sources */,
 				30FBF6371FC52D500035671D /* AppDelegate.swift in Sources */,
+				30FBF64E1FC52F6A0035671D /* Geometry.swift in Sources */,
+				30FBF6591FC52F8A0035671D /* MapView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

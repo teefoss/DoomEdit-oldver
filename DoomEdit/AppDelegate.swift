@@ -11,11 +11,13 @@ import Cocoa
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate {
 
-	@IBOutlet weak var window: NSWindow!
 
-
+	var mapWindowController: MapWindowController?
+	
 	func applicationDidFinishLaunching(_ aNotification: Notification) {
-		// Insert code here to initialize your application
+		let mapWindowController = MapWindowController()
+		mapWindowController.showWindow(self)
+		self.mapWindowController = mapWindowController
 	}
 
 	func applicationWillTerminate(_ aNotification: Notification) {
