@@ -5,8 +5,6 @@
 //  Created by Thomas Foster on 10/22/17.
 //  Copyright © 2017 Thomas Foster. All rights reserved.
 //
-//  MapView Drawing-related Methods
-//
 
 import Cocoa
 
@@ -19,6 +17,9 @@ fileprivate let gridColor = NSColor.systemBlue.withAlphaComponent(gridAlpha)
 //fileprivate let tileColor = NSColor(calibratedRed: 178/255, green: 230/255, blue: 251/255, alpha: 1.0)
 //fileprivate let gridColor = NSColor(calibratedRed: 229/255, green: 246/255, blue: 253/255, alpha: 1.0)
 
+
+/**  MapView Drawing-related Methods  */
+
 extension MapView {
 	
 	override func draw(_ dirtyRect: NSRect) {
@@ -28,7 +29,7 @@ extension MapView {
 		drawLines(in: dirtyRect)
 	}
 
-	func drawGrid(in rect: NSRect) {
+	private func drawGrid(in rect: NSRect) {
 		
 		let left = Int(rect.minX)
 		let bottom = Int(rect.minY)
@@ -71,7 +72,7 @@ extension MapView {
 	}
 
 	// Draw all world lines
-	func drawLines(in rect: NSRect) {
+	private func drawLines(in rect: NSRect) {
 
 		for line in world.lines {
 			let pt1 = convert(NSPoint(x: line.pt1.coord.x, y: line.pt1.coord.y), from: superview)

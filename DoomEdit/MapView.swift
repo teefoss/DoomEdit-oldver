@@ -5,16 +5,17 @@
 //  Created by Thomas Foster on 9/16/17.
 //  Copyright © 2017 Thomas Foster. All rights reserved.
 //
-//  View that displays the map
-//
 
 import Cocoa
+
+
+/**  View that displays the map  */
 
 class MapView: NSView {
 
 	var delegate: MapViewDelegate?
 	
-	var gridSize: Int = 32
+	var gridSize: Int = 8
 	var scale: CGFloat = 1.0
 	
 	// for line drawing
@@ -22,11 +23,55 @@ class MapView: NSView {
 	var startPoint: NSPoint!
 	var endPoint: NSPoint!
 	
-	// get the grid point closet to the mouse click
-	func getGridPoint(from event: NSEvent) -> NSPoint {
+	override init(frame frameRect: NSRect) {
+		super.init(frame: frameRect)
 		
-		var point = convert(event.locationInWindow, from: nil)
+		let trackingArea = NSTrackingArea(rect: bounds,
+										  options: [.activeInKeyWindow, .inVisibleRect, .mouseMoved],
+										  owner: self,
+										  userInfo: nil)
+		addTrackingArea(trackingArea)
+	}
+	
+	required init?(coder decoder: NSCoder) {
+		fatalError("init(coder:) has not been implemented")
+	}
+
+	///  Convert a point to the world coordinate system
+	///- parameter point: A point in the view coordinate system
+	func worldCoord(for point: NSPoint) -> NSPoint {
 		
+		let pt = convert(point, from: nil)
+		
+		let xOffset = bounds.origin.x - frame.origin.x
+		let yOffset = bounds.origin.y - frame.origin.y
+		
+		let x = pt.x - xOffset + 1
+		let y = pt.y - yOffset + 1
+		
+		return NSPoint(x: x, y: y)
+	}
+
+	///  Convert a point to the view coordinate system
+	///- parameter point: A point in the world coordinate system
+	func viewCoord(for point: NSPoint) -> NSPoint {
+		
+		let pt = convert(point, to: nil)
+		
+		let xOffset = frame.origin.x - bounds.origin.x
+		let yOffset = frame.origin.y - bounds.origin.y
+		
+		let x = pt.x - xOffset - 1
+		let y = pt.y - yOffset - 1
+		
+		return NSPoint(x: x, y: y)
+	}
+	
+	///  Get the grid point closest to the mouse click in world coordinates
+	func getWorldGridPoint(from point: NSPoint) -> NSPoint {
+		
+		var point = worldCoord(for: point)
+
 		point.x = CGFloat(Int(point.x / CGFloat(gridSize) + 0.5 * (point.x < 0 ? -1 : 1)))
 		point.y = CGFloat(Int(point.y / CGFloat(gridSize) + 0.5 * (point.y < 0 ? -1 : 1)))
 		point.x *= CGFloat(gridSize)
@@ -34,19 +79,24 @@ class MapView: NSView {
 		
 		return point
 	}
+	
+	///  Get the grid point closest to the mouse click in view coordinates
+	func getViewGridPoint(from point: NSPoint) -> NSPoint {
+		
+		var point = convert(point, from: nil)
+		
+		point.x = CGFloat(Int(point.x / CGFloat(gridSize) + 0.5 * (point.x < 0 ? -1 : 1)))
+		point.y = CGFloat(Int(point.y / CGFloat(gridSize) + 0.5 * (point.y < 0 ? -1 : 1)))
+		point.x *= CGFloat(gridSize)
+		point.y *= CGFloat(gridSize)
+		
+		return point
 
-	func currentOrigin() -> NSPoint {
-		let global = convert((superview?.bounds.origin)!, from: superview)
-		return global
 	}
 	
-	func currentWorldOriginInWindow() -> NSPoint {
-
-		// fuck everything
-		let corner = convert((window?.contentView?.bounds.origin)!, to: superview)
-		return corner
-		
-//		return convert(self.visibleRect.origin, to: superview)
+	/**  Returns the current origin of the visible rect in world coordinates  */
+	func currentOrigin() -> NSPoint {
+		return worldCoord(for: visibleRect.origin)
 	}
 	
 	func setOrigin(for origin: NSPoint) {

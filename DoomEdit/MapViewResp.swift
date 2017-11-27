@@ -15,35 +15,31 @@ extension MapView {
 	override var acceptsFirstResponder: Bool { return true }
 	override func becomeFirstResponder() -> Bool { return true }
 	override func resignFirstResponder() -> Bool { return true }
-
 	
 	
-	// MARK: - Key Actions
+	
+	// ===================
+	// MARK: - Key Presses
+	// ===================
 
 	override func keyDown(with event: NSEvent) {
 		
-		if event.keyCode == KEY_MINUS {			// zoom out
-			scale /= 2
-			print("scale = \(scale)")
-			let mouseLoc = convert(event.locationInWindow, from: nil)
-			delegate?.zoom(to: mouseLoc, with: scale)
-		}
-		else if event.keyCode == KEY_EQUALS	{	// zoom in
-			scale *= 2
-			print("scale = \(scale)")
-			let mouseLoc = convert(event.locationInWindow, from: nil)
-			delegate?.zoom(to: mouseLoc, with: scale)
-		}
-		else if event.keyCode == KEY_LEFTBRACKET {
+		switch event.keyCode {
+		case KEY_MINUS:
+			zoomOut(from: event)
+		case KEY_EQUALS:
+			zoomIn(to: event)
+		case KEY_LEFTBRACKET:
 			decreaseGrid()
-			
-		} else if event.keyCode == KEY_RIGHTBRACKET {
+		case KEY_RIGHTBRACKET:
 			increaseGrid()
+		case KEY_I:
+			printInfo()
+		default: break
 		}
-		
-		//world.updateWindows()
 	}
-		
+	
+	/// Grid lines get farther apart
 	func increaseGrid() {
 		if gridSize < 64 {
 			gridSize *= 2
@@ -51,7 +47,8 @@ extension MapView {
 			needsDisplay = true
 		}
 	}
-	
+
+	/// Grid lines get closer together
 	func decreaseGrid() {
 		if gridSize > 1 {
 			gridSize /= 2
@@ -60,12 +57,51 @@ extension MapView {
 		}
 	}
 	
+	// FIXME: When mouse is outside window?
+	/// Zooms in on mouse location
+	func zoomIn(to event: NSEvent) {
+		if scale < 4 {
+			scale *= 2
+			print("scale = \(scale*100)%")
+			let mouseLoc = worldCoord(for: event.locationInWindow)
+			delegate?.zoom(to: mouseLoc, with: scale)
+			frame = world.updateBounds()
+		} else {
+			NSSound.beep()
+		}
+	}
 	
+	/// Zooms out from mouse location
+	func zoomOut(from event: NSEvent) {
+		if scale > 0.125 {
+			scale /= 2
+			print("scale = \(scale*100)%")
+			let mouseLoc = worldCoord(for: event.locationInWindow)
+			delegate?.zoom(to: mouseLoc, with: scale)
+			frame = world.updateBounds()
+		} else {
+			NSSound.beep()
+		}
+	}
+	
+	// For testing
+	func printInfo() {
+		print("frame: \(frame)")
+		print("frame.origin.x: \(frame.origin.x)")
+		print("bounds: \(bounds)")
+		print("visibleRect: \(visibleRect)")
+		let converted = convert(visibleRect.origin, from: nil)
+		print("viz rect origin converted: \(converted)")
+	}
+
+	
+	// =====================
 	// MARK: - Mouse Actions
+	// =====================
 	
 	override func mouseDown(with event: NSEvent) {
 		
-		self.startPoint = getGridPoint(from: event)
+		self.startPoint = getViewGridPoint(from: event.locationInWindow)
 		
 		shapeLayer = CAShapeLayer()
 		shapeLayer.lineWidth = 1.0
@@ -79,7 +115,7 @@ extension MapView {
 		
 		needsDisplay = false		// don't redraw everything while adding a line (???)
 		
-		endPoint = getGridPoint(from: event)
+		endPoint = getViewGridPoint(from: event.locationInWindow)
 		let path = CGMutablePath()
 		path.move(to: self.startPoint)
 		path.addLine(to: endPoint)
@@ -88,11 +124,27 @@ extension MapView {
 	}
 	
 	override func mouseUp(with event: NSEvent) {
-		let pt1 = convert(startPoint, to: superview)
-		let pt2 = convert(endPoint, to: superview)
-		world.newLine(from: pt1, to: pt2)
 
-		frame = world.updateBounds()
+		// FIXME: Line coordinates don't get translated correctly
+		
+		let pt1 = viewCoord(for: startPoint)
+		
+		if let endPoint = endPoint {
+			let pt2 = viewCoord(for: endPoint)
+			world.newLine(from: pt1, to: pt2)
+			frame = world.updateBounds()
+			setNeedsDisplay(bounds)
+		}
 	}
+	
+	func visibleRectOriginInWorldCoord() -> NSPoint {
+		return worldCoord(for: visibleRect.origin)
+	}
+	
+	func mouseLocationInWorldCoord(from event: NSEvent) -> NSPoint {
+		return worldCoord(for: event.locationInWindow)
+	}
+	
+	
 
 }

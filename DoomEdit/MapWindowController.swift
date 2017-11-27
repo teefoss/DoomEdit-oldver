@@ -39,7 +39,6 @@ class MapWindowController: NSWindowController, MapViewDelegate {
 		// Load world and set up the map view
 		world.loadWorldFile()
 		mapView.frame = world.updateBounds()
-
 		// Set up the scroll view
 		scrollView.documentView = mapView
 		scrollView.allowsMagnification = true
@@ -62,8 +61,11 @@ class MapWindowController: NSWindowController, MapViewDelegate {
 // MARK: - NSWindowDelegate Methods
 // ================================
 
+// TODO: Get all this working
+
 extension MapWindowController: NSWindowDelegate {
 	
+	/// Note the origin so it can be kept in the same place after resize
 	func windowWillResize(_ sender: NSWindow, to frameSize: NSSize) -> NSSize {
 		
 		if let windowFrame = window?.frame {
@@ -76,6 +78,7 @@ extension MapWindowController: NSWindowDelegate {
 		return frameSize
 	}
 	
+	/// Adjust world bounds for the new frame
 	func windowDidResize(_ notification: Notification) {
 		
 		let scale = mapView.scale

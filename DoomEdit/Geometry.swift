@@ -43,7 +43,7 @@ func makeBox(from box: inout Box, with pt1: NSPoint, and pt2: NSPoint) {
 	}
 }
 
-// Transforms given rect to just touch given points
+/// Transforms given rect to just touch given points
 func makeRect(from rect: inout NSRect, with pt1: NSPoint, and pt2: NSPoint) {
 	
 	if pt1.x < pt2.x {
@@ -88,3 +88,5 @@ func enclosePoint(rect: inout NSRect, point: NSPoint) {
 	rect.size.width = right - rect.origin.x + 1
 	rect.size.height = top - rect.origin.y + 1
 }
+
+

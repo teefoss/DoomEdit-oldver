@@ -13,7 +13,7 @@ import Foundation
 fileprivate let BOUNDSBORDER = 128
 
 
-
+/// Global instance of current map
 var world = World()
 
 class World {
@@ -41,7 +41,7 @@ class World {
 	// MARK: - Geometry
 	// ================
 	
-	// Go through all the points and adjust the world bounds
+	/// Go through all the points and adjust the world bounds to encompass them
 	func updateBounds() -> NSRect {
 		
 		var right, left, top, bottom: CGFloat
@@ -85,7 +85,7 @@ class World {
 	// MARK: - New Data Allocation
 	// ===========================
 
-	// add a point to the 'points' storage array
+	/// Adds a new point to the `points` storage array
 	private func newPoint(_ point: NSPoint) {
 		
 		boundsDirty = true
@@ -111,7 +111,7 @@ class World {
 		points.append(newPoint)
 	}
 	
-	// add a line to 'lines' storage array
+	/// Adds a new line to 'lines' storage array
 	func newLine(from pt1: NSPoint, to pt2: NSPoint) {
 		
 		newPoint(pt1)
@@ -131,8 +131,9 @@ class World {
 	// MARK: - Saving & Loading
 	// ========================
 
-	// Reads data from a DWD file and stores it in world.lines and world.points
 	// TODO: stores thing data in world.things
+	// TODO: store sidedef data, sector data
+	/// Reads data from a `.dwd` file and stores it in `world.lines` and `world.points`
 	func loadWorldFile() {
 		
 		boundsDirty = true
@@ -149,10 +150,10 @@ class World {
 			}
 		}
 		
-		// every line of the file
+		// every line of the file separated
 		guard let dataSeparated = fileContents?.components(separatedBy: CharacterSet.newlines) else { return }
 		
-		// filter out only line with line data and put in linesData
+		// filter out only lines with line data and put in linesData
 		for line in dataSeparated {
 			if line.first == "t" { break }
 			if line.first == "(" {
@@ -174,15 +175,15 @@ class World {
 			let pt2 = TestPoint(coord: NSPoint(x: pt2x, y: pt2y))
 			let newLine = TestLine(pt1: pt1, pt2: pt2)
 			
-			
 			world.points.append(pt1)
 			world.points.append(pt2)
 			world.lines.append(newLine)
 		}
 	}
 	
-	// reads this format to get point and line coords:
-	// (1088,-3680) to (1024,-3680) : 1 : 0 : 0
+	/// Reads a .dwd file and stores the data.
+	/// - note: Currently only reads line data in format:
+	/// `(1088,-3680) to (1024,-3680) : 1 : 0 : 0`
 	private func scanDWD(data: String, pt1x: inout Int, pt1y: inout Int, pt2x: inout Int, pt2y: inout Int) {
 		let scanner = Scanner(string: data)
 		

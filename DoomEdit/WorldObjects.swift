@@ -22,8 +22,6 @@ struct Side {
 	var lowerTexture: String?
 }
 
-
-
 // For testing
 // TODO: remove these
 struct TestPoint {
@@ -39,6 +37,7 @@ struct TestLine {
 		return NSPoint(x: x, y: y)
 	}
 	
+	/// The point at the end of the 'tick mark' of a line
 	var normal: NSPoint {
 		let dx = Double(pt2.coord.x - pt1.coord.x)
 		let dy = Double(pt2.coord.y - pt1.coord.y)
