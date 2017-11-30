@@ -41,7 +41,7 @@ struct TestLine {
 	var normal: NSPoint {
 		let dx = Double(pt2.coord.x - pt1.coord.x)
 		let dy = Double(pt2.coord.y - pt1.coord.y)
-		let length = CGFloat(sqrt(dx*dx + dy*dy) / Double(LINENORMALLENGTH))
+		let length = CGFloat(sqrt(dx*dx + dy*dy) / Double(lineNormalLength))
 		
 		let normalX = midPoint.x + CGFloat(dy)/length
 		let normalY = midPoint.y - CGFloat(dx)/length

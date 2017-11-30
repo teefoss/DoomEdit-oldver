@@ -9,8 +9,9 @@
 import Cocoa
 
 
-/**  View that displays the map  */
-
+/**
+View that displays the map
+*/
 class MapView: NSView {
 
 	var delegate: MapViewDelegate?
@@ -20,8 +21,10 @@ class MapView: NSView {
 	
 	// for line drawing
 	var shapeLayer: CAShapeLayer!
+	var shapeLayerIndex: Int!
 	var startPoint: NSPoint!
 	var endPoint: NSPoint!
+	var didDragLine: Bool = false
 	
 	override init(frame frameRect: NSRect) {
 		super.init(frame: frameRect)

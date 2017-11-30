@@ -10,6 +10,18 @@
 
 import Cocoa
 
+fileprivate let KEY_MINUS: 			UInt16 = 27
+fileprivate let KEY_EQUALS: 		UInt16 = 24
+fileprivate let KEY_LEFTBRACKET: 	UInt16 = 33
+fileprivate let KEY_RIGHTBRACKET: 	UInt16 = 30
+fileprivate let KEY_I: 				UInt16 = 34
+
+
+
+/**
+MapView Responder Methods
+*/
+
 extension MapView {
 	
 	override var acceptsFirstResponder: Bool { return true }
@@ -21,7 +33,7 @@ extension MapView {
 	// ===================
 	// MARK: - Key Presses
 	// ===================
-
+	
 	override func keyDown(with event: NSEvent) {
 		
 		switch event.keyCode {
@@ -47,7 +59,7 @@ extension MapView {
 			needsDisplay = true
 		}
 	}
-
+	
 	/// Grid lines get closer together
 	func decreaseGrid() {
 		if gridSize > 1 {
@@ -93,7 +105,7 @@ extension MapView {
 		let converted = convert(visibleRect.origin, from: nil)
 		print("viz rect origin converted: \(converted)")
 	}
-
+	
 	
 	// =====================
 	// MARK: - Mouse Actions
@@ -101,18 +113,21 @@ extension MapView {
 	
 	override func mouseDown(with event: NSEvent) {
 		
+		// animated drawing is done in view coord system
 		self.startPoint = getViewGridPoint(from: event.locationInWindow)
 		
 		shapeLayer = CAShapeLayer()
 		shapeLayer.lineWidth = 1.0
 		shapeLayer.fillColor = NSColor.clear.cgColor
 		shapeLayer.strokeColor = NSColor.black.cgColor
-		self.layer?.addSublayer(shapeLayer)
+		layer?.addSublayer(shapeLayer)
+		shapeLayerIndex = layer?.sublayers?.index(of: shapeLayer)
 		
 	}
 	
 	override func mouseDragged(with event: NSEvent) {
 		
+		didDragLine = true
 		needsDisplay = false		// don't redraw everything while adding a line (???)
 		
 		endPoint = getViewGridPoint(from: event.locationInWindow)
@@ -120,22 +135,31 @@ extension MapView {
 		path.move(to: self.startPoint)
 		path.addLine(to: endPoint)
 		self.shapeLayer.path = path
-
+		
 	}
 	
 	override func mouseUp(with event: NSEvent) {
-
-		// FIXME: Line coordinates don't get translated correctly
 		
-		let pt1 = viewCoord(for: startPoint)
+		// FIXME: Make shapeLayer line go away
+		//self.shapeLayer.sublayers = nil
 		
-		if let endPoint = endPoint {
-			let pt2 = viewCoord(for: endPoint)
-			world.newLine(from: pt1, to: pt2)
-			frame = world.updateBounds()
-			setNeedsDisplay(bounds)
+		if didDragLine {
+			layer?.sublayers?.remove(at: shapeLayerIndex)
+			
+			// convert startPoint to world coord
+			let pt1 = convert(startPoint, to: superview)
+			
+			if let endPoint = endPoint {
+				// convert endPoint to world coord
+				let pt2 = convert(endPoint, to: superview)
+				world.newLine(from: pt1, to: pt2)
+				frame = world.updateBounds()
+				setNeedsDisplay(bounds)
+			}
+			didDragLine = false
 		}
 	}
+	
 	
 	func visibleRectOriginInWorldCoord() -> NSPoint {
 		return worldCoord(for: visibleRect.origin)
@@ -146,5 +170,5 @@ extension MapView {
 	}
 	
 	
-
+	
 }

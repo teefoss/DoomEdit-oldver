@@ -8,17 +8,20 @@
 
 import Cocoa
 
+let lineNormalLength = 6
+
 // Grid Style Constants
 
 fileprivate let tileAlpha: CGFloat = 0.4		// originally 3 and 1
 fileprivate let gridAlpha: CGFloat = 0.2
 fileprivate let tileColor = NSColor.systemBlue.withAlphaComponent(tileAlpha)
 fileprivate let gridColor = NSColor.systemBlue.withAlphaComponent(gridAlpha)
-//fileprivate let tileColor = NSColor(calibratedRed: 178/255, green: 230/255, blue: 251/255, alpha: 1.0)
-//fileprivate let gridColor = NSColor(calibratedRed: 229/255, green: 246/255, blue: 253/255, alpha: 1.0)
 
 
-/**  MapView Drawing-related Methods  */
+
+/**
+MapView Drawing-related Methods
+*/
 
 extension MapView {
 	
@@ -29,6 +32,7 @@ extension MapView {
 		drawLines(in: dirtyRect)
 	}
 
+	/// Draws the 64x64 fixed tiles and the adjustable grid
 	private func drawGrid(in rect: NSRect) {
 		
 		let left = Int(rect.minX)
@@ -71,10 +75,12 @@ extension MapView {
 		}
 	}
 
-	// Draw all world lines
+	///  Draw all world lines
 	private func drawLines(in rect: NSRect) {
 
 		for line in world.lines {
+			// drawing will be in view coord, i.e. origin = (0, 0)
+			// so use superview's coord system, they are the same as world coord
 			let pt1 = convert(NSPoint(x: line.pt1.coord.x, y: line.pt1.coord.y), from: superview)
 			let pt2 = convert(NSPoint(x: line.pt2.coord.x, y: line.pt2.coord.y), from: superview)
 			let midPt = convert(line.midPoint, from: superview)
@@ -84,5 +90,10 @@ extension MapView {
 			NSBezierPath.strokeLine(from: pt1, to: pt2)			// line
 			NSBezierPath.strokeLine(from: midPt, to: normPt)	// line normal 'tick'			
 		}
+	}
+	
+	///  Draw all world things
+	private func drawThings(in rect: NSRect) {
+		
 	}
 }

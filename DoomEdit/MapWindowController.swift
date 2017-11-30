@@ -49,6 +49,7 @@ class MapWindowController: NSWindowController, MapViewDelegate {
 		zoom(to: NSPoint.zero, with: 1.0)
     }
 	
+	// TODO: Animate zooming
 	func zoom(to point: NSPoint, with scale: CGFloat) {
 		scrollView.setMagnification(CGFloat(scale), centeredAt: point)
 	}
