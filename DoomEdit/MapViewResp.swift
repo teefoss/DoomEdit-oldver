@@ -111,6 +111,8 @@ extension MapView {
 	// MARK: - Mouse Actions
 	// =====================
 	
+	
+	
 	override func mouseDown(with event: NSEvent) {
 		
 		// animated drawing is done in view coord system
@@ -142,6 +144,7 @@ extension MapView {
 		
 		// FIXME: Make shapeLayer line go away
 		//self.shapeLayer.sublayers = nil
+		var line = Line()
 		
 		if didDragLine {
 			layer?.sublayers?.remove(at: shapeLayerIndex)
@@ -152,7 +155,10 @@ extension MapView {
 			if let endPoint = endPoint {
 				// convert endPoint to world coord
 				let pt2 = convert(endPoint, to: superview)
-				world.newLine(from: pt1, to: pt2)
+				//world.newLine(from: pt1, to: pt2)
+				line.pt1.coord = pt1
+				line.pt2.coord = pt2
+				world.newLine(line: &line)
 				frame = world.updateBounds()
 				setNeedsDisplay(bounds)
 			}

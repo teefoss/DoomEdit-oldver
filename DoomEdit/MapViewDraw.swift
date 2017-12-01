@@ -30,6 +30,7 @@ extension MapView {
 				
 		drawGrid(in: dirtyRect)
 		drawLines(in: dirtyRect)
+		drawThings(in: dirtyRect)
 	}
 
 	/// Draws the 64x64 fixed tiles and the adjustable grid
@@ -83,9 +84,10 @@ extension MapView {
 			// so use superview's coord system, they are the same as world coord
 			let pt1 = convert(NSPoint(x: line.pt1.coord.x, y: line.pt1.coord.y), from: superview)
 			let pt2 = convert(NSPoint(x: line.pt2.coord.x, y: line.pt2.coord.y), from: superview)
-			let midPt = convert(line.midPoint, from: superview)
+			let midPt = convert(line.midpoint, from: superview)
 			let normPt = convert(line.normal, from: superview)
 
+			
 			NSColor.black.set()
 			NSBezierPath.strokeLine(from: pt1, to: pt2)			// line
 			NSBezierPath.strokeLine(from: midPt, to: normPt)	// line normal 'tick'			
@@ -94,6 +96,21 @@ extension MapView {
 	
 	///  Draw all world things
 	private func drawThings(in rect: NSRect) {
-		
+
+		for thing in world.things {
+			let origin = convert(thing.origin, from: superview)
+			let size = NSSize(width: 32, height: 32)
+			let offset: CGFloat = 16
+			let rect = NSRect(x: origin.x-offset, y: origin.y-offset, width: size.width, height: size.height)
+			
+			thing.color.set()
+			NSBezierPath.fill(rect)
+			
+		}
 	}
 }
+
+
+
+
+
