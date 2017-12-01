@@ -10,6 +10,6 @@ import Cocoa
 
 struct Color {
 	static let lineOneSided = NSColor.black
-	static let lineTwoSided = NSColor.darkGray
-	static let lineSpecial = NSColor.systemGreen
+	static let lineTwoSided = NSColor.gray
+	static let lineSpecial = NSColor.green
 }

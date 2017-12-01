@@ -69,6 +69,15 @@ struct Line {
 	var isSelected: Bool
 	var ref: Int
 	
+	var color: NSColor {
+		if special != 0 {
+			return Color.lineSpecial
+		} else if back != nil {
+			return Color.lineTwoSided
+		}
+		return NSColor.black
+	}
+	
 	init() {
 		pt1 = Point()
 		pt2 = Point()

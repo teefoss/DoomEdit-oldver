@@ -87,8 +87,7 @@ extension MapView {
 			let midPt = convert(line.midpoint, from: superview)
 			let normPt = convert(line.normal, from: superview)
 
-			
-			NSColor.black.set()
+			line.color.set()
 			NSBezierPath.strokeLine(from: pt1, to: pt2)			// line
 			NSBezierPath.strokeLine(from: midPt, to: normPt)	// line normal 'tick'			
 		}
