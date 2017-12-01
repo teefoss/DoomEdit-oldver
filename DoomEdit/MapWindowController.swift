@@ -38,6 +38,11 @@ class MapWindowController: NSWindowController, MapViewDelegate {
 
 		// Load world and set up the map view
 		world.loadWorldFile()
+		
+		for line in world.lines {
+			print("(\(line.pt1.coord)) to (\(line.pt2.coord))")
+		}
+		
 		mapView.frame = world.updateBounds()
 		// Set up the scroll view
 		scrollView.documentView = mapView

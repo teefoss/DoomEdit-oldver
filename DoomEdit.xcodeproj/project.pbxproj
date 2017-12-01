@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		30399CC11FCFAAAC00503DB4 /* WorldLoad.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30399CC01FCFAAAC00503DB4 /* WorldLoad.swift */; };
+		30399CC71FD06EEE00503DB4 /* dwd-format.txt in Resources */ = {isa = PBXBuildFile; fileRef = 30399CC61FD06EEE00503DB4 /* dwd-format.txt */; };
+		30399CC91FD1E8A600503DB4 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30399CC81FD1E8A600503DB4 /* Constants.swift */; };
 		30E827E31FC9FC7B00992422 /* e4m1.dwd in Resources */ = {isa = PBXBuildFile; fileRef = 30E827E21FC9FC7B00992422 /* e4m1.dwd */; };
 		30FBF6371FC52D500035671D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30FBF6361FC52D500035671D /* AppDelegate.swift */; };
 		30FBF6391FC52D500035671D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 30FBF6381FC52D500035671D /* Assets.xcassets */; };
@@ -23,6 +26,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		30399CC01FCFAAAC00503DB4 /* WorldLoad.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorldLoad.swift; sourceTree = "<group>"; };
+		30399CC61FD06EEE00503DB4 /* dwd-format.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "dwd-format.txt"; sourceTree = "<group>"; };
+		30399CC81FD1E8A600503DB4 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		30E827E21FC9FC7B00992422 /* e4m1.dwd */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = e4m1.dwd; sourceTree = "<group>"; };
 		30FBF6331FC52D500035671D /* DoomEdit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DoomEdit.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		30FBF6361FC52D500035671D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -72,15 +78,18 @@
 			isa = PBXGroup;
 			children = (
 				30FBF6361FC52D500035671D /* AppDelegate.swift */,
+				30399CC81FD1E8A600503DB4 /* Constants.swift */,
 				30FBF64A1FC52F6A0035671D /* Geometry.swift */,
 				30FBF6441FC52DB70035671D /* MapWindowController.swift */,
 				30FBF6531FC52F8A0035671D /* MapView.swift */,
 				30FBF6541FC52F8A0035671D /* MapViewDraw.swift */,
 				30FBF6561FC52F8A0035671D /* MapViewResp.swift */,
-				30FBF6491FC52F690035671D /* World.swift */,
 				30FBF6481FC52F690035671D /* WorldObjects.swift */,
+				30FBF6491FC52F690035671D /* World.swift */,
+				30399CC01FCFAAAC00503DB4 /* WorldLoad.swift */,
 				30FBF65D1FC52F930035671D /* e1m1.dwd */,
 				30E827E21FC9FC7B00992422 /* e4m1.dwd */,
+				30399CC61FD06EEE00503DB4 /* dwd-format.txt */,
 				30FBF6381FC52D500035671D /* Assets.xcassets */,
 				30FBF63A1FC52D500035671D /* MainMenu.xib */,
 				30FBF6451FC52DB70035671D /* MapWindowController.xib */,
@@ -154,6 +163,7 @@
 				30FBF65E1FC52F930035671D /* e1m1.dwd in Resources */,
 				30FBF6391FC52D500035671D /* Assets.xcassets in Resources */,
 				30FBF63C1FC52D500035671D /* MainMenu.xib in Resources */,
+				30399CC71FD06EEE00503DB4 /* dwd-format.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -168,6 +178,8 @@
 				30FBF64C1FC52F6A0035671D /* WorldObjects.swift in Sources */,
 				30FBF65C1FC52F8A0035671D /* MapViewResp.swift in Sources */,
 				30FBF65A1FC52F8A0035671D /* MapViewDraw.swift in Sources */,
+				30399CC11FCFAAAC00503DB4 /* WorldLoad.swift in Sources */,
+				30399CC91FD1E8A600503DB4 /* Constants.swift in Sources */,
 				30FBF64D1FC52F6A0035671D /* World.swift in Sources */,
 				30FBF6371FC52D500035671D /* AppDelegate.swift in Sources */,
 				30FBF64E1FC52F6A0035671D /* Geometry.swift in Sources */,
