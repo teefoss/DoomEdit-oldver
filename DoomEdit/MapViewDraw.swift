@@ -31,6 +31,7 @@ extension MapView {
 		drawGrid(in: dirtyRect)
 		drawLines(in: dirtyRect)
 		drawThings(in: dirtyRect)
+		drawPoints(in: dirtyRect)
 	}
 
 	/// Draws the 64x64 fixed tiles and the adjustable grid
@@ -80,16 +81,29 @@ extension MapView {
 	private func drawLines(in rect: NSRect) {
 
 		for line in world.lines {
+			
+			let offset: CGFloat = 0.5
+			
 			// drawing will be in view coord, i.e. origin = (0, 0)
 			// so use superview's coord system, they are the same as world coord
-			let pt1 = convert(NSPoint(x: line.pt1.coord.x, y: line.pt1.coord.y), from: superview)
-			let pt2 = convert(NSPoint(x: line.pt2.coord.x, y: line.pt2.coord.y), from: superview)
+			let pt1 = convert(NSPoint(x: line.pt1.coord.x-offset, y: line.pt1.coord.y-offset), from: superview)
+			let pt2 = convert(NSPoint(x: line.pt2.coord.x-offset, y: line.pt2.coord.y-offset), from: superview)
 			let midPt = convert(line.midpoint, from: superview)
 			let normPt = convert(line.normal, from: superview)
-
+			
+			let midPtx = midPt.x - offset
+			let midPty = midPt.y - offset
+			let newMidPt = NSPoint(x: midPtx, y: midPty)
+			
+			let normPtx = normPt.x - offset
+			let normPty = normPt.y - offset
+			let newNormPt = NSPoint(x: normPtx, y: normPty)
+			
+			
 			line.color.set()
+			NSBezierPath.defaultLineWidth = 1.5
 			NSBezierPath.strokeLine(from: pt1, to: pt2)			// line
-			NSBezierPath.strokeLine(from: midPt, to: normPt)	// line normal 'tick'			
+			NSBezierPath.strokeLine(from: newMidPt, to: newNormPt)	// line normal 'tick'
 		}
 	}
 	
@@ -99,7 +113,7 @@ extension MapView {
 		for thing in world.things {
 			let origin = convert(thing.origin, from: superview)
 			let size = NSSize(width: 32, height: 32)
-			let offset: CGFloat = 16
+			let offset: CGFloat = 16.5
 			let rect = NSRect(x: origin.x-offset, y: origin.y-offset, width: size.width, height: size.height)
 			
 			thing.color.set()
@@ -107,9 +121,28 @@ extension MapView {
 			
 		}
 	}
+	
+	private func drawPoints(in rect: NSRect) {
+		
+		for point in world.points {
+			let origin = convert(point.coord, from: superview)
+			let offset: CGFloat = 2.5
+			let size = NSSize(width: 4, height: 4)
+			let rect = NSRect(x: origin.x-offset, y: origin.y-offset, width: size.width, height: size.height)
+
+//			if !point.hovering {
+//				NSColor.black.setFill()
+//			} else {
+//				NSColor.blue.setFill()
+//			}
+			if point.hovering {
+				NSColor.red.set()
+				NSBezierPath.fill(rect)
+			} else {
+				NSColor.black.set()
+				NSBezierPath.fill(rect)
+			}
+		}
+	}
 }
-
-
-
-
 

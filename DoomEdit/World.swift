@@ -11,9 +11,7 @@
 import Foundation
 
 fileprivate let BOUNDSBORDER = 128
-
-
-/// Global instance of current map
+fileprivate let selectionRadius: CGFloat = 16
 var world = World()
 
 class World {
@@ -79,6 +77,25 @@ class World {
 		return bounds
 	}
 
+	func closestPoint(to point: NSPoint) -> Point? {
+		
+		var minDistance = CGFloat.greatestFiniteMagnitude
+		var closestPt: Point?
+		
+		for i in 0..<self.points.count {
+			let pt = self.points[i]
+			let distance = point <-> pt.coord
+			
+			if distance < selectionRadius && distance < minDistance {
+				minDistance = distance
+				closestPt = pt
+				self.points[i].hovering = true
+			} else {
+				self.points[i].hovering = false
+			}
+		}
+		return closestPt
+	}
 	
 	
 	// ===========================

@@ -54,6 +54,10 @@ class MapWindowController: NSWindowController, MapViewDelegate {
 		scrollView.setMagnification(CGFloat(scale), centeredAt: point)
 	}
 	
+	func updateWindow() {
+		mapView.setNeedsDisplay(mapView.bounds)
+	}
+	
 }
 
 

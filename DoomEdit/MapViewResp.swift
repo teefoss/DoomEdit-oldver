@@ -107,11 +107,26 @@ extension MapView {
 	}
 	
 	
+	
+	
+	
 	// =====================
 	// MARK: - Mouse Actions
 	// =====================
 	
-	
+	override func mouseMoved(with event: NSEvent) {
+		super.mouseMoved(with: event)
+		
+		let gridPoint = getWorldGridPoint(from: event.locationInWindow)
+		let closestPoint = world.closestPoint(to: gridPoint)
+		self.closestPoint = closestPoint
+		print(self.closestPoint)
+		if let pt = self.closestPoint {
+			if pt.hovering == true {
+				setNeedsDisplay(bounds)
+			}
+		}
+	}
 	
 	override func mouseDown(with event: NSEvent) {
 		
@@ -119,7 +134,7 @@ extension MapView {
 		self.startPoint = getViewGridPoint(from: event.locationInWindow)
 		
 		shapeLayer = CAShapeLayer()
-		shapeLayer.lineWidth = 1.0
+		shapeLayer.lineWidth = 1.5
 		shapeLayer.fillColor = NSColor.clear.cgColor
 		shapeLayer.strokeColor = NSColor.black.cgColor
 		layer?.addSublayer(shapeLayer)
@@ -136,6 +151,7 @@ extension MapView {
 		let path = CGMutablePath()
 		path.move(to: self.startPoint)
 		path.addLine(to: endPoint)
+		
 		self.shapeLayer.path = path
 		
 	}

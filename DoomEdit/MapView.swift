@@ -15,6 +15,12 @@ View that displays the map
 class MapView: NSView {
 
 	var delegate: MapViewDelegate?
+	var trackingArea: NSTrackingArea?
+	var closestPoint: Point? {
+		didSet{
+			self.setNeedsDisplay(bounds)
+		}
+	}
 	
 	var gridSize: Int = 8
 	var scale: CGFloat = 1.0
@@ -33,12 +39,24 @@ class MapView: NSView {
 										  options: [.activeInKeyWindow, .inVisibleRect, .mouseMoved],
 										  owner: self,
 										  userInfo: nil)
+		self.trackingArea = trackingArea
 		addTrackingArea(trackingArea)
 	}
 	
 	required init?(coder decoder: NSCoder) {
 		fatalError("init(coder:) has not been implemented")
 	}
+	
+	override func updateTrackingAreas() {
+		guard var trackingArea = self.trackingArea else {
+			return super.updateTrackingAreas()
+		}
+		removeTrackingArea(trackingArea)
+		trackingArea = NSTrackingArea(rect: self.bounds, options: [NSTrackingArea.Options.activeInKeyWindow, NSTrackingArea.Options.inVisibleRect, NSTrackingArea.Options.mouseMoved], owner: self, userInfo: nil)
+		self.trackingArea = trackingArea
+		addTrackingArea(trackingArea)
+	}
+
 
 	///  Convert a point to the world coordinate system
 	///- parameter point: A point in the view coordinate system
