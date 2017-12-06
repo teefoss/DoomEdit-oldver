@@ -23,7 +23,6 @@ class World {
 	var dirtyRect: NSRect = NSRect.zero
 	var dirtyPoints: Bool = false
 	
-	// TODO: change this to [Point] and [Line] eventually
 	var points: [Point] = []
 	var lines: [Line] = []
 	var sectors: [Sector] = []
@@ -59,7 +58,6 @@ class World {
 				if x > right { right = x }
 				if y < bottom { bottom = y }
 				if y > top { top = y }
-				
 			}
 			
 			bounds.origin.x = left - CGFloat(BOUNDSBORDER)
@@ -141,8 +139,26 @@ class World {
 	}
 	
 	func newThing(_ thing: Thing) {
-		self.things.append(thing)
+		things.append(thing)
 	}
 	
+	
+	// =========================
+	// MARK: - Selection Methods
+	// =========================
+
+	func selectPoint(_ i: Int) {
+		world.points[i].isSelected = true
+	}
+	
+	func deselectPoint(_ i: Int) {
+		world.points[i].isSelected = false
+	}
+	
+	func deselectAllPoints() {
+		for i in 0..<world.points.count {
+			world.points[i].isSelected = false
+		}
+	}
 
 }

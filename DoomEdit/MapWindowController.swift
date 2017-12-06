@@ -26,6 +26,8 @@ class MapWindowController: NSWindowController, MapViewDelegate {
 	var preResizeOrigin = NSPoint()
 
 	@IBOutlet weak var scrollView: NSScrollView!
+	@IBOutlet weak var clipView: NSClipView!
+	
 	
 	override var windowNibName: NSNib.Name? {
 		return .MapWindowController
@@ -33,20 +35,24 @@ class MapWindowController: NSWindowController, MapViewDelegate {
 	
     override func windowDidLoad() {
         super.windowDidLoad()
+		
+		positionWindowTopLeft(leftOffset: 50, topOffset: 50)
 		delegate = self
-		mapView.delegate = self
-
+		
 		// Load world and set up the map view
 		world.loadWorldFile()
+		mapView.delegate = self
 		mapView.frame = world.updateBounds()
+		
 		// Set up the scroll view
 		scrollView.documentView = mapView
 		scrollView.allowsMagnification = true
 		// FIXME: scroll to center of map on load
 		let centerx = scrollView.documentVisibleRect.maxX / 2
 		let centery = scrollView.documentVisibleRect.maxY / 2
-		scrollView.scroll(NSPoint(x: centerx, y: centery))
-		zoom(to: NSPoint.zero, with: 1.0)
+		let center = NSPoint(x: centerx, y: centery)
+		scrollView.scroll(clipView, to: center)
+		zoom(to: center, with: 1.0)
     }
 	
 	// TODO: Animate zooming

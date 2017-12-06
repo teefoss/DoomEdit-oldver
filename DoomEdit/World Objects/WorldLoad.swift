@@ -45,7 +45,6 @@ extension World {
 					isTwoSided = true
 				}
 			} else if readSideData(from: fileLine, to: &side) {
-	
 				switch isTwoSided {
 				case true:
 					if !gotFrontSide {
@@ -58,7 +57,6 @@ extension World {
 					line.front = side
 				}
 			} else if readSectorData(from: fileLine, to: &sectorDef) {
-				
 				switch isTwoSided {
 				case true:
 					if !gotFrontSectorDef {
@@ -92,10 +90,6 @@ extension World {
 				gotThing = false
 			}
 		}
-		
-
-
-		
 	}
 	
 	

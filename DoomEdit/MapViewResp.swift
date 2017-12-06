@@ -15,6 +15,7 @@ fileprivate let KEY_EQUALS: 		UInt16 = 24
 fileprivate let KEY_LEFTBRACKET: 	UInt16 = 33
 fileprivate let KEY_RIGHTBRACKET: 	UInt16 = 30
 fileprivate let KEY_I: 				UInt16 = 34
+fileprivate let KEY_SPACE:			UInt16 = 49
 
 
 
@@ -42,11 +43,18 @@ extension MapView {
 		case KEY_EQUALS:
 			zoomIn(to: event)
 		case KEY_LEFTBRACKET:
-			decreaseGrid()
-		case KEY_RIGHTBRACKET:
 			increaseGrid()
+			for pt in world.points {
+				if pt.isSelected {
+					print("1 selected point")
+				}
+			}
+		case KEY_RIGHTBRACKET:
+			decreaseGrid()
 		case KEY_I:
 			printInfo()
+		case KEY_SPACE:
+			toggleDrawMode()
 		default: break
 		}
 	}
@@ -96,6 +104,15 @@ extension MapView {
 		}
 	}
 	
+	func toggleDrawMode() {
+		inDrawingMode = !inDrawingMode
+		if inDrawingMode {
+			NSCursor.crosshair.set()
+		} else {
+			NSCursor.arrow.set()
+		}
+	}
+	
 	// For testing
 	func printInfo() {
 		print("frame: \(frame)")
@@ -114,81 +131,132 @@ extension MapView {
 	// MARK: - Mouse Actions
 	// =====================
 	
-	override func mouseMoved(with event: NSEvent) {
-		super.mouseMoved(with: event)
-		
-		let gridPoint = getWorldGridPoint(from: event.locationInWindow)
-		let closestPoint = world.closestPoint(to: gridPoint)
-		self.closestPoint = closestPoint
-		print(self.closestPoint)
-		if let pt = self.closestPoint {
-			if pt.hovering == true {
-				setNeedsDisplay(bounds)
-			}
-		}
-	}
-	
 	override func mouseDown(with event: NSEvent) {
 		
-		// animated drawing is done in view coord system
-		self.startPoint = getViewGridPoint(from: event.locationInWindow)
+
+		selectObject(at: event)
 		
-		shapeLayer = CAShapeLayer()
-		shapeLayer.lineWidth = 1.5
-		shapeLayer.fillColor = NSColor.clear.cgColor
-		shapeLayer.strokeColor = NSColor.black.cgColor
-		layer?.addSublayer(shapeLayer)
-		shapeLayerIndex = layer?.sublayers?.index(of: shapeLayer)
+		if inDrawingMode {
+			// animated drawing is done in view coord system
+			self.startPoint = getViewGridPoint(from: event.locationInWindow)
+			shapeLayer = CAShapeLayer()
+			shapeLayer.lineWidth = 1.0
+			shapeLayer.fillColor = NSColor.clear.cgColor
+			shapeLayer.strokeColor = NSColor.black.cgColor
+			layer?.addSublayer(shapeLayer)
+			shapeLayerIndex = layer?.sublayers?.index(of: shapeLayer)
+		}
+		
+		setNeedsDisplay(bounds)
 		
 	}
 	
 	override func mouseDragged(with event: NSEvent) {
 		
-		didDragLine = true
-		needsDisplay = false		// don't redraw everything while adding a line (???)
-		
-		endPoint = getViewGridPoint(from: event.locationInWindow)
-		let path = CGMutablePath()
-		path.move(to: self.startPoint)
-		path.addLine(to: endPoint)
-		
-		self.shapeLayer.path = path
-		
+		if inDrawingMode {
+			didDragLine = true
+			needsDisplay = false		// don't redraw everything while adding a line (???)
+			endPoint = getViewGridPoint(from: event.locationInWindow)
+			let path = CGMutablePath()
+			path.move(to: self.startPoint)
+			path.addLine(to: endPoint)
+			
+			self.shapeLayer.path = path
+		}
 	}
 	
 	override func mouseUp(with event: NSEvent) {
 		
-		// FIXME: Make shapeLayer line go away
-		//self.shapeLayer.sublayers = nil
-		var line = Line()
+		needsDisplay = true
 		
-		if didDragLine {
-			layer?.sublayers?.remove(at: shapeLayerIndex)
-			
-			// convert startPoint to world coord
-			let pt1 = convert(startPoint, to: superview)
-			
-			if let endPoint = endPoint {
-				// convert endPoint to world coord
-				let pt2 = convert(endPoint, to: superview)
-				//world.newLine(from: pt1, to: pt2)
-				line.pt1.coord = pt1
-				line.pt2.coord = pt2
-				world.newLine(line: &line)
-				frame = world.updateBounds()
-				setNeedsDisplay(bounds)
+		if inDrawingMode {
+			var line = Line()
+			if didDragLine {
+				layer?.sublayers?.remove(at: shapeLayerIndex)
+				
+				// convert startPoint to world coord
+				let pt1 = convert(startPoint, to: superview)
+				
+				if let endPoint = endPoint {
+					// convert endPoint to world coord
+					let pt2 = convert(endPoint, to: superview)
+					//world.newLine(from: pt1, to: pt2)
+					line.pt1.coord = pt1
+					line.pt2.coord = pt2
+					world.newLine(line: &line)
+					frame = world.updateBounds()
+					setNeedsDisplay(bounds)
+				}
+				didDragLine = false
 			}
-			didDragLine = false
 		}
 	}
 	
-	
-	func visibleRectOriginInWorldCoord() -> NSPoint {
-		return worldCoord(for: visibleRect.origin)
-	}
-	
-	func mouseLocationInWorldCoord(from event: NSEvent) -> NSPoint {
-		return worldCoord(for: event.locationInWindow)
+	// https://stackoverflow.com/questions/33158513/checking-keydown-event-modifierflags-yields-error
+	/// Selects a point at the mouse location. If no point is present, selects a line, thing, or sector in that order of priority.
+	func selectObject(at event: NSEvent) {
+		
+		var index: Int = -1
+		var point_p = Point()
+		var thing = Thing()
+		var left, right, top, bottom: CGFloat  // For a box around the click point
+		var p1, p2: NSPoint
+		var clickPoint: NSPoint
+		var inStroke: Int
+
+		clickPoint = worldCoord(for: event.locationInWindow)
+		print(clickPoint)
+		
+		// set up a box around the click point
+		left = clickPoint.x - pointSize/scale/CGFloat(2)
+		right = clickPoint.x + pointSize/scale/CGFloat(2)
+		bottom = clickPoint.y - pointSize/scale/CGFloat(2)
+		top = clickPoint.y + pointSize/scale/CGFloat(2)
+		
+		// see if the click hit a point
+		for i in 0..<world.points.count {
+			point_p = world.points[i]
+			// if the point is inside the box
+			if point_p.coord.x > left && point_p.coord.x < right &&
+				point_p.coord.y < top && point_p.coord.y > bottom {
+				print("got a point at \(point_p.coord)")
+				index = i
+				print ("point index = \(index)")
+				break	// got one, move on
+			}
+		}
+
+		print("world.points.count \(world.points.count)")
+
+		if index >= 0 && index < world.points.count {
+			// clicked a point
+			if world.points[index].isSelected {
+				world.deselectPoint(index)
+				print("deselected point")
+				return
+			} else {
+				// if not clicking on a selection and not shift-clicking, deselect all selected points
+				if !event.modifierFlags.contains(.shift) {
+					world.deselectAllPoints()
+				}
+				world.selectPoint(index)
+				print(index)
+			}
+			//drag
+			print("Point at \(world.points[index].coord) is selected: \(world.points[index].isSelected)")
+			return
+		}
+		
+		// lines
+		// thing
+		
+		if !event.modifierFlags.contains(.shift) {
+			world.deselectAllPoints()
+		}
+		
+		
+		
+		
 	}
 	
 	

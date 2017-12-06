@@ -21,16 +21,22 @@ class MapView: NSView {
 			self.setNeedsDisplay(bounds)
 		}
 	}
-	
 	var gridSize: Int = 8
 	var scale: CGFloat = 1.0
 	
 	// for line drawing
+	var inDrawingMode: Bool = false
 	var shapeLayer: CAShapeLayer!
 	var shapeLayerIndex: Int!
 	var startPoint: NSPoint!
 	var endPoint: NSPoint!
 	var didDragLine: Bool = false
+	
+	
+	
+	// ============
+	// MARK: - Init
+	// ============
 	
 	override init(frame frameRect: NSRect) {
 		super.init(frame: frameRect)
@@ -41,6 +47,7 @@ class MapView: NSView {
 										  userInfo: nil)
 		self.trackingArea = trackingArea
 		addTrackingArea(trackingArea)
+		
 	}
 	
 	required init?(coder decoder: NSCoder) {
@@ -56,7 +63,14 @@ class MapView: NSView {
 		self.trackingArea = trackingArea
 		addTrackingArea(trackingArea)
 	}
+	
+	
 
+	
+	
+	// =========================
+	// MARK: - Coordinate System
+	// =========================
 
 	///  Convert a point to the world coordinate system
 	///- parameter point: A point in the view coordinate system

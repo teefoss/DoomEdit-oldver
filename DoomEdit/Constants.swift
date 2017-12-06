@@ -8,6 +8,10 @@
 
 import Cocoa
 
+let pointSize: CGFloat = 14
+let pointDraw = 4
+let thingDrawSize = 32
+
 struct Color {
 	static let lineOneSided = NSColor.black
 	static let lineTwoSided = NSColor.gray

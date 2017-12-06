@@ -7,6 +7,7 @@
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="MapWindowController" customModule="DoomEdit" customModuleProvider="target">
             <connections>
+                <outlet property="clipView" destination="rH1-Au-p1r" id="MgP-qI-fDJ"/>
                 <outlet property="scrollView" destination="OTZ-fo-Sfz" id="V7d-Bq-nti"/>
                 <outlet property="window" destination="F0z-JX-Cv5" id="gIp-Ho-8D9"/>
             </connections>
@@ -17,7 +18,7 @@
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="196" y="240" width="640" height="640"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1280" height="778"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1058"/>
             <value key="minSize" type="size" width="320" height="320"/>
             <view key="contentView" wantsLayer="YES" id="se5-gp-TjO">
                 <rect key="frame" x="0.0" y="0.0" width="640" height="640"/>
@@ -26,21 +27,21 @@
                     <scrollView horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" allowsMagnification="YES" minMagnification="0.125" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OTZ-fo-Sfz">
                         <rect key="frame" x="0.0" y="0.0" width="640" height="640"/>
                         <clipView key="contentView" id="rH1-Au-p1r">
-                            <rect key="frame" x="1" y="1" width="638" height="638"/>
+                            <rect key="frame" x="1" y="1" width="623" height="623"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
                                 <view fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="VMI-Nl-RrZ">
-                                    <rect key="frame" x="0.0" y="0.0" width="623" height="623"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="608" height="608"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 </view>
                             </subviews>
                         </clipView>
                         <scroller key="horizontalScroller" verticalHuggingPriority="750" horizontal="YES" id="0jJ-2H-z0L">
-                            <rect key="frame" x="1" y="623" width="638" height="16"/>
+                            <rect key="frame" x="1" y="624" width="623" height="15"/>
                             <autoresizingMask key="autoresizingMask"/>
                         </scroller>
                         <scroller key="verticalScroller" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="heK-5i-cig">
-                            <rect key="frame" x="623" y="1" width="16" height="638"/>
+                            <rect key="frame" x="624" y="1" width="15" height="623"/>
                             <autoresizingMask key="autoresizingMask"/>
                         </scroller>
                     </scrollView>

@@ -12,8 +12,8 @@ let lineNormalLength = 6
 
 // Grid Style Constants
 
-fileprivate let tileAlpha: CGFloat = 0.4		// originally 3 and 1
-fileprivate let gridAlpha: CGFloat = 0.2
+fileprivate let tileAlpha: CGFloat = 0.3		// originally 3 and 1
+fileprivate let gridAlpha: CGFloat = 0.1
 fileprivate let tileColor = NSColor.systemBlue.withAlphaComponent(tileAlpha)
 fileprivate let gridColor = NSColor.systemBlue.withAlphaComponent(gridAlpha)
 
@@ -27,7 +27,7 @@ extension MapView {
 	
 	override func draw(_ dirtyRect: NSRect) {
 		super.draw(dirtyRect)
-				
+		
 		drawGrid(in: dirtyRect)
 		drawLines(in: dirtyRect)
 		drawThings(in: dirtyRect)
@@ -49,6 +49,8 @@ extension MapView {
 			context.fill(rect)
 			context.flush()
 		}
+		
+		NSBezierPath.defaultLineWidth = 1.0
 		
 		//draw horizontal lines
 		for i in bottom...top {
@@ -101,7 +103,7 @@ extension MapView {
 			
 			
 			line.color.set()
-			NSBezierPath.defaultLineWidth = 1.5
+			NSBezierPath.defaultLineWidth = 1.0
 			NSBezierPath.strokeLine(from: pt1, to: pt2)			// line
 			NSBezierPath.strokeLine(from: newMidPt, to: newNormPt)	// line normal 'tick'
 		}
@@ -124,24 +126,29 @@ extension MapView {
 	
 	private func drawPoints(in rect: NSRect) {
 		
-		for point in world.points {
+		for i in 0..<world.points.count {
+			let point = world.points[i]
+			
 			let origin = convert(point.coord, from: superview)
 			let offset: CGFloat = 2.5
 			let size = NSSize(width: 4, height: 4)
 			let rect = NSRect(x: origin.x-offset, y: origin.y-offset, width: size.width, height: size.height)
 
-//			if !point.hovering {
-//				NSColor.black.setFill()
-//			} else {
-//				NSColor.blue.setFill()
-//			}
-			if point.hovering {
+			if point.isSelected {
 				NSColor.red.set()
 				NSBezierPath.fill(rect)
+				if i == 204 {
+					print("204 red")
+				}
 			} else {
 				NSColor.black.set()
 				NSBezierPath.fill(rect)
+				if i == 204 {
+					print("204 black")
+				}
+
 			}
+
 		}
 	}
 }
