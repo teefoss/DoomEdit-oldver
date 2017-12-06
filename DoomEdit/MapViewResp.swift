@@ -44,11 +44,6 @@ extension MapView {
 			zoomIn(to: event)
 		case KEY_LEFTBRACKET:
 			increaseGrid()
-			for pt in world.points {
-				if pt.isSelected {
-					print("1 selected point")
-				}
-			}
 		case KEY_RIGHTBRACKET:
 			decreaseGrid()
 		case KEY_I:
@@ -133,7 +128,7 @@ extension MapView {
 	
 	override func mouseDown(with event: NSEvent) {
 		
-
+		
 		selectObject(at: event)
 		
 		if inDrawingMode {
@@ -180,12 +175,14 @@ extension MapView {
 				if let endPoint = endPoint {
 					// convert endPoint to world coord
 					let pt2 = convert(endPoint, to: superview)
-					//world.newLine(from: pt1, to: pt2)
-					line.pt1.coord = pt1
-					line.pt2.coord = pt2
-					world.newLine(line: &line)
-					frame = world.updateBounds()
-					setNeedsDisplay(bounds)
+					// if line didn't end where it started
+					if pt1.x != pt2.x && pt1.y != pt2.y {
+						line.pt1.coord = pt1
+						line.pt2.coord = pt2
+						world.newLine(line: &line)
+						frame = world.updateBounds()
+						setNeedsDisplay(bounds)
+					}
 				}
 				didDragLine = false
 			}
@@ -197,42 +194,41 @@ extension MapView {
 	func selectObject(at event: NSEvent) {
 		
 		var index: Int = -1
-		var point_p = Point()
+		var pt = Point()
 		var thing = Thing()
 		var left, right, top, bottom: CGFloat  // For a box around the click point
 		var p1, p2: NSPoint
 		var clickPoint: NSPoint
 		var inStroke: Int
-
-		clickPoint = worldCoord(for: event.locationInWindow)
-		print(clickPoint)
 		
+		clickPoint = worldCoord(for: event.locationInWindow)
+
+		//
+		// see if the click hit a point
+		//
+
 		// set up a box around the click point
 		left = clickPoint.x - pointSize/scale/CGFloat(2)
 		right = clickPoint.x + pointSize/scale/CGFloat(2)
 		bottom = clickPoint.y - pointSize/scale/CGFloat(2)
 		top = clickPoint.y + pointSize/scale/CGFloat(2)
 		
-		// see if the click hit a point
 		for i in 0..<world.points.count {
-			point_p = world.points[i]
+			pt = world.points[i]
 			// if the point is inside the box
-			if point_p.coord.x > left && point_p.coord.x < right &&
-				point_p.coord.y < top && point_p.coord.y > bottom {
-				print("got a point at \(point_p.coord)")
+			if pt.coord.x > left && pt.coord.x < right &&
+				pt.coord.y < top && pt.coord.y > bottom {
 				index = i
-				print ("point index = \(index)")
 				break	// got one, move on
 			}
 		}
-
+		
 		print("world.points.count \(world.points.count)")
-
+		
 		if index >= 0 && index < world.points.count {
 			// clicked a point
 			if world.points[index].isSelected {
 				world.deselectPoint(index)
-				print("deselected point")
 				return
 			} else {
 				// if not clicking on a selection and not shift-clicking, deselect all selected points
@@ -240,14 +236,18 @@ extension MapView {
 					world.deselectAllPoints()
 				}
 				world.selectPoint(index)
-				print(index)
 			}
 			//drag
-			print("Point at \(world.points[index].coord) is selected: \(world.points[index].isSelected)")
 			return
 		}
 		
-		// lines
+		//
+		// didn't hit a point, check for a line
+		//
+		
+		
+		
+		
 		// thing
 		
 		if !event.modifierFlags.contains(.shift) {

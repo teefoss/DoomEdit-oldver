@@ -50,7 +50,7 @@ extension MapView {
 			context.flush()
 		}
 		
-		NSBezierPath.defaultLineWidth = 1.0
+		NSBezierPath.defaultLineWidth = lineThickness
 		
 		//draw horizontal lines
 		for i in bottom...top {
@@ -103,7 +103,7 @@ extension MapView {
 			
 			
 			line.color.set()
-			NSBezierPath.defaultLineWidth = 1.0
+			NSBezierPath.defaultLineWidth = lineThickness
 			NSBezierPath.strokeLine(from: pt1, to: pt2)			// line
 			NSBezierPath.strokeLine(from: newMidPt, to: newNormPt)	// line normal 'tick'
 		}
@@ -137,16 +137,9 @@ extension MapView {
 			if point.isSelected {
 				NSColor.red.set()
 				NSBezierPath.fill(rect)
-				if i == 204 {
-					print("204 red")
-				}
 			} else {
 				NSColor.black.set()
 				NSBezierPath.fill(rect)
-				if i == 204 {
-					print("204 black")
-				}
-
 			}
 
 		}

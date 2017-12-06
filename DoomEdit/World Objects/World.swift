@@ -124,6 +124,12 @@ class World {
 		
 		//newPoint.ref = highestRef + 1
 		
+		for pt in points {
+			if newPoint.coord.x == pt.coord.x && newPoint.coord.y == pt.coord.y {
+				return
+			}
+		}
+		
 		points.append(newPoint)
 	}
 	

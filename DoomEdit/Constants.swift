@@ -11,6 +11,7 @@ import Cocoa
 let pointSize: CGFloat = 14
 let pointDraw = 4
 let thingDrawSize = 32
+let lineThickness: CGFloat = 1.0
 
 struct Color {
 	static let lineOneSided = NSColor.black
