@@ -216,6 +216,12 @@ extension MapView {
 		}
 	}
 	
+	
+	
+	// =========================
+	// MARK: - Selection Methods
+	// =========================
+	
 	// https://stackoverflow.com/questions/33158513/checking-keydown-event-modifierflags-yields-error
 	/// Selects a point at the mouse location. If no point is present, selects a line, thing, or sector in that order of priority.
 	func selectObject(at event: NSEvent) {
@@ -258,21 +264,21 @@ extension MapView {
 			if world.points[pointIndex].isSelected {
 				// shift is not being held
 				if !event.modifierFlags.contains(.shift) {
-					world.deselectAll()
+					deselectAll()
 					return
 				} else {
-					world.deselectPoint(pointIndex)
+					deselectPoint(pointIndex)
 					return
 				}
 			// point is not already selected
 			} else {
 				// shift is not being held
 				if !event.modifierFlags.contains(.shift) {
-					world.deselectAll()
-					world.selectPoint(pointIndex)
+					deselectAll()
+					selectPoint(pointIndex)
 					return
 				} else {
-					world.selectPoint(pointIndex)
+					selectPoint(pointIndex)
 					return
 				}
 			}
@@ -311,22 +317,22 @@ extension MapView {
 				// line is already selected
 				if world.lines[i].isSelected {
 					if !event.modifierFlags.contains(.shift) {
-						world.deselectAll()
+						deselectAll()
 						return
 					} else {
-						world.deselectLine(i)
+						deselectLine(i)
 						return
 					}
 				// line is not already selected
 				} else {
 					// shift if not held
 					if !event.modifierFlags.contains(.shift) {
-						world.deselectAll()
-						world.selectLine(i)
+						deselectAll()
+						selectLine(i)
 						return
 					// shift is held
 					} else {
-						world.selectLine(i)
+						selectLine(i)
 						return
 					}
 				}
@@ -361,22 +367,22 @@ extension MapView {
 			if world.things[thingIndex].isSelected {
 				// shift is not being held
 				if !event.modifierFlags.contains(.shift) {
-					world.deselectAllThings()
+					deselectAllThings()
 					return
 				// shift is being held
 				} else {
-					world.deselectThing(thingIndex)
+					deselectThing(thingIndex)
 					return
 				}
 				
 			// Thing is not already selected
 			} else {
 				if !event.modifierFlags.contains(.shift) {
-					world.deselectAll()
-					world.selectThing(thingIndex)
+					deselectAll()
+					selectThing(thingIndex)
 					return
 				} else {
-					world.selectThing(thingIndex)
+					selectThing(thingIndex)
 					return
 				}
 			}
@@ -386,10 +392,74 @@ extension MapView {
 		//  Hit nothing
 		//
 		if !event.modifierFlags.contains(.shift) {
-			world.deselectAll()
+			deselectAll()
 		}
 	}
 	
+	func selectPoint(_ i: Int) {
+		world.points[i].isSelected = true
+	}
+	
+	func deselectPoint(_ i: Int) {
+		world.points[i].isSelected = false
+	}
+	
+	func deselectAllPoints() {
+		for i in 0..<world.points.count {
+			world.points[i].isSelected = false
+		}
+	}
+	
+	func selectLine(_ i: Int) {
+		world.lines[i].isSelected = true
+		
+		// also select its points
+		let ref = world.lines[i].ref
+		for j in 0..<world.points.count {
+			if world.points[j].ref.contains(ref) {
+				world.points[j].isSelected = true
+			}
+		}
+	}
+	
+	func deselectLine(_ i: Int) {
+		world.lines[i].isSelected = false
+		
+		// also deselect its points
+		let ref = world.lines[i].ref
+		for j in 0..<world.points.count {
+			if world.points[j].ref.contains(ref) {
+				world.points[j].isSelected = false
+			}
+		}
+	}
+	
+	func deselectAllLines() {
+		for i in 0..<world.lines.count {
+			world.lines[i].isSelected = false
+		}
+	}
+	
+	func selectThing(_ i: Int) {
+		world.things[i].isSelected = true
+	}
+	
+	func deselectThing(_ i: Int) {
+		world.things[i].isSelected = false
+	}
+	
+	func deselectAllThings() {
+		for i in 0..<world.things.count {
+			world.things[i].isSelected = false
+		}
+	}
+	
+	func deselectAll() {
+		deselectAllPoints()
+		deselectAllLines()
+		deselectAllThings()
+	}
+
 	
 	
 }
