@@ -8,10 +8,14 @@
 
 import Cocoa
 
-let pointSize: CGFloat = 14
-let pointDraw = 4
-let thingDrawSize = 32
-let lineThickness: CGFloat = 1.0
+let fileName = "e4m1"
+let fileExt = "dwd"
+let fullFileName = fileName + "." + fileExt
+
+let POINT_SIZE: CGFloat = 14
+let POINT_DRAW_SIZE = 4
+let THING_DRAW_SIZE = 32
+let LINE_WIDTH: CGFloat = 1.0
 
 struct Color {
 	static let lineOneSided = NSColor.black

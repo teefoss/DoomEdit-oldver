@@ -28,6 +28,7 @@ extension MapView {
 	override func draw(_ dirtyRect: NSRect) {
 		super.draw(dirtyRect)
 		
+		// TODO: Draw objects in the right order
 		drawGrid(in: dirtyRect)
 		drawLines(in: dirtyRect)
 		drawThings(in: dirtyRect)
@@ -50,7 +51,7 @@ extension MapView {
 			context.flush()
 		}
 		
-		NSBezierPath.defaultLineWidth = lineThickness
+		NSBezierPath.defaultLineWidth = LINE_WIDTH
 		
 		//draw horizontal lines
 		for i in bottom...top {
@@ -86,7 +87,7 @@ extension MapView {
 			
 			let offset: CGFloat = 0.5
 			
-			// drawing will be in view coord, i.e. origin = (0, 0)
+			// drawing will be in view coord, i.e. origin = (0, 0)...
 			// so use superview's coord system, they are the same as world coord
 			let pt1 = convert(NSPoint(x: line.pt1.coord.x-offset, y: line.pt1.coord.y-offset), from: superview)
 			let pt2 = convert(NSPoint(x: line.pt2.coord.x-offset, y: line.pt2.coord.y-offset), from: superview)
@@ -103,7 +104,10 @@ extension MapView {
 			
 			
 			line.color.set()
-			NSBezierPath.defaultLineWidth = lineThickness
+			if line.isSelected {
+				NSColor.red.set()
+			}
+			NSBezierPath.defaultLineWidth = LINE_WIDTH
 			NSBezierPath.strokeLine(from: pt1, to: pt2)			// line
 			NSBezierPath.strokeLine(from: newMidPt, to: newNormPt)	// line normal 'tick'
 		}
@@ -119,11 +123,15 @@ extension MapView {
 			let rect = NSRect(x: origin.x-offset, y: origin.y-offset, width: size.width, height: size.height)
 			
 			thing.color.set()
+			if thing.isSelected {
+				NSColor.red.set()
+			}
 			NSBezierPath.fill(rect)
 			
 		}
 	}
 	
+	///  Draw all world points
 	private func drawPoints(in rect: NSRect) {
 		
 		for i in 0..<world.points.count {

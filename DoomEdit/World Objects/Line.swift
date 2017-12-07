@@ -19,6 +19,10 @@ struct Line {
 	var special: Int
 	var tag: Int
 	
+	var isSelected: Bool
+	/// A reference number for the line. Used so that points can hold a reference to each line it connects to.
+	var ref: Int
+	
 	// TODO: - var length
 	var midpoint: NSPoint {
 		let x = (pt1.coord.x + pt2.coord.x) / 2
@@ -36,8 +40,6 @@ struct Line {
 		
 		return NSPoint(x: normalX, y: normalY)
 	}
-	var isSelected: Bool
-	var ref: Int
 	
 	var color: NSColor {
 		if special != 0 {

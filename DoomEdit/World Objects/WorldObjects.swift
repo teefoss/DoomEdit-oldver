@@ -14,11 +14,14 @@ struct Point {
 	var coord: NSPoint
 	var isSelected: Bool
 	var hovering: Bool
+	/// A list of the lines connects to this point. These are the same numbers as each `line.ref`
+	var ref: [Int]
 	
 	init() {
 		coord = NSPoint()
 		isSelected = false
 		hovering = false
+		ref = []
 	}
 }
 

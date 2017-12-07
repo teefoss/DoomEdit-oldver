@@ -18,7 +18,7 @@ extension World {
 	func loadWorldFile() {
 		
 		var fileContents: String?		// to store the entire file
-		if let filepath = Bundle.main.path(forResource: "e4m1", ofType: "dwd") {
+		if let filepath = Bundle.main.path(forResource: fileName, ofType: fileExt) {
 			do {
 				fileContents = try String(contentsOfFile: filepath)
 			} catch {

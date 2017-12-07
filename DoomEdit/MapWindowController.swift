@@ -24,6 +24,15 @@ class MapWindowController: NSWindowController, MapViewDelegate {
 	var delegate: NSWindowDelegate?
 	var oldScreenOrigin = NSPoint()
 	var preResizeOrigin = NSPoint()
+	
+	var mode: String {
+		switch world.currentMode {
+		case .edit:
+			return "Edit Mode"
+		case .draw:
+			return "Draw Mode"
+		}
+	}
 
 	@IBOutlet weak var scrollView: NSScrollView!
 	@IBOutlet weak var clipView: NSClipView!
@@ -35,6 +44,9 @@ class MapWindowController: NSWindowController, MapViewDelegate {
 	
     override func windowDidLoad() {
         super.windowDidLoad()
+		
+		
+		window?.title = "\(fullFileName) : \(mode)"
 		
 		positionWindowTopLeft(leftOffset: 50, topOffset: 50)
 		delegate = self

@@ -47,7 +47,8 @@ extension MapView {
 		case KEY_RIGHTBRACKET:
 			decreaseGrid()
 		case KEY_I:
-			printInfo()
+			//printInfo()
+			printRefInfo()
 		case KEY_SPACE:
 			toggleDrawMode()
 		default: break
@@ -102,14 +103,21 @@ extension MapView {
 	func toggleDrawMode() {
 		inDrawingMode = !inDrawingMode
 		if inDrawingMode {
+			world.currentMode = .draw
 			NSCursor.crosshair.set()
 		} else {
+			world.currentMode = .edit
 			NSCursor.arrow.set()
 		}
 	}
 	
-	// For testing
-	func printInfo() {
+	
+	
+	// ===========================
+	// MARK: - Testing Information
+	// ===========================
+
+	func printCoordInfo() {
 		print("frame: \(frame)")
 		print("frame.origin.x: \(frame.origin.x)")
 		print("bounds: \(bounds)")
@@ -118,7 +126,22 @@ extension MapView {
 		print("viz rect origin converted: \(converted)")
 	}
 	
-	
+	func printRefInfo() {
+
+		print("=====================")
+		print("Reference Number Info")
+		for pt in world.points {
+			if pt.isSelected {
+				print("Point ref: \(pt.ref)")
+			}
+		}
+		for line in world.lines {
+			if line.isSelected {
+				print("Line ref: \(line.ref)")
+			}
+		}
+		print("=====================")
+	}
 	
 	
 	
@@ -132,6 +155,10 @@ extension MapView {
 		selectObject(at: event)
 		
 		if inDrawingMode {
+			
+			// TODO: Move all this out into a function
+			// TODO: Draw the 'tick' mark while adding a line
+			
 			// animated drawing is done in view coord system
 			self.startPoint = getViewGridPoint(from: event.locationInWindow)
 			shapeLayer = CAShapeLayer()
@@ -193,70 +220,174 @@ extension MapView {
 	/// Selects a point at the mouse location. If no point is present, selects a line, thing, or sector in that order of priority.
 	func selectObject(at event: NSEvent) {
 		
-		var index: Int = -1
+		var pointIndex: Int = -1
+		var thingIndex: Int = -1
 		var pt = Point()
-		var thing = Thing()
 		var left, right, top, bottom: CGFloat  // For a box around the click point
-		var p1, p2: NSPoint
 		var clickPoint: NSPoint
-		var inStroke: Int
 		
 		clickPoint = worldCoord(for: event.locationInWindow)
+		print("clickPoint: \(clickPoint)")
 
 		//
 		// see if the click hit a point
 		//
 
+		// TODO: adjust this after zooming fixed
 		// set up a box around the click point
-		left = clickPoint.x - pointSize/scale/CGFloat(2)
-		right = clickPoint.x + pointSize/scale/CGFloat(2)
-		bottom = clickPoint.y - pointSize/scale/CGFloat(2)
-		top = clickPoint.y + pointSize/scale/CGFloat(2)
+		left = clickPoint.x - POINT_SIZE/scale/CGFloat(2)
+		right = clickPoint.x + POINT_SIZE/scale/CGFloat(2)
+		bottom = clickPoint.y - POINT_SIZE/scale/CGFloat(2)
+		top = clickPoint.y + POINT_SIZE/scale/CGFloat(2)
 		
 		for i in 0..<world.points.count {
 			pt = world.points[i]
 			// if the point is inside the box
 			if pt.coord.x > left && pt.coord.x < right &&
 				pt.coord.y < top && pt.coord.y > bottom {
-				index = i
+				pointIndex = i
 				break	// got one, move on
 			}
 		}
 		
-		print("world.points.count \(world.points.count)")
-		
-		if index >= 0 && index < world.points.count {
-			// clicked a point
-			if world.points[index].isSelected {
-				world.deselectPoint(index)
-				return
-			} else {
-				// if not clicking on a selection and not shift-clicking, deselect all selected points
+
+		// clicked a point
+		if pointIndex >= 0 && pointIndex < world.points.count {
+
+			// if the point is already selected
+			if world.points[pointIndex].isSelected {
+				// shift is not being held
 				if !event.modifierFlags.contains(.shift) {
-					world.deselectAllPoints()
+					world.deselectAll()
+					return
+				} else {
+					world.deselectPoint(pointIndex)
+					return
 				}
-				world.selectPoint(index)
+			// point is not already selected
+			} else {
+				// shift is not being held
+				if !event.modifierFlags.contains(.shift) {
+					world.deselectAll()
+					world.selectPoint(pointIndex)
+					return
+				} else {
+					world.selectPoint(pointIndex)
+					return
+				}
 			}
 			//drag
-			return
 		}
 		
 		//
 		// didn't hit a point, check for a line
 		//
 		
-		
-		
-		
-		// thing
-		
-		if !event.modifierFlags.contains(.shift) {
-			world.deselectAllPoints()
+		for i in 0..<world.lines.count {
+			
+			let p1 = world.lines[i].pt1.coord
+			let p2 = world.lines[i].pt2.coord
+			
+			if (p1.x < left && p2.x < left)
+			|| (p1.x > right && p2.x > right)		// DoomEd p2.x > left, mistake?
+			|| (p1.y > top && p2.y > top)
+			|| (p1.y < bottom && p2.y < bottom)
+			{
+				continue
+			}
+			
+
+			let layer = CAShapeLayer()
+			layer.lineWidth = 32.0
+			let path = CGMutablePath()
+			path.move(to: p1)
+			path.addLine(to: p2)
+			layer.path = path
+			
+			let newPath = path.copy(strokingWithWidth: 32.0, lineCap: .butt, lineJoin: .miter, miterLimit: 1.0)
+			
+			// Clicked on a line
+			if newPath.contains(clickPoint) {
+				// line is already selected
+				if world.lines[i].isSelected {
+					if !event.modifierFlags.contains(.shift) {
+						world.deselectAll()
+						return
+					} else {
+						world.deselectLine(i)
+						return
+					}
+				// line is not already selected
+				} else {
+					// shift if not held
+					if !event.modifierFlags.contains(.shift) {
+						world.deselectAll()
+						world.selectLine(i)
+						return
+					// shift is held
+					} else {
+						world.selectLine(i)
+						return
+					}
+				}
+				// TODO: add drag functionality
+			}
+			
 		}
 		
 		
+		//
+		// didn't hit a line, check for a thing
+		//
 		
+		left = clickPoint.x - CGFloat(THING_DRAW_SIZE/2)
+		right = clickPoint.x + CGFloat(THING_DRAW_SIZE/2)
+		bottom = clickPoint.y - CGFloat(THING_DRAW_SIZE/2)
+		top = clickPoint.y +  CGFloat(THING_DRAW_SIZE/2)
 		
+		for i in 0..<world.things.count {
+			
+			let thing = world.things[i]
+			if thing.origin.x > left && thing.origin.x < right
+				&& thing.origin.y < top && thing.origin.y > bottom {
+				thingIndex = i
+				break
+			}
+		}
+		
+		if thingIndex >= 0 && thingIndex < world.things.count {
+
+			// Thing is already seleted
+			if world.things[thingIndex].isSelected {
+				// shift is not being held
+				if !event.modifierFlags.contains(.shift) {
+					world.deselectAllThings()
+					return
+				// shift is being held
+				} else {
+					world.deselectThing(thingIndex)
+					return
+				}
+				
+			// Thing is not already selected
+			} else {
+				if !event.modifierFlags.contains(.shift) {
+					world.deselectAll()
+					world.selectThing(thingIndex)
+					return
+				} else {
+					world.selectThing(thingIndex)
+					return
+				}
+			}
+		}
+
+		//
+		//  Hit nothing
+		//
+		if !event.modifierFlags.contains(.shift) {
+			world.deselectAll()
+		}
 	}
 	
 	
