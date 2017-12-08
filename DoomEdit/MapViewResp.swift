@@ -50,7 +50,11 @@ extension MapView {
 			//printInfo()
 			printRefInfo()
 		case KEY_SPACE:
-			toggleDrawMode()
+			if currentMode == .edit {
+				currentMode = .draw
+			} else {
+				currentMode = .edit
+			}
 		default: break
 		}
 	}
@@ -100,16 +104,6 @@ extension MapView {
 		}
 	}
 	
-	func toggleDrawMode() {
-		inDrawingMode = !inDrawingMode
-		if inDrawingMode {
-			world.currentMode = .draw
-			NSCursor.crosshair.set()
-		} else {
-			world.currentMode = .edit
-			NSCursor.arrow.set()
-		}
-	}
 	
 	
 	
@@ -151,11 +145,21 @@ extension MapView {
 	
 	override func mouseDown(with event: NSEvent) {
 		
-		
-		selectObject(at: event)
-		
-		if inDrawingMode {
-			
+		switch currentMode {
+		case .edit:
+			selectObject(at: event)
+			if shouldDragSelectionBox {
+				startPoint = convert(event.locationInWindow, from: nil)
+				
+				shapeLayer = CAShapeLayer()
+				shapeLayer.lineWidth = SELECTION_BOX_WIDTH
+				shapeLayer.fillColor = NSColor.clear.cgColor
+				shapeLayer.strokeColor = NSColor.gray.cgColor
+				self.layer?.addSublayer(shapeLayer)
+				didDragSelectionBox = true
+			}
+
+		case .draw:
 			// TODO: Move all this out into a function
 			// TODO: Draw the 'tick' mark while adding a line
 			
@@ -167,15 +171,27 @@ extension MapView {
 			shapeLayer.strokeColor = NSColor.black.cgColor
 			layer?.addSublayer(shapeLayer)
 			shapeLayerIndex = layer?.sublayers?.index(of: shapeLayer)
+
 		}
-		
 		setNeedsDisplay(bounds)
 		
 	}
 	
 	override func mouseDragged(with event: NSEvent) {
 		
-		if inDrawingMode {
+		switch currentMode {
+		case .edit:
+			if didDragSelectionBox {
+				let dragPoint = convert(event.locationInWindow, from: nil)
+				let path = CGMutablePath()
+				path.move(to: NSPoint(x: startPoint.x, y: startPoint.y))
+				path.addLine(to: NSPoint(x: dragPoint.x, y: startPoint.y))
+				path.addLine(to: NSPoint(x: dragPoint.x, y: dragPoint.y))
+				path.addLine(to: NSPoint(x: startPoint.x, y: dragPoint.y))
+				path.closeSubpath()
+				shapeLayer.path = path
+			}
+		case .draw:
 			didDragLine = true
 			needsDisplay = false		// don't redraw everything while adding a line (???)
 			endPoint = getViewGridPoint(from: event.locationInWindow)
@@ -191,7 +207,16 @@ extension MapView {
 		
 		needsDisplay = true
 		
-		if inDrawingMode {
+		switch currentMode {
+		case .edit:
+			if didDragSelectionBox {
+				shapeLayer.removeFromSuperlayer()
+				shapeLayer = nil
+				shouldDragSelectionBox = false
+				didDragSelectionBox = false
+			}
+			
+		case .draw:
 			var line = Line()
 			if didDragLine {
 				layer?.sublayers?.remove(at: shapeLayerIndex)
@@ -394,7 +419,11 @@ extension MapView {
 		if !event.modifierFlags.contains(.shift) {
 			deselectAll()
 		}
+		
+		shouldDragSelectionBox = true
 	}
+	
+	
 	
 	func selectPoint(_ i: Int) {
 		world.points[i].isSelected = true
@@ -458,6 +487,27 @@ extension MapView {
 		deselectAllPoints()
 		deselectAllLines()
 		deselectAllThings()
+	}
+	
+	//https://stackoverflow.com/questions/20357960/drawing-selection-box-rubberbanding-marching-ants-in-cocoa-objectivec
+	func dragSelectionBox(event: NSEvent) {
+		startPoint = convert(event.locationInWindow, from: nil)
+		
+		shapeLayer = CAShapeLayer()
+		shapeLayer.lineWidth = 1.0
+		shapeLayer.fillColor = NSColor.clear.cgColor
+		shapeLayer.strokeColor = NSColor.gray.cgColor
+		self.layer?.addSublayer(shapeLayer)
+		
+		let dragPoint = convert(event.locationInWindow, from: nil)
+			
+		let path = CGMutablePath()
+		path.move(to: NSPoint(x: startPoint.x, y: startPoint.y))
+		path.addLine(to: NSPoint(x: dragPoint.x, y: startPoint.y))
+		path.addLine(to: NSPoint(x: dragPoint.x, y: dragPoint.y))
+		path.addLine(to: NSPoint(x: startPoint.x, y: dragPoint.y))
+		path.closeSubpath()
+		shapeLayer.path = path
 	}
 
 	

@@ -18,7 +18,6 @@ var numLines = 0
 class World {
 	
 	var loaded: Bool = false
-	var currentMode: Mode = .edit
 	var bounds: NSRect = CGRect(x: 0, y: 0, width: 100, height: 100)
 	var dirty: Bool = true
 	var boundsDirty: Bool = false
@@ -59,10 +58,6 @@ class World {
 	var copiedSectors: [Sector] = []
 	var copiedThings: [Thing] = []
 
-	enum Mode {
-		case edit
-		case draw
-	}
 	
 	
 	// ================

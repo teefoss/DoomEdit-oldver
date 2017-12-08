@@ -21,6 +21,9 @@ class MapView: NSView {
 			self.setNeedsDisplay(bounds)
 		}
 	}
+	var shouldDragSelectionBox: Bool = false
+	var didDragSelectionBox: Bool = false
+	
 	var gridSize: Int = 8
 	var scale: CGFloat = 1.0
 	
@@ -32,7 +35,33 @@ class MapView: NSView {
 	var endPoint: NSPoint!
 	var didDragLine: Bool = false
 	
+	var currentMode: Mode = .edit {
+		didSet{
+			switch currentMode {
+			case .edit:
+				window?.title = "\(fullFileName) : Edit Mode"
+				setCursor()
+			case .draw:
+				window?.title = "\(fullFileName) : Draw Mode"
+				setCursor()
+			}
+		}
+	}
+
+	enum Mode {
+		case edit
+		case draw
+	}
 	
+	func setCursor() {
+		switch currentMode {
+		case .edit:
+			NSCursor.arrow.set()
+		case .draw:
+			NSCursor.crosshair.set()
+		}
+	}
+
 	
 	// ============
 	// MARK: - Init
