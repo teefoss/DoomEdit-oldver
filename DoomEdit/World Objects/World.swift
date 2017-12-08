@@ -13,6 +13,7 @@ import Foundation
 fileprivate let BOUNDSBORDER = 128
 fileprivate let selectionRadius: CGFloat = 16
 var world = World()
+var numPoints = 0
 var numLines = 0
 
 class World {
@@ -24,31 +25,6 @@ class World {
 	var dirtyRect: NSRect = NSRect.zero
 	var dirtyPoints: Bool = false
 
-	
-	var linePoints: [Point] {
-		var array: [Point] = []
-		var shouldAppendPt1: Bool = true
-		var shouldAppendPt2: Bool = true
-		for i in 0..<lines.count {
-			let line = lines[i]
-			for pt in array {
-				if (line.pt1.coord.x == pt.coord.x && line.pt1.coord.y == pt.coord.y) {
-					shouldAppendPt1 = false
-				}
-				if (line.pt2.coord.x == pt.coord.x && line.pt2.coord.y == pt.coord.y) {
-					shouldAppendPt2 = false
-				}
-			}
-			if shouldAppendPt1 {
-				array.append(line.pt1)
-			}
-			if shouldAppendPt2 {
-				array.append(line.pt2)
-			}
-		}
-		return array
-	}
-	
 	var points: [Point] = []
 	var lines: [Line] = []
 	var sectors: [Sector] = []
@@ -131,7 +107,7 @@ class World {
 
 	
 	/// Adds a new point to the `points` storage array
-	private func newPoint(_ point: NSPoint, with ref: Int) {
+	private func newPoint(_ point: NSPoint) -> Int {
 		
 		boundsDirty = true
 		dirtyPoints = true
@@ -142,22 +118,20 @@ class World {
 		var newPoint = Point()
 		newPoint.coord.x = roundedPtx
 		newPoint.coord.y = roundedPty
-		newPoint.ref.append(ref)
 
 		// check if the point exists already and just add the new ref if needed
-		for i in 0..<points.count {
-			let pt = points[i]
-			if newPoint.coord.x == pt.coord.x && newPoint.coord.y == pt.coord.y {
-				if points[i].ref.contains(ref) {
-					return
-				} else {
-					points[i].ref.append(ref)
-				}
-				return
+		
+		for i in 0..<world.points.count {
+			let pt = world.points[i]
+			if pt.coord.x == newPoint.coord.x && pt.coord.y == newPoint.coord.y {
+				return i
 			}
 		}
 		
 		points.append(newPoint)
+		numPoints += 1
+		
+		return numPoints-1
 	}
 
 	
@@ -165,13 +139,11 @@ class World {
 	func newLine(line: inout Line) {
 
 		numLines += 1
-		let ref = numLines
-		line.ref = ref
+
+		line.pt1 = newPoint(line.end1.coord)
+		line.pt2 = newPoint(line.end2.coord)
 
 		lines.append(line)
-		
-		newPoint(line.pt1.coord, with: ref)
-		newPoint(line.pt2.coord, with: ref)
 
 		dirtyPoints = true
 		boundsDirty = true // added

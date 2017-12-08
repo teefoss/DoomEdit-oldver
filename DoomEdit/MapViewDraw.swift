@@ -89,8 +89,8 @@ extension MapView {
 			
 			// drawing will be in view coord, i.e. origin = (0, 0)...
 			// so use superview's coord system, they are the same as world coord
-			let pt1 = convert(NSPoint(x: line.pt1.coord.x-offset, y: line.pt1.coord.y-offset), from: superview)
-			let pt2 = convert(NSPoint(x: line.pt2.coord.x-offset, y: line.pt2.coord.y-offset), from: superview)
+			let pt1 = convert(NSPoint(x: line.end1.coord.x-offset, y: line.end1.coord.y-offset), from: superview)
+			let pt2 = convert(NSPoint(x: line.end2.coord.x-offset, y: line.end2.coord.y-offset), from: superview)
 			let midPt = convert(line.midpoint, from: superview)
 			let normPt = convert(line.normal, from: superview)
 			

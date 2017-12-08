@@ -10,7 +10,8 @@ import Cocoa
 
 struct Line {
 	
-	var pt1, pt2: Point
+	var end1, end2: Point
+	var pt1, pt2: Int
 	
 	var front: Side
 	var back: Side?
@@ -20,19 +21,17 @@ struct Line {
 	var tag: Int
 	
 	var isSelected: Bool
-	/// A reference number for the line. Used so that points can hold a reference to each line it connects to.
-	var ref: Int
 	
 	// TODO: - var length
 	var midpoint: NSPoint {
-		let x = (pt1.coord.x + pt2.coord.x) / 2
-		let y = (pt1.coord.y + pt2.coord.y) / 2
+		let x = (end1.coord.x + end2.coord.x) / 2
+		let y = (end1.coord.y + end2.coord.y) / 2
 		return CGPoint(x: x, y: y)
 	}
 	/// The point at the end of the 'tick mark' of a line
 	var normal: NSPoint {
-		let dx = Double(pt2.coord.x - pt1.coord.x)
-		let dy = Double(pt2.coord.y - pt1.coord.y)
+		let dx = Double(end2.coord.x - end1.coord.x)
+		let dy = Double(end2.coord.y - end1.coord.y)
 		let length = CGFloat(sqrt(dx*dx + dy*dy) / Double(lineNormalLength))
 		
 		let normalX = midpoint.x + CGFloat(dy)/length
@@ -51,13 +50,14 @@ struct Line {
 	}
 	
 	init() {
-		pt1 = Point()
-		pt2 = Point()
+		end1 = Point()
+		end2 = Point()
+		pt1 = 0
+		pt2 = 0
 		front = Side()
 		flags = 0
 		special = 0
 		tag = 0
 		isSelected = false
-		ref = 0
 	}
 }

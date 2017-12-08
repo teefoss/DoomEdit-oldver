@@ -47,8 +47,7 @@ extension MapView {
 		case KEY_RIGHTBRACKET:
 			decreaseGrid()
 		case KEY_I:
-			//printInfo()
-			printRefInfo()
+			printCoordInfo()
 		case KEY_SPACE:
 			if currentMode == .edit {
 				currentMode = .draw
@@ -120,22 +119,6 @@ extension MapView {
 		print("viz rect origin converted: \(converted)")
 	}
 	
-	func printRefInfo() {
-
-		print("=====================")
-		print("Reference Number Info")
-		for pt in world.points {
-			if pt.isSelected {
-				print("Point ref: \(pt.ref)")
-			}
-		}
-		for line in world.lines {
-			if line.isSelected {
-				print("Line ref: \(line.ref)")
-			}
-		}
-		print("=====================")
-	}
 	
 	
 	
@@ -148,6 +131,7 @@ extension MapView {
 		switch currentMode {
 		case .edit:
 			selectObject(at: event)
+			//https://stackoverflow.com/questions/20357960/drawing-selection-box-rubberbanding-marching-ants-in-cocoa-objectivec
 			if shouldDragSelectionBox {
 				startPoint = convert(event.locationInWindow, from: nil)
 				
@@ -157,6 +141,7 @@ extension MapView {
 				shapeLayer.strokeColor = NSColor.gray.cgColor
 				self.layer?.addSublayer(shapeLayer)
 				didDragSelectionBox = true
+				shouldDragSelectionBox = false
 			}
 
 		case .draw:
@@ -189,6 +174,9 @@ extension MapView {
 				path.addLine(to: NSPoint(x: dragPoint.x, y: dragPoint.y))
 				path.addLine(to: NSPoint(x: startPoint.x, y: dragPoint.y))
 				path.closeSubpath()
+				let pt1 = convert(startPoint, to: superview)
+				let pt2 = convert(dragPoint, to: superview)
+				makeRect(&selectionBox, with: pt1, and: pt2)
 				shapeLayer.path = path
 			}
 		case .draw:
@@ -210,10 +198,11 @@ extension MapView {
 		switch currentMode {
 		case .edit:
 			if didDragSelectionBox {
+				selectObjectsInBox()
 				shapeLayer.removeFromSuperlayer()
 				shapeLayer = nil
-				shouldDragSelectionBox = false
 				didDragSelectionBox = false
+				selectionBox = NSRect.zero
 			}
 			
 		case .draw:
@@ -229,8 +218,8 @@ extension MapView {
 					let pt2 = convert(endPoint, to: superview)
 					// if line didn't end where it started
 					if pt1.x != pt2.x && pt1.y != pt2.y {
-						line.pt1.coord = pt1
-						line.pt2.coord = pt2
+						line.end1.coord = pt1
+						line.end2.coord = pt2
 						world.newLine(line: &line)
 						frame = world.updateBounds()
 						setNeedsDisplay(bounds)
@@ -316,8 +305,8 @@ extension MapView {
 		
 		for i in 0..<world.lines.count {
 			
-			let p1 = world.lines[i].pt1.coord
-			let p2 = world.lines[i].pt2.coord
+			let p1 = world.lines[i].end1.coord
+			let p2 = world.lines[i].end2.coord
 			
 			if (p1.x < left && p2.x < left)
 			|| (p1.x > right && p2.x > right)		// DoomEd p2.x > left, mistake?
@@ -423,6 +412,43 @@ extension MapView {
 		shouldDragSelectionBox = true
 	}
 	
+
+	func selectObjectsInBox() {
+		
+		var box1 = Box()	// the selection box
+		var box2 = Box()	// a box around a line
+		
+		// get points in the selection box
+		for i in 0..<world.points.count {
+			let pt = world.points[i].coord
+			if NSPointInRect(pt, selectionBox) {
+				selectPoint(i)
+			}
+		}
+		
+		// get lines in the selection box
+		makeBox(&box1, from: selectionBox)
+		for i in 0..<world.lines.count {
+			
+			var p1 = world.points[world.lines[i].pt1].coord
+			var p2 = world.points[world.lines[i].pt2].coord
+			
+			makeBox(&box2, with: p1, and: p2)
+			
+			if box1.right < box2.left || box1.left > box2.right ||
+				box1.top < box2.bottom || box1.bottom > box2.top {
+				continue
+			}
+			
+			if lineInRect(x0: &p1.x, y0: &p1.y, x1: &p2.x, y1: &p2.y, rect: selectionBox) {
+				selectLine(i)
+			}
+		}
+		
+		// get things in the selection box
+	}
+
+
 	
 	
 	func selectPoint(_ i: Int) {
@@ -442,25 +468,19 @@ extension MapView {
 	func selectLine(_ i: Int) {
 		world.lines[i].isSelected = true
 		
+		
 		// also select its points
-		let ref = world.lines[i].ref
-		for j in 0..<world.points.count {
-			if world.points[j].ref.contains(ref) {
-				world.points[j].isSelected = true
-			}
-		}
+		world.points[world.lines[i].pt1].isSelected = true
+		world.points[world.lines[i].pt2].isSelected = true
 	}
 	
 	func deselectLine(_ i: Int) {
 		world.lines[i].isSelected = false
 		
 		// also deselect its points
-		let ref = world.lines[i].ref
-		for j in 0..<world.points.count {
-			if world.points[j].ref.contains(ref) {
-				world.points[j].isSelected = false
-			}
-		}
+		world.points[world.lines[i].pt1].isSelected = false
+		world.points[world.lines[i].pt2].isSelected = false
+
 	}
 	
 	func deselectAllLines() {
@@ -489,26 +509,6 @@ extension MapView {
 		deselectAllThings()
 	}
 	
-	//https://stackoverflow.com/questions/20357960/drawing-selection-box-rubberbanding-marching-ants-in-cocoa-objectivec
-	func dragSelectionBox(event: NSEvent) {
-		startPoint = convert(event.locationInWindow, from: nil)
-		
-		shapeLayer = CAShapeLayer()
-		shapeLayer.lineWidth = 1.0
-		shapeLayer.fillColor = NSColor.clear.cgColor
-		shapeLayer.strokeColor = NSColor.gray.cgColor
-		self.layer?.addSublayer(shapeLayer)
-		
-		let dragPoint = convert(event.locationInWindow, from: nil)
-			
-		let path = CGMutablePath()
-		path.move(to: NSPoint(x: startPoint.x, y: startPoint.y))
-		path.addLine(to: NSPoint(x: dragPoint.x, y: startPoint.y))
-		path.addLine(to: NSPoint(x: dragPoint.x, y: dragPoint.y))
-		path.addLine(to: NSPoint(x: startPoint.x, y: dragPoint.y))
-		path.closeSubpath()
-		shapeLayer.path = path
-	}
 
 	
 	

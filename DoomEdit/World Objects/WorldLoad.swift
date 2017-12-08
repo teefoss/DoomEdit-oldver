@@ -118,10 +118,10 @@ extension World {
 		{
 			return false
 		} else {
-			line.pt1.coord.x = CGFloat(p1x)
-			line.pt1.coord.y = CGFloat(p1y)
-			line.pt2.coord.x = CGFloat(p2x)
-			line.pt2.coord.y = CGFloat(p2y)
+			line.end1.coord.x = CGFloat(p1x)
+			line.end1.coord.y = CGFloat(p1y)
+			line.end2.coord.x = CGFloat(p2x)
+			line.end2.coord.y = CGFloat(p2y)
 		}
 		return true
 	}

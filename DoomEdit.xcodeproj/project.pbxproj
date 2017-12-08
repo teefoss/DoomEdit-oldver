@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		300E0DFE1FDADDC00066134A /* EX_NSPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300E0DFD1FDADDC00066134A /* EX_NSPoint.swift */; };
 		30399CC11FCFAAAC00503DB4 /* WorldLoad.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30399CC01FCFAAAC00503DB4 /* WorldLoad.swift */; };
 		30399CC71FD06EEE00503DB4 /* dwd-format.txt in Resources */ = {isa = PBXBuildFile; fileRef = 30399CC61FD06EEE00503DB4 /* dwd-format.txt */; };
 		30399CC91FD1E8A600503DB4 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30399CC81FD1E8A600503DB4 /* Constants.swift */; };
@@ -38,6 +39,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		300E0DFD1FDADDC00066134A /* EX_NSPoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EX_NSPoint.swift; sourceTree = "<group>"; };
 		30399CC01FCFAAAC00503DB4 /* WorldLoad.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorldLoad.swift; sourceTree = "<group>"; };
 		30399CC61FD06EEE00503DB4 /* dwd-format.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "dwd-format.txt"; sourceTree = "<group>"; };
 		30399CC81FD1E8A600503DB4 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
@@ -101,6 +103,7 @@
 			isa = PBXGroup;
 			children = (
 				30A00B9C1FD6EB4700EBCA27 /* EX_NSWindowController.swift */,
+				300E0DFD1FDADDC00066134A /* EX_NSPoint.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -275,6 +278,7 @@
 				30FBF64D1FC52F6A0035671D /* World.swift in Sources */,
 				30FBF6371FC52D500035671D /* AppDelegate.swift in Sources */,
 				30FBF64E1FC52F6A0035671D /* Geometry.swift in Sources */,
+				300E0DFE1FDADDC00066134A /* EX_NSPoint.swift in Sources */,
 				30A00B9D1FD6EB4700EBCA27 /* EX_NSWindowController.swift in Sources */,
 				30399CCB1FD3049E00503DB4 /* Line.swift in Sources */,
 				30FBF6591FC52F8A0035671D /* MapView.swift in Sources */,
