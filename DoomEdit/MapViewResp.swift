@@ -446,6 +446,12 @@ extension MapView {
 		}
 		
 		// get things in the selection box
+		for i in 0..<world.things.count {
+			let org = world.things[i].origin
+			if NSPointInRect(org, selectionBox) {
+				selectThing(i)
+			}
+		}
 	}
 
 

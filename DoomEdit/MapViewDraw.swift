@@ -30,8 +30,8 @@ extension MapView {
 		
 		// TODO: Draw objects in the right order
 		drawGrid(in: dirtyRect)
-		drawLines(in: dirtyRect)
 		drawThings(in: dirtyRect)
+		drawLines(in: dirtyRect)
 		drawPoints(in: dirtyRect)
 	}
 
