@@ -148,6 +148,9 @@ extension MapView {
 		case .draw:
 			dragLine_LMDown(with: event)
 		}
+		if let thing = clickedThing {
+			
+		}
 		setNeedsDisplay(bounds)
 	}
 	
@@ -183,6 +186,11 @@ extension MapView {
 				dragLine_LMUp()
 			}
 		}
+	}
+	
+	override func rightMouseDown(with event: NSEvent) {
+
+		
 	}
 	
 	
@@ -338,16 +346,20 @@ extension MapView {
 		
 		if thingIndex >= 0 && thingIndex < things.count {
 
-			// Thing is already seleted
+			// Thing is already selected
 			if things[thingIndex].isSelected {
 				// shift is not being held
 				if !event.modifierFlags.contains(.shift) {
 					dragObjects_LMDown(with: event)
+					didClickThing = true
+					clickedThing = things[thingIndex]
 					//deselectAllThings()
 					return
 				// shift is being held
 				} else {
 					dragObjects_LMDown(with: event)
+					didClickThing = true
+					clickedThing = things[thingIndex]
 					//deselectThing(thingIndex)
 					return
 				}
@@ -358,10 +370,14 @@ extension MapView {
 					deselectAll()
 					selectThing(thingIndex)
 					dragObjects_LMDown(with: event)
+					didClickThing = true
+					clickedThing = things[thingIndex]
 					return
 				} else {
 					selectThing(thingIndex)
 					dragObjects_LMDown(with: event)
+					didClickThing = true
+					clickedThing = things[thingIndex]
 					return
 				}
 			}

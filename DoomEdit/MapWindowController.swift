@@ -20,6 +20,8 @@ protocol MapViewDelegate {
 
 class MapWindowController: NSWindowController, MapViewDelegate {
 
+	var windowList: [NSWindowController]?
+	
 	var mapView = MapView()
 	var delegate: NSWindowDelegate?
 	var oldScreenOrigin = NSPoint()
@@ -109,5 +111,4 @@ extension MapWindowController: NSWindowDelegate {
 		mapView.setOrigin(for: preResizeOrigin)
 	}
 }
-
 

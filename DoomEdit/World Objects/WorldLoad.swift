@@ -9,7 +9,6 @@
 import Foundation
 
 
-fileprivate let twoSided = 4
 
 extension World {
 	
@@ -41,7 +40,7 @@ extension World {
 		for fileLine in fileLines {
 			
 			if readLineData(from: fileLine, to: &line) {
-				if line.flags&twoSided == twoSided {
+				if line.flags&TWO_SIDED == TWO_SIDED {
 					isTwoSided = true
 				}
 			} else if readSideData(from: fileLine, to: &side) {

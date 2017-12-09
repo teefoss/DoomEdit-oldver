@@ -38,6 +38,17 @@ class MapView: NSView {
 	var endPoint: NSPoint!
 	var didDragLine: Bool = false
 	
+	var didClickThing = false
+	var clickedThing = Thing()
+	var clickedThingBounds: NSRect {
+//		let origin = viewCoord(for: clickedThing.origin)
+		let origin = clickedThing.origin
+		let rect = NSRect(x: origin.x-16, y: origin.y-16, width: 32, height: 32)
+		return rect
+	}
+	
+
+	
 	func toggleDrawMode() {
 		inDrawMode = !inDrawMode
 		if inDrawMode {
@@ -83,6 +94,7 @@ class MapView: NSView {
 										  userInfo: nil)
 		self.trackingArea = trackingArea
 		addTrackingArea(trackingArea)
+		
 	}
 	
 	required init?(coder decoder: NSCoder) {

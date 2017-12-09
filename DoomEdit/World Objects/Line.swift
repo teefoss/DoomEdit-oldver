@@ -8,6 +8,8 @@
 
 import Cocoa
 
+let TWO_SIDED = 4
+
 struct Line {
 	
 	var end1, end2: Point

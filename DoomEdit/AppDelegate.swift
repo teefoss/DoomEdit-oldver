@@ -13,11 +13,18 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
 
 	var mapWindowController: MapWindowController?
+	var thingWindowController: ThingWindowController?
 	
 	func applicationDidFinishLaunching(_ aNotification: Notification) {
 		let mapWindowController = MapWindowController()
 		mapWindowController.showWindow(self)
 		self.mapWindowController = mapWindowController
+		
+		let thingWindowController = ThingWindowController()
+		thingWindowController.showWindow(self)
+		self.thingWindowController = thingWindowController
+		
+		mapWindowController.thingWindow = thingWindowController
 	}
 
 	func applicationWillTerminate(_ aNotification: Notification) {

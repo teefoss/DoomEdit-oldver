@@ -8,6 +8,14 @@
 
 import Cocoa
 
+// Flags
+
+let SKILL_EASY = 1
+let SKILL_NORMAL = 2
+let SKILL_HARD = 4
+let AMBUSH = 8
+let NETWORK = 16
+
 struct Thing {
 	
 	var isSelected: Bool = false
