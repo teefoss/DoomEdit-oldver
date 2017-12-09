@@ -23,22 +23,22 @@ struct Line {
 	var isSelected: Bool
 	
 	// TODO: - var length
-	var midpoint: NSPoint {
-		let x = (end1.coord.x + end2.coord.x) / 2
-		let y = (end1.coord.y + end2.coord.y) / 2
-		return CGPoint(x: x, y: y)
-	}
+	var midpoint: NSPoint
+//		let x = (end1.coord.x + end2.coord.x) / 2
+//		let y = (end1.coord.y + end2.coord.y) / 2
+//		return CGPoint(x: x, y: y)
+
 	/// The point at the end of the 'tick mark' of a line
-	var normal: NSPoint {
-		let dx = Double(end2.coord.x - end1.coord.x)
-		let dy = Double(end2.coord.y - end1.coord.y)
-		let length = CGFloat(sqrt(dx*dx + dy*dy) / Double(lineNormalLength))
-		
-		let normalX = midpoint.x + CGFloat(dy)/length
-		let normalY = midpoint.y - CGFloat(dx)/length
-		
-		return NSPoint(x: normalX, y: normalY)
-	}
+	var normal: NSPoint
+//		let dx = Double(end2.coord.x - end1.coord.x)
+//		let dy = Double(end2.coord.y - end1.coord.y)
+//		let length = CGFloat(sqrt(dx*dx + dy*dy) / Double(LINE_NORMAL_LENGTH))
+//
+//		let normalX = midpoint.x + CGFloat(dy)/length
+//		let normalY = midpoint.y - CGFloat(dx)/length
+//
+//		return NSPoint(x: normalX, y: normalY)
+
 	
 	var color: NSColor {
 		if special != 0 {
@@ -59,5 +59,7 @@ struct Line {
 		special = 0
 		tag = 0
 		isSelected = false
+		midpoint = NSPoint()
+		normal = NSPoint()
 	}
 }

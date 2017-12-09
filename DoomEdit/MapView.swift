@@ -25,6 +25,7 @@ class MapView: NSView {
 	var shouldDragSelectionBox: Bool = false
 	var didDragSelectionBox: Bool = false
 	var selectionBox = NSRect()
+	var didDragObject = false
 	
 	var gridSize: Int = 8
 	var scale: CGFloat = 1.0

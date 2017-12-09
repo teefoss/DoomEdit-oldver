@@ -10,12 +10,27 @@
 
 import Cocoa
 
+// Keys
 fileprivate let KEY_MINUS: 			UInt16 = 27
 fileprivate let KEY_EQUALS: 		UInt16 = 24
 fileprivate let KEY_LEFTBRACKET: 	UInt16 = 33
 fileprivate let KEY_RIGHTBRACKET: 	UInt16 = 30
 fileprivate let KEY_I: 				UInt16 = 34
 fileprivate let KEY_SPACE:			UInt16 = 49
+
+// Dragging Objects
+fileprivate var cursor = NSPoint.zero
+fileprivate var oldDragRect = NSRect.zero
+fileprivate var fixedRect = NSRect.zero
+fileprivate var dragRect = NSRect.zero
+fileprivate var currentDragRect = NSRect.zero
+fileprivate var updateRect = NSRect.zero
+fileprivate var lineList: [Int] = []
+fileprivate var lineCount: Int = 0
+fileprivate var lastPoint: Int = 0
+fileprivate var pointCount: Int = 0
+fileprivate var totalMoved = NSPoint.zero
+
 
 
 
@@ -142,6 +157,9 @@ extension MapView {
 		case .edit:
 			if didDragSelectionBox {
 				dragBox_LMDragged(with: event)
+			} else if didDragObject {
+				print("object dragged")
+				dragObjects_LMDragged(with: event)
 			}
 		case .draw:
 			dragLine_LMDragged(with: event)
@@ -156,6 +174,9 @@ extension MapView {
 		case .edit:
 			if didDragSelectionBox {
 				dragBox_LMUp()
+			} else if didDragObject {
+				dragObjects_LMUp(with: event)
+				didDragObject = false
 			}
 		case .draw:
 			if didDragLine {
@@ -181,7 +202,7 @@ extension MapView {
 		var clickPoint: NSPoint
 		
 		clickPoint = worldCoord(for: event.locationInWindow)
-		print("clickPoint: \(clickPoint)")
+		//print("clickPoint: \(clickPoint)")
 
 		//
 		// see if the click hit a point
@@ -194,8 +215,8 @@ extension MapView {
 		bottom = clickPoint.y - POINT_SIZE/scale/CGFloat(2)
 		top = clickPoint.y + POINT_SIZE/scale/CGFloat(2)
 		
-		for i in 0..<world.points.count {
-			pt = world.points[i]
+		for i in 0..<points.count {
+			pt = points[i]
 			// if the point is inside the box
 			if pt.coord.x > left && pt.coord.x < right &&
 				pt.coord.y < top && pt.coord.y > bottom {
@@ -206,16 +227,18 @@ extension MapView {
 		
 
 		// clicked a point
-		if pointIndex >= 0 && pointIndex < world.points.count {
+		if pointIndex >= 0 && pointIndex < points.count {
 
 			// if the point is already selected
-			if world.points[pointIndex].isSelected {
+			if points[pointIndex].isSelected {
 				// shift is not being held
 				if !event.modifierFlags.contains(.shift) {
-					deselectAll()
+					dragObjects_LMDown(with: event)
+//					deselectAll()
 					return
 				} else {
-					deselectPoint(pointIndex)
+//					deselectPoint(pointIndex)
+					dragObjects_LMDown(with: event)
 					return
 				}
 			// point is not already selected
@@ -224,23 +247,24 @@ extension MapView {
 				if !event.modifierFlags.contains(.shift) {
 					deselectAll()
 					selectPoint(pointIndex)
+					dragObjects_LMDown(with: event)
 					return
 				} else {
 					selectPoint(pointIndex)
+					dragObjects_LMDown(with: event)
 					return
 				}
 			}
-			//drag
 		}
 		
 		//
 		// didn't hit a point, check for a line
 		//
 		
-		for i in 0..<world.lines.count {
+		for i in 0..<lines.count {
 			
-			let p1 = world.lines[i].end1.coord
-			let p2 = world.lines[i].end2.coord
+			let p1 = lines[i].end1.coord
+			let p2 = lines[i].end2.coord
 			
 			if (p1.x < left && p2.x < left)
 			|| (p1.x > right && p2.x > right)		// DoomEd p2.x > left, mistake?
@@ -263,12 +287,14 @@ extension MapView {
 			// Clicked on a line
 			if newPath.contains(clickPoint) {
 				// line is already selected
-				if world.lines[i].isSelected {
+				if lines[i].isSelected {
 					if !event.modifierFlags.contains(.shift) {
-						deselectAll()
+						dragObjects_LMDown(with: event)
+						//deselectAll()
 						return
 					} else {
-						deselectLine(i)
+						dragObjects_LMDown(with: event)
+						//deselectLine(i)
 						return
 					}
 				// line is not already selected
@@ -277,14 +303,15 @@ extension MapView {
 					if !event.modifierFlags.contains(.shift) {
 						deselectAll()
 						selectLine(i)
+						dragObjects_LMDown(with: event)
 						return
 					// shift is held
 					} else {
 						selectLine(i)
+						dragObjects_LMDown(with: event)
 						return
 					}
 				}
-				// TODO: add drag functionality
 			}
 			
 		}
@@ -299,9 +326,9 @@ extension MapView {
 		bottom = clickPoint.y - CGFloat(THING_DRAW_SIZE/2)
 		top = clickPoint.y +  CGFloat(THING_DRAW_SIZE/2)
 		
-		for i in 0..<world.things.count {
+		for i in 0..<things.count {
 			
-			let thing = world.things[i]
+			let thing = things[i]
 			if thing.origin.x > left && thing.origin.x < right
 				&& thing.origin.y < top && thing.origin.y > bottom {
 				thingIndex = i
@@ -309,17 +336,19 @@ extension MapView {
 			}
 		}
 		
-		if thingIndex >= 0 && thingIndex < world.things.count {
+		if thingIndex >= 0 && thingIndex < things.count {
 
 			// Thing is already seleted
-			if world.things[thingIndex].isSelected {
+			if things[thingIndex].isSelected {
 				// shift is not being held
 				if !event.modifierFlags.contains(.shift) {
-					deselectAllThings()
+					dragObjects_LMDown(with: event)
+					//deselectAllThings()
 					return
 				// shift is being held
 				} else {
-					deselectThing(thingIndex)
+					dragObjects_LMDown(with: event)
+					//deselectThing(thingIndex)
 					return
 				}
 				
@@ -328,9 +357,11 @@ extension MapView {
 				if !event.modifierFlags.contains(.shift) {
 					deselectAll()
 					selectThing(thingIndex)
+					dragObjects_LMDown(with: event)
 					return
 				} else {
 					selectThing(thingIndex)
+					dragObjects_LMDown(with: event)
 					return
 				}
 			}
@@ -390,8 +421,8 @@ extension MapView {
 		var box2 = Box()	// a box around a line
 		
 		// get points in the selection box
-		for i in 0..<world.points.count {
-			let pt = world.points[i].coord
+		for i in 0..<points.count {
+			let pt = points[i].coord
 			if NSPointInRect(pt, selectionBox) {
 				selectPoint(i)
 			}
@@ -399,10 +430,10 @@ extension MapView {
 		
 		// get lines in the selection box
 		makeBox(&box1, from: selectionBox)
-		for i in 0..<world.lines.count {
+		for i in 0..<lines.count {
 			
-			var p1 = world.points[world.lines[i].pt1].coord
-			var p2 = world.points[world.lines[i].pt2].coord
+			var p1 = points[lines[i].pt1].coord
+			var p2 = points[lines[i].pt2].coord
 			
 			makeBox(&box2, with: p1, and: p2)
 			
@@ -417,8 +448,8 @@ extension MapView {
 		}
 		
 		// get things in the selection box
-		for i in 0..<world.things.count {
-			let org = world.things[i].origin
+		for i in 0..<things.count {
+			let org = things[i].origin
 			if NSPointInRect(org, selectionBox) {
 				selectThing(i)
 			}
@@ -429,54 +460,54 @@ extension MapView {
 	
 	
 	func selectPoint(_ i: Int) {
-		world.points[i].isSelected = true
+		points[i].isSelected = true
 	}
 	
 	func deselectPoint(_ i: Int) {
-		world.points[i].isSelected = false
+		points[i].isSelected = false
 	}
 	
 	func deselectAllPoints() {
-		for i in 0..<world.points.count {
-			world.points[i].isSelected = false
+		for i in 0..<points.count {
+			points[i].isSelected = false
 		}
 	}
 	
 	func selectLine(_ i: Int) {
-		world.lines[i].isSelected = true
+		lines[i].isSelected = true
 		
 		
 		// also select its points
-		world.points[world.lines[i].pt1].isSelected = true
-		world.points[world.lines[i].pt2].isSelected = true
+		points[lines[i].pt1].isSelected = true
+		points[lines[i].pt2].isSelected = true
 	}
 	
 	func deselectLine(_ i: Int) {
-		world.lines[i].isSelected = false
+		lines[i].isSelected = false
 		
 		// also deselect its points
-		world.points[world.lines[i].pt1].isSelected = false
-		world.points[world.lines[i].pt2].isSelected = false
+		points[lines[i].pt1].isSelected = false
+		points[lines[i].pt2].isSelected = false
 
 	}
 	
 	func deselectAllLines() {
-		for i in 0..<world.lines.count {
-			world.lines[i].isSelected = false
+		for i in 0..<lines.count {
+			lines[i].isSelected = false
 		}
 	}
 	
 	func selectThing(_ i: Int) {
-		world.things[i].isSelected = true
+		things[i].isSelected = true
 	}
 	
 	func deselectThing(_ i: Int) {
-		world.things[i].isSelected = false
+		things[i].isSelected = false
 	}
 	
 	func deselectAllThings() {
-		for i in 0..<world.things.count {
-			world.things[i].isSelected = false
+		for i in 0..<things.count {
+			things[i].isSelected = false
 		}
 	}
 	
@@ -486,6 +517,163 @@ extension MapView {
 		deselectAllThings()
 	}
 	
+	
+	
+	// ================
+	// MARK: - Dragging
+	// ================
+
+	func dragObjects_LMDown(with event: NSEvent) {
+
+		print("dragObjects_LMDown called")
+		
+		cursor = getWorldGridPoint(from: event.locationInWindow)
+		
+		// set up negative rects
+		fixedRect.origin.x = CGFloat.greatestFiniteMagnitude/4
+		fixedRect.origin.y = CGFloat.greatestFiniteMagnitude/4
+		fixedRect.size.width = -CGFloat.greatestFiniteMagnitude/2
+		fixedRect.size.height = -CGFloat.greatestFiniteMagnitude/2
+		dragRect = fixedRect;
+		
+		for i in 0..<lines.count {
+
+			let end1 = points[lines[i].pt1].isSelected
+			let end2 = points[lines[i].pt2].isSelected
+
+			if end1 || end2 {
+				lineList.append(i)
+			}
+			
+			if end1 && !end2 {
+				enclosePoint(rect: &fixedRect, point: points[lines[i].pt2].coord)  // pt2 is fixed
+			} else if end2 && !end1 {
+				enclosePoint(rect: &fixedRect, point: points[lines[i].pt1].coord)  // pt1 is fixed
+			}
+		}
+		
+		lineCount = lineList.count
+
+		//
+		// the dragrect encloses all selected points
+		//
+		let offset = CGFloat(THING_DRAW_SIZE/2 + 2)
+		
+		
+		for i in 0..<points.count {
+			if points[i].isSelected {
+				pointCount += 1
+				lastPoint = i
+				enclosePoint(rect: &dragRect, point: points[i].coord)
+			}
+		}
+		
+		for i in 0..<things.count {
+			if things[i].isSelected {
+				var pt: NSPoint
+				
+				pt = things[i].origin
+				pt.x -= offset
+				pt.y -= offset
+				enclosePoint(rect: &dragRect, point: pt)
+				pt.x = things[i].origin.x + offset
+				pt.y = things[i].origin.y + offset
+				enclosePoint(rect: &dragRect, point: pt)
+			}
+		}
+		
+		oldDragRect = dragRect		// absolute coordinates
+		
+		dragRect.origin.x -= cursor.x	// relative to cursor
+		dragRect.origin.y -= cursor.y
+		
+		print("didDragObject set to true")
+		
+		didDragObject = true
+	}
+	
+	
+	func dragObjects_LMDragged(with event: NSEvent) {
+		
+		print("dragObjects_LMDragged called")
+		
+		var moved: NSPoint = cursor
+		totalMoved = cursor
+		
+		// calculate new rectangle
+		cursor = getWorldGridPoint(from: event.locationInWindow) // handle grid and such
+
+		// move all selected points
+		if pointCount == 1 {
+			points[lastPoint].coord = cursor
+		} else {
+			
+			moved.x = cursor.x - moved.x
+			moved.y = cursor.y - moved.y
+			
+			for i in 0..<points.count {
+				if points[i].isSelected {
+					points[i].coord.x += moved.x
+					points[i].coord.y += moved.y
+				}
+			}
+			
+			for i in 0..<things.count {
+				if things[i].isSelected {
+					things[i].origin.x += moved.x
+					things[i].origin.y += moved.y
+				}
+			}
+
+			// TODO: Set project dirty
+
+			moved = cursor
+
+			// TODO: update line normals
+			for i in 0..<lineCount {
+				world.updateLineNormal(lineList[i])
+			}
+			
+			// redraw new frame
+			currentDragRect = dragRect
+			currentDragRect.origin.x += cursor.x
+			currentDragRect.origin.y += cursor.y
+			updateRect = currentDragRect
+			NSUnionRect(oldDragRect, updateRect)
+			NSUnionRect(fixedRect, updateRect)
+			oldDragRect = currentDragRect;
+			self.setNeedsDisplay(updateRect)
+		}
+
+
+	}
+
+	func dragObjects_LMUp(with event: NSEvent) {
+
+		print("dragObjects_LMUp called")
+
+		// tell the world about the changes
+		// the points have to be set back to their original positions before sending
+		// the new point to the server so the dirty rect will contain everything touched
+		// by the old and new positions
+
+		totalMoved.x = cursor.x - totalMoved.x;
+		totalMoved.y = cursor.y - totalMoved.y;
+		
+		for i in 0..<points.count {
+			if points[i].isSelected {
+				let newPoint = points[i]
+				points[i].coord.x -= totalMoved.x
+				points[i].coord.y -= totalMoved.y
+				world.changePoint(i, to: newPoint)
+				// TODO: set project dirty
+				// if (totalmoved.x || totalmoved.y)
+				// [doomproject_i	setDirtyMap:TRUE];
+
+			}
+		}
+		
+	}
 
 	
 	

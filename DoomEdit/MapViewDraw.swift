@@ -8,7 +8,6 @@
 
 import Cocoa
 
-let lineNormalLength = 6
 
 // Grid Style Constants
 
@@ -84,16 +83,16 @@ extension MapView {
 	///  Draw all world lines
 	private func drawLines(in rect: NSRect) {
 
-		for line in world.lines {
+		for i in 0..<lines.count {
 			
 			let offset: CGFloat = 0.5
 			
 			// drawing will be in view coord, i.e. origin = (0, 0)...
 			// so use superview's coord system, they are the same as world coord
-			let pt1 = convert(NSPoint(x: line.end1.coord.x-offset, y: line.end1.coord.y-offset), from: superview)
-			let pt2 = convert(NSPoint(x: line.end2.coord.x-offset, y: line.end2.coord.y-offset), from: superview)
-			let midPt = convert(line.midpoint, from: superview)
-			let normPt = convert(line.normal, from: superview)
+			let pt1 = convert(NSPoint(x: points[lines[i].pt1].coord.x-offset, y: points[lines[i].pt1].coord.y-offset), from: superview)
+			let pt2 = convert(NSPoint(x: points[lines[i].pt2].coord.x-offset, y: points[lines[i].pt2].coord.y-offset), from: superview)
+			let midPt = convert(lines[i].midpoint, from: superview)
+			let normPt = convert(lines[i].normal, from: superview)
 			
 			let midPtx = midPt.x - offset
 			let midPty = midPt.y - offset
@@ -104,8 +103,8 @@ extension MapView {
 			let newNormPt = NSPoint(x: normPtx, y: normPty)
 			
 			
-			line.color.set()
-			if line.isSelected {
+			lines[i].color.set()
+			if lines[i].isSelected {
 				NSColor.red.set()
 			}
 			NSBezierPath.defaultLineWidth = LINE_WIDTH
@@ -117,7 +116,7 @@ extension MapView {
 	///  Draw all world things
 	private func drawThings(in rect: NSRect) {
 
-		for thing in world.things {
+		for thing in things {
 			let origin = convert(thing.origin, from: superview)
 			let size = NSSize(width: 32, height: 32)
 			let offset: CGFloat = 16.5
@@ -135,8 +134,8 @@ extension MapView {
 	///  Draw all world points
 	private func drawPoints(in rect: NSRect) {
 		
-		for i in 0..<world.points.count {
-			let point = world.points[i]
+		for i in 0..<points.count {
+			let point = points[i]
 			
 			let origin = convert(point.coord, from: superview)
 			let offset: CGFloat = 2.5

@@ -13,7 +13,7 @@ fileprivate let twoSided = 4
 
 extension World {
 	
-	// TODO: stores thing data in world.things
+	// TODO: stores thing data in things
 	/// Reads data from a `.dwd` file and stores all line and thing data
 	func loadWorldFile() {
 		

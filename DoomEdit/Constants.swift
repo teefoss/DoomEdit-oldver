@@ -8,14 +8,18 @@
 
 import Cocoa
 
-let fileName = "e4m6"
+let fileName = "e1m1"
 let fileExt = "dwd"
 let fullFileName = fileName + "." + fileExt
 
 let POINT_SIZE: CGFloat = 14
 let POINT_DRAW_SIZE = 4
+
 let THING_DRAW_SIZE = 32
+
 let LINE_WIDTH: CGFloat = 1.0
+let LINE_NORMAL_LENGTH = 6
+
 let SELECTION_BOX_WIDTH: CGFloat = 4.0
 
 struct Color {
