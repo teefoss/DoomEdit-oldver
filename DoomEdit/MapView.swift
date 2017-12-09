@@ -30,22 +30,34 @@ class MapView: NSView {
 	var scale: CGFloat = 1.0
 	
 	// for line drawing
-	var inDrawingMode: Bool = false
+	var inDrawMode: Bool = false
 	var shapeLayer: CAShapeLayer!
 	var shapeLayerIndex: Int!
 	var startPoint: NSPoint!
 	var endPoint: NSPoint!
 	var didDragLine: Bool = false
 	
+	func toggleDrawMode() {
+		inDrawMode = !inDrawMode
+		if inDrawMode {
+			currentMode = .draw
+			print("crosshair set")
+			// FIXME: This stopped working?
+			NSCursor.crosshair.set()
+		} else {
+			currentMode = .edit
+			print("arrow set")
+			NSCursor.arrow.set()
+		}
+	}
+	
 	var currentMode: Mode = .edit {
 		didSet{
 			switch currentMode {
 			case .edit:
 				window?.title = "\(fullFileName) : Edit Mode"
-				setCursor()
 			case .draw:
 				window?.title = "\(fullFileName) : Draw Mode"
-				setCursor()
 			}
 		}
 	}
@@ -55,14 +67,6 @@ class MapView: NSView {
 		case draw
 	}
 	
-	func setCursor() {
-		switch currentMode {
-		case .edit:
-			NSCursor.arrow.set()
-		case .draw:
-			NSCursor.crosshair.set()
-		}
-	}
 
 	
 	// ============
@@ -78,7 +82,6 @@ class MapView: NSView {
 										  userInfo: nil)
 		self.trackingArea = trackingArea
 		addTrackingArea(trackingArea)
-		
 	}
 	
 	required init?(coder decoder: NSCoder) {

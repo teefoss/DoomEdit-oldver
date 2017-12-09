@@ -29,7 +29,7 @@ extension MapView {
 	override func becomeFirstResponder() -> Bool { return true }
 	override func resignFirstResponder() -> Bool { return true }
 	
-	
+
 	
 	// ===================
 	// MARK: - Key Presses
@@ -49,11 +49,7 @@ extension MapView {
 		case KEY_I:
 			printCoordInfo()
 		case KEY_SPACE:
-			if currentMode == .edit {
-				currentMode = .draw
-			} else {
-				currentMode = .edit
-			}
+			toggleDrawMode()
 		default: break
 		}
 	}
@@ -131,35 +127,13 @@ extension MapView {
 		switch currentMode {
 		case .edit:
 			selectObject(at: event)
-			//https://stackoverflow.com/questions/20357960/drawing-selection-box-rubberbanding-marching-ants-in-cocoa-objectivec
 			if shouldDragSelectionBox {
-				startPoint = convert(event.locationInWindow, from: nil)
-				
-				shapeLayer = CAShapeLayer()
-				shapeLayer.lineWidth = SELECTION_BOX_WIDTH
-				shapeLayer.fillColor = NSColor.clear.cgColor
-				shapeLayer.strokeColor = NSColor.gray.cgColor
-				self.layer?.addSublayer(shapeLayer)
-				didDragSelectionBox = true
-				shouldDragSelectionBox = false
+				dragBox_LMDown(with: event)
 			}
-
 		case .draw:
-			// TODO: Move all this out into a function
-			// TODO: Draw the 'tick' mark while adding a line
-			
-			// animated drawing is done in view coord system
-			self.startPoint = getViewGridPoint(from: event.locationInWindow)
-			shapeLayer = CAShapeLayer()
-			shapeLayer.lineWidth = 1.0
-			shapeLayer.fillColor = NSColor.clear.cgColor
-			shapeLayer.strokeColor = NSColor.black.cgColor
-			layer?.addSublayer(shapeLayer)
-			shapeLayerIndex = layer?.sublayers?.index(of: shapeLayer)
-
+			dragLine_LMDown(with: event)
 		}
 		setNeedsDisplay(bounds)
-		
 	}
 	
 	override func mouseDragged(with event: NSEvent) {
@@ -167,27 +141,10 @@ extension MapView {
 		switch currentMode {
 		case .edit:
 			if didDragSelectionBox {
-				let dragPoint = convert(event.locationInWindow, from: nil)
-				let path = CGMutablePath()
-				path.move(to: NSPoint(x: startPoint.x, y: startPoint.y))
-				path.addLine(to: NSPoint(x: dragPoint.x, y: startPoint.y))
-				path.addLine(to: NSPoint(x: dragPoint.x, y: dragPoint.y))
-				path.addLine(to: NSPoint(x: startPoint.x, y: dragPoint.y))
-				path.closeSubpath()
-				let pt1 = convert(startPoint, to: superview)
-				let pt2 = convert(dragPoint, to: superview)
-				makeRect(&selectionBox, with: pt1, and: pt2)
-				shapeLayer.path = path
+				dragBox_LMDragged(with: event)
 			}
 		case .draw:
-			didDragLine = true
-			needsDisplay = false		// don't redraw everything while adding a line (???)
-			endPoint = getViewGridPoint(from: event.locationInWindow)
-			let path = CGMutablePath()
-			path.move(to: self.startPoint)
-			path.addLine(to: endPoint)
-			
-			self.shapeLayer.path = path
+			dragLine_LMDragged(with: event)
 		}
 	}
 	
@@ -198,34 +155,11 @@ extension MapView {
 		switch currentMode {
 		case .edit:
 			if didDragSelectionBox {
-				selectObjectsInBox()
-				shapeLayer.removeFromSuperlayer()
-				shapeLayer = nil
-				didDragSelectionBox = false
-				selectionBox = NSRect.zero
+				dragBox_LMUp()
 			}
-			
 		case .draw:
-			var line = Line()
 			if didDragLine {
-				layer?.sublayers?.remove(at: shapeLayerIndex)
-				
-				// convert startPoint to world coord
-				let pt1 = convert(startPoint, to: superview)
-				
-				if let endPoint = endPoint {
-					// convert endPoint to world coord
-					let pt2 = convert(endPoint, to: superview)
-					// if line didn't end where it started
-					if pt1.x != pt2.x && pt1.y != pt2.y {
-						line.end1.coord = pt1
-						line.end2.coord = pt2
-						world.newLine(line: &line)
-						frame = world.updateBounds()
-						setNeedsDisplay(bounds)
-					}
-				}
-				didDragLine = false
+				dragLine_LMUp()
 			}
 		}
 	}
@@ -411,6 +345,43 @@ extension MapView {
 		
 		shouldDragSelectionBox = true
 	}
+	
+	
+	//https://stackoverflow.com/questions/20357960/drawing-selection-box-rubberbanding-marching-ants-in-cocoa-objectivec
+
+	func dragBox_LMDown(with event: NSEvent) {
+		startPoint = convert(event.locationInWindow, from: nil)
+		shapeLayer = CAShapeLayer()
+		shapeLayer.lineWidth = SELECTION_BOX_WIDTH
+		shapeLayer.fillColor = NSColor.clear.cgColor
+		shapeLayer.strokeColor = NSColor.gray.cgColor
+		self.layer?.addSublayer(shapeLayer)
+		didDragSelectionBox = true
+		shouldDragSelectionBox = false
+	}
+	
+	func dragBox_LMDragged(with event: NSEvent) {
+		let dragPoint = convert(event.locationInWindow, from: nil)
+		let path = CGMutablePath()
+		path.move(to: NSPoint(x: startPoint.x, y: startPoint.y))
+		path.addLine(to: NSPoint(x: dragPoint.x, y: startPoint.y))
+		path.addLine(to: NSPoint(x: dragPoint.x, y: dragPoint.y))
+		path.addLine(to: NSPoint(x: startPoint.x, y: dragPoint.y))
+		path.closeSubpath()
+		let pt1 = convert(startPoint, to: superview)
+		let pt2 = convert(dragPoint, to: superview)
+		makeRect(&selectionBox, with: pt1, and: pt2)
+		shapeLayer.path = path
+	}
+	
+	func dragBox_LMUp() {
+		selectObjectsInBox()
+		shapeLayer.removeFromSuperlayer()
+		shapeLayer = nil
+		didDragSelectionBox = false
+		selectionBox = NSRect.zero
+	}
+	
 	
 
 	func selectObjectsInBox() {

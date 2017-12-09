@@ -33,6 +33,7 @@ extension MapView {
 		drawThings(in: dirtyRect)
 		drawLines(in: dirtyRect)
 		drawPoints(in: dirtyRect)
+		
 	}
 
 	/// Draws the 64x64 fixed tiles and the adjustable grid
@@ -152,5 +153,66 @@ extension MapView {
 
 		}
 	}
+	
+	
+	// =====================
+	// MARK: - Line Dragging
+	// =====================
+	
+	func dragLine_LMDown(with event: NSEvent) {
+		// TODO: Move all this out into a function
+		// TODO: Draw the 'tick' mark while adding a line
+		
+		// animated drawing is done in view coord system
+		self.startPoint = getViewGridPoint(from: event.locationInWindow)
+		shapeLayer = CAShapeLayer()
+		shapeLayer.lineWidth = 1.0
+		shapeLayer.fillColor = NSColor.clear.cgColor
+		shapeLayer.strokeColor = NSColor.black.cgColor
+		layer?.addSublayer(shapeLayer)
+		shapeLayerIndex = layer?.sublayers?.index(of: shapeLayer)
+	}
+	
+	func dragLine_LMDragged(with event: NSEvent) {
+		didDragLine = true
+		needsDisplay = false		// don't redraw everything while adding a line (???)
+		endPoint = getViewGridPoint(from: event.locationInWindow)
+		let path = CGMutablePath()
+		path.move(to: self.startPoint)
+		path.addLine(to: endPoint)
+		self.shapeLayer.path = path
+	}
+	
+	func dragLine_LMUp() {
+		
+		var line = Line()
+
+		layer?.sublayers?.remove(at: shapeLayerIndex)
+		
+		// convert startPoint to world coord
+		let pt1 = convert(startPoint, to: superview)
+		
+		if let endPoint = endPoint {
+			// convert endPoint to world coord
+			let pt2 = convert(endPoint, to: superview)
+			// if line didn't end where it started
+			if pt1.x != pt2.x && pt1.y != pt2.y {
+				line.end1.coord = pt1
+				line.end2.coord = pt2
+				world.newLine(line: &line)
+				selectLine(numLines-1)
+				frame = world.updateBounds()
+				setNeedsDisplay(bounds)
+			}
+		}
+		didDragLine = false
+	}
+	
 }
+
+
+
+
+
+
 
