@@ -23,9 +23,10 @@
 		30A00BAF1FD6F1AF00EBCA27 /* texture1.dsp in Resources */ = {isa = PBXBuildFile; fileRef = 30A00BA81FD6F1AE00EBCA27 /* texture1.dsp */; };
 		30A00BB01FD6F1AF00EBCA27 /* linespecials.doom1 in Resources */ = {isa = PBXBuildFile; fileRef = 30A00BA91FD6F1AE00EBCA27 /* linespecials.doom1 */; };
 		30A00BB11FD6F1AF00EBCA27 /* things.dsp in Resources */ = {isa = PBXBuildFile; fileRef = 30A00BAA1FD6F1AE00EBCA27 /* things.dsp */; };
-		30E477211FDC4FB1001FB339 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 30E477201FDC4FB1001FB339 /* Main.storyboard */; };
-		30E477241FDC520B001FB339 /* ThingWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30E477221FDC520B001FB339 /* ThingWindowController.swift */; };
-		30E477251FDC520B001FB339 /* ThingWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 30E477231FDC520B001FB339 /* ThingWindow.xib */; };
+		30B16B1C1FDCBF930066DEC3 /* Data.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30B16B1B1FDCBF930066DEC3 /* Data.swift */; };
+		30B16B1F1FDE01CB0066DEC3 /* ThingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30B16B1D1FDE01CB0066DEC3 /* ThingViewController.swift */; };
+		30B16B201FDE01CB0066DEC3 /* ThingViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 30B16B1E1FDE01CB0066DEC3 /* ThingViewController.xib */; };
+		30B16B221FDE15A70066DEC3 /* EX_Int.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30B16B211FDE15A70066DEC3 /* EX_Int.swift */; };
 		30E827E31FC9FC7B00992422 /* e4m1.dwd in Resources */ = {isa = PBXBuildFile; fileRef = 30E827E21FC9FC7B00992422 /* e4m1.dwd */; };
 		30FBF6371FC52D500035671D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30FBF6361FC52D500035671D /* AppDelegate.swift */; };
 		30FBF6391FC52D500035671D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 30FBF6381FC52D500035671D /* Assets.xcassets */; };
@@ -61,9 +62,10 @@
 		30A00BA81FD6F1AE00EBCA27 /* texture1.dsp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = texture1.dsp; sourceTree = "<group>"; };
 		30A00BA91FD6F1AE00EBCA27 /* linespecials.doom1 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = linespecials.doom1; sourceTree = "<group>"; };
 		30A00BAA1FD6F1AE00EBCA27 /* things.dsp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = things.dsp; sourceTree = "<group>"; };
-		30E477201FDC4FB1001FB339 /* Main.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
-		30E477221FDC520B001FB339 /* ThingWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThingWindowController.swift; sourceTree = "<group>"; };
-		30E477231FDC520B001FB339 /* ThingWindow.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ThingWindow.xib; sourceTree = "<group>"; };
+		30B16B1B1FDCBF930066DEC3 /* Data.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Data.swift; sourceTree = "<group>"; };
+		30B16B1D1FDE01CB0066DEC3 /* ThingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThingViewController.swift; sourceTree = "<group>"; };
+		30B16B1E1FDE01CB0066DEC3 /* ThingViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ThingViewController.xib; sourceTree = "<group>"; };
+		30B16B211FDE15A70066DEC3 /* EX_Int.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EX_Int.swift; sourceTree = "<group>"; };
 		30E827E21FC9FC7B00992422 /* e4m1.dwd */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = e4m1.dwd; sourceTree = "<group>"; };
 		30FBF6331FC52D500035671D /* DoomEdit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DoomEdit.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		30FBF6361FC52D500035671D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -110,6 +112,7 @@
 			children = (
 				30A00B9C1FD6EB4700EBCA27 /* EX_NSWindowController.swift */,
 				300E0DFD1FDADDC00066134A /* EX_NSPoint.swift */,
+				30B16B211FDE15A70066DEC3 /* EX_Int.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -168,7 +171,6 @@
 		30FBF6351FC52D500035671D /* DoomEdit */ = {
 			isa = PBXGroup;
 			children = (
-				30A00B9E1FD6EB5800EBCA27 /* Extensions */,
 				30FBF6361FC52D500035671D /* AppDelegate.swift */,
 				30399CC81FD1E8A600503DB4 /* Constants.swift */,
 				30FBF64A1FC52F6A0035671D /* Geometry.swift */,
@@ -176,17 +178,18 @@
 				30FBF6531FC52F8A0035671D /* MapView.swift */,
 				30FBF6541FC52F8A0035671D /* MapViewDraw.swift */,
 				30FBF6561FC52F8A0035671D /* MapViewResp.swift */,
-				30E477221FDC520B001FB339 /* ThingWindowController.swift */,
+				30B16B1D1FDE01CB0066DEC3 /* ThingViewController.swift */,
+				30B16B1B1FDCBF930066DEC3 /* Data.swift */,
 				30399CCE1FD30C9D00503DB4 /* World Objects */,
+				30A00B9E1FD6EB5800EBCA27 /* Extensions */,
 				30A00B9F1FD6F06E00EBCA27 /* DWD Files */,
 				30399CC61FD06EEE00503DB4 /* dwd-format.txt */,
 				30A00BB21FD6F1BB00EBCA27 /* DSP Files */,
 				30A00BA31FD6F0EF00EBCA27 /* LMP Files */,
-				30E477201FDC4FB1001FB339 /* Main.storyboard */,
 				30FBF6381FC52D500035671D /* Assets.xcassets */,
 				30FBF63A1FC52D500035671D /* MainMenu.xib */,
 				30FBF6451FC52DB70035671D /* MapWindowController.xib */,
-				30E477231FDC520B001FB339 /* ThingWindow.xib */,
+				30B16B1E1FDE01CB0066DEC3 /* ThingViewController.xib */,
 				30FBF63D1FC52D500035671D /* Info.plist */,
 				30FBF63E1FC52D500035671D /* DoomEdit.entitlements */,
 			);
@@ -258,10 +261,9 @@
 				30FBF6471FC52DB70035671D /* MapWindowController.xib in Resources */,
 				30A00BAE1FD6F1AF00EBCA27 /* texture2.dsp in Resources */,
 				30FBF65E1FC52F930035671D /* e1m1.dwd in Resources */,
-				30E477211FDC4FB1001FB339 /* Main.storyboard in Resources */,
-				30E477251FDC520B001FB339 /* ThingWindow.xib in Resources */,
 				3085C4541FD61A79001049A8 /* e5m1.dwd in Resources */,
 				30A00BAF1FD6F1AF00EBCA27 /* texture1.dsp in Resources */,
+				30B16B201FDE01CB0066DEC3 /* ThingViewController.xib in Resources */,
 				30A00BAC1FD6F1AF00EBCA27 /* sectorspecials.dsp in Resources */,
 				30FBF6391FC52D500035671D /* Assets.xcassets in Resources */,
 				30A00BB11FD6F1AF00EBCA27 /* things.dsp in Resources */,
@@ -284,16 +286,18 @@
 				30FBF65C1FC52F8A0035671D /* MapViewResp.swift in Sources */,
 				30FBF65A1FC52F8A0035671D /* MapViewDraw.swift in Sources */,
 				30399CCD1FD3050800503DB4 /* Thing.swift in Sources */,
+				30B16B1F1FDE01CB0066DEC3 /* ThingViewController.swift in Sources */,
 				30399CC11FCFAAAC00503DB4 /* WorldLoad.swift in Sources */,
 				30399CC91FD1E8A600503DB4 /* Constants.swift in Sources */,
 				30FBF64D1FC52F6A0035671D /* World.swift in Sources */,
 				30FBF6371FC52D500035671D /* AppDelegate.swift in Sources */,
+				30B16B221FDE15A70066DEC3 /* EX_Int.swift in Sources */,
 				30FBF64E1FC52F6A0035671D /* Geometry.swift in Sources */,
 				300E0DFE1FDADDC00066134A /* EX_NSPoint.swift in Sources */,
 				30A00B9D1FD6EB4700EBCA27 /* EX_NSWindowController.swift in Sources */,
 				30399CCB1FD3049E00503DB4 /* Line.swift in Sources */,
-				30E477241FDC520B001FB339 /* ThingWindowController.swift in Sources */,
 				30FBF6591FC52F8A0035671D /* MapView.swift in Sources */,
+				30B16B1C1FDCBF930066DEC3 /* Data.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

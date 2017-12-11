@@ -12,8 +12,10 @@ import Cocoa
 /**
 View that displays the map
 */
-class MapView: NSView {
+class MapView: NSView, NSPopoverDelegate {
 
+	var thingViewController = ThingViewController()
+	
 	var delegate: MapViewDelegate?
 	var trackingArea: NSTrackingArea?
 	var closestPoint: Point? {
@@ -39,13 +41,8 @@ class MapView: NSView {
 	var didDragLine: Bool = false
 	
 	var didClickThing = false
-	var clickedThing = Thing()
-	var clickedThingBounds: NSRect {
-//		let origin = viewCoord(for: clickedThing.origin)
-		let origin = clickedThing.origin
-		let rect = NSRect(x: origin.x-16, y: origin.y-16, width: 32, height: 32)
-		return rect
-	}
+	var selectedThing = Thing()
+	var selectedThingIndex: Int = 0
 	
 
 	
@@ -95,8 +92,26 @@ class MapView: NSView {
 		self.trackingArea = trackingArea
 		addTrackingArea(trackingArea)
 		
+		thingViewController = ThingViewController.init(nibName: NSNib.Name(rawValue: "ThingViewController"), bundle: nil)
+	}
+
+	func initPopover(_ popover: inout NSPopover) {
+		popover = NSPopover.init()
+		popover.contentViewController = thingViewController
+		popover.appearance = NSAppearance.init(named: .vibrantLight)
+		popover.animates = true
+		popover.behavior = .transient
+		popover.delegate = self
 	}
 	
+	func displayThingPopover(at thing: NSView) {
+		var thingPopover = NSPopover()
+		initPopover(&thingPopover)
+		thingViewController.thing = selectedThing
+		thingViewController.thingIndex = selectedThingIndex
+		thingPopover.show(relativeTo: thing.bounds, of: thing, preferredEdge: .maxX)
+	}
+
 	required init?(coder decoder: NSCoder) {
 		fatalError("init(coder:) has not been implemented")
 	}

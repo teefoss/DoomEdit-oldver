@@ -139,6 +139,7 @@ extension MapView {
 	
 	override func mouseDown(with event: NSEvent) {
 		
+		
 		switch currentMode {
 		case .edit:
 			selectObject(at: event)
@@ -147,9 +148,6 @@ extension MapView {
 			}
 		case .draw:
 			dragLine_LMDown(with: event)
-		}
-		if let thing = clickedThing {
-			
 		}
 		setNeedsDisplay(bounds)
 	}
@@ -190,7 +188,16 @@ extension MapView {
 	
 	override func rightMouseDown(with event: NSEvent) {
 
-		
+		selectObject(at: event)
+		if didClickThing {
+			let thingRect = NSRect(x: selectedThing.origin.x-16, y: selectedThing.origin.y-16, width: 32, height: 32)
+			let newThingRect = convert(thingRect, from: superview)
+			let thingView = NSView(frame: newThingRect)
+			self.addSubview(thingView)
+			displayThingPopover(at: thingView)
+			//delegate?.updateThingWindow(with: clickedThing)
+		}
+
 	}
 	
 	
@@ -352,14 +359,16 @@ extension MapView {
 				if !event.modifierFlags.contains(.shift) {
 					dragObjects_LMDown(with: event)
 					didClickThing = true
-					clickedThing = things[thingIndex]
+					selectedThing = things[thingIndex]
+					selectedThingIndex = thingIndex
 					//deselectAllThings()
 					return
 				// shift is being held
 				} else {
 					dragObjects_LMDown(with: event)
 					didClickThing = true
-					clickedThing = things[thingIndex]
+					selectedThing = things[thingIndex]
+					selectedThingIndex = thingIndex
 					//deselectThing(thingIndex)
 					return
 				}
@@ -371,13 +380,16 @@ extension MapView {
 					selectThing(thingIndex)
 					dragObjects_LMDown(with: event)
 					didClickThing = true
-					clickedThing = things[thingIndex]
+					selectedThing = things[thingIndex]
+					selectedThingIndex = thingIndex
+
 					return
 				} else {
 					selectThing(thingIndex)
 					dragObjects_LMDown(with: event)
 					didClickThing = true
-					clickedThing = things[thingIndex]
+					selectedThing = things[thingIndex]
+					selectedThingIndex = thingIndex
 					return
 				}
 			}

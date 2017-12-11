@@ -43,6 +43,7 @@ func makeBox(_ box: inout Box, with pt1: NSPoint, and pt2: NSPoint) {
 	}
 }
 
+
 /// Transforms given rect to just touch given points
 func makeRect(_ rect: inout NSRect, with pt1: NSPoint, and pt2: NSPoint) {
 	
