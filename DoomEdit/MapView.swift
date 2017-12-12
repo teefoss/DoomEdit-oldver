@@ -15,6 +15,7 @@ View that displays the map
 class MapView: NSView, NSPopoverDelegate {
 
 	var thingViewController = ThingViewController()
+	var lineViewController = LineViewController()
 	
 	var delegate: MapViewDelegate?
 	var trackingArea: NSTrackingArea?
@@ -43,6 +44,10 @@ class MapView: NSView, NSPopoverDelegate {
 	var didClickThing = false
 	var selectedThing = Thing()
 	var selectedThingIndex: Int = 0
+	
+	var didClickLine = false
+	var selectedLine = Line()
+	var selectedLineIndex: Int = 0
 	
 
 	
@@ -95,9 +100,9 @@ class MapView: NSView, NSPopoverDelegate {
 		thingViewController = ThingViewController.init(nibName: NSNib.Name(rawValue: "ThingViewController"), bundle: nil)
 	}
 
-	func initPopover(_ popover: inout NSPopover) {
+	func initPopover(_ popover: inout NSPopover, with viewController: NSViewController) {
 		popover = NSPopover.init()
-		popover.contentViewController = thingViewController
+		popover.contentViewController = viewController
 		popover.appearance = NSAppearance.init(named: .vibrantLight)
 		popover.animates = true
 		popover.behavior = .transient
@@ -106,10 +111,18 @@ class MapView: NSView, NSPopoverDelegate {
 	
 	func displayThingPopover(at thing: NSView) {
 		var thingPopover = NSPopover()
-		initPopover(&thingPopover)
+		initPopover(&thingPopover, with: thingViewController)
 		thingViewController.thing = selectedThing
 		thingViewController.thingIndex = selectedThingIndex
 		thingPopover.show(relativeTo: thing.bounds, of: thing, preferredEdge: .maxX)
+	}
+	
+	func displayLinePopover(at line: NSView) {
+		var linePopover = NSPopover()
+		initPopover(&linePopover, with: lineViewController)
+		lineViewController.line = selectedLine
+		lineViewController.lineIndex = selectedLineIndex
+		linePopover.show(relativeTo: line.bounds, of: line, preferredEdge: .maxX)
 	}
 
 	required init?(coder decoder: NSCoder) {

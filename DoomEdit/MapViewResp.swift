@@ -195,7 +195,15 @@ extension MapView {
 			let thingView = NSView(frame: newThingRect)
 			self.addSubview(thingView)
 			displayThingPopover(at: thingView)
+			didClickThing = false
 			//delegate?.updateThingWindow(with: clickedThing)
+		} else if didClickLine {
+			let lineRect = NSRect(x: selectedLine.midpoint.x-16, y: selectedLine.midpoint.y-16, width: 32, height: 32)
+			let newLineRect = convert(lineRect, from: superview)
+			let lineView = NSView(frame: newLineRect)
+			self.addSubview(lineView)
+			displayLinePopover(at: lineView)
+			didClickLine = false
 		}
 
 	}
@@ -305,10 +313,17 @@ extension MapView {
 				if lines[i].isSelected {
 					if !event.modifierFlags.contains(.shift) {
 						dragObjects_LMDown(with: event)
+						didClickLine = true
+						selectedLine = lines[i]
+						selectedLineIndex = i
 						//deselectAll()
 						return
 					} else {
 						dragObjects_LMDown(with: event)
+						didClickLine = true
+						selectedLine = lines[i]
+						selectedLineIndex = i
+
 						//deselectLine(i)
 						return
 					}
@@ -319,11 +334,19 @@ extension MapView {
 						deselectAll()
 						selectLine(i)
 						dragObjects_LMDown(with: event)
+						didClickLine = true
+						selectedLine = lines[i]
+						selectedLineIndex = i
+
 						return
 					// shift is held
 					} else {
 						selectLine(i)
 						dragObjects_LMDown(with: event)
+						didClickLine = true
+						selectedLine = lines[i]
+						selectedLineIndex = i
+
 						return
 					}
 				}

@@ -8,7 +8,15 @@
 
 import Cocoa
 
+let BLOCKS_ALL = 1
+let BLOCKS_MONSTERS = 2
 let TWO_SIDED = 4
+let UPPER_UNPEGGED = 8
+let LOWER_UNPEGGED = 16
+let SECRET = 32
+let BLOCKS_SOUND = 64
+let NOT_ON_MAP = 128
+let SHOW_ON_MAP = 256
 
 struct Line {
 	
