@@ -26,6 +26,19 @@ struct Thing {
 	var options: Int
 	var size: NSSize
 	
+	var hasDirection: Bool {
+		switch type {
+		case 1, 2, 3, 4, 11: // player
+			return true
+		case 68, 64, 3003, 3305, 65, 72, 16, 3002, 3004, 9, 69, 3001, 3006, 67, 71, 66, 58, 7, 84:
+			return true
+		case 14: // teleport destination
+			return true
+		default:
+			return false
+		}
+	}
+	
 	init() {
 		origin = NSPoint()
 		angle = 0

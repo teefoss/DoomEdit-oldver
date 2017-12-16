@@ -8,7 +8,7 @@
 
 import Cocoa
 
-class ThingViewController: NSViewController {
+class ThingPanel: NSViewController {
 	
 	var thing = Thing()
 	var thingIndex: Int = 0

@@ -14,6 +14,7 @@ extension NSNib.Name {
 
 protocol MapViewDelegate {
 	func zoom(to point: NSPoint, with scale: CGFloat)
+	func updateView()
 //	func updateThingWindow(with data: Thing)
 }
 
@@ -21,6 +22,7 @@ class MapWindowController: NSWindowController, MapViewDelegate {
 
 //	var windowList: [NSWindowController]?
 //	var thingWindow: ThingWindowController?
+	var lineSpecialWindow: LineSpecialWindow?
 	
 	var mapView = MapView()
 	var delegate: NSWindowDelegate?
@@ -40,19 +42,17 @@ class MapWindowController: NSWindowController, MapViewDelegate {
 		
 		window?.title = "\(fullFileName) : Edit Mode"
 		
-		print(data.things)
-		
-//		let thingWindow = ThingWindowController()
-//		thingWindow.showWindow(self)
-//		self.thingWindow = thingWindow
+		let lineSpecialWindow = LineSpecialWindow()
+		lineSpecialWindow.showWindow(self)
+		self.lineSpecialWindow = lineSpecialWindow
 		
 		positionWindowTopLeft(leftOffset: 50, topOffset: 50)
 		delegate = self
 		
 		// Load world and set up the map view
-		world.loadWorldFile()
+		editWorld.loadWorldFile()
 		mapView.delegate = self
-		mapView.frame = world.updateBounds()
+		mapView.frame = editWorld.getBounds()
 		
 		// Set up the scroll view
 		scrollView.documentView = mapView
@@ -70,7 +70,7 @@ class MapWindowController: NSWindowController, MapViewDelegate {
 		scrollView.setMagnification(CGFloat(scale), centeredAt: point)
 	}
 	
-	func updateWindow() {
+	func updateView() {
 		mapView.setNeedsDisplay(mapView.bounds)
 	}
 	

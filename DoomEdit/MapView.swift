@@ -14,8 +14,9 @@ View that displays the map
 */
 class MapView: NSView, NSPopoverDelegate {
 
-	var thingViewController = ThingViewController()
+	var thingViewController = ThingPanel()
 	var lineViewController = LineViewController()
+	var sectorPanel = SectorPanel()
 	
 	var delegate: MapViewDelegate?
 	var trackingArea: NSTrackingArea?
@@ -48,6 +49,9 @@ class MapView: NSView, NSPopoverDelegate {
 	var didClickLine = false
 	var selectedLine = Line()
 	var selectedLineIndex: Int = 0
+	
+	var didClickSector = false
+	var selectedDef = SectorDef()
 	
 
 	
@@ -97,7 +101,7 @@ class MapView: NSView, NSPopoverDelegate {
 		self.trackingArea = trackingArea
 		addTrackingArea(trackingArea)
 		
-		thingViewController = ThingViewController.init(nibName: NSNib.Name(rawValue: "ThingViewController"), bundle: nil)
+//		thingViewController = ThingViewController.init(nibName: NSNib.Name(rawValue: "ThingViewController"), bundle: nil)
 	}
 
 	func initPopover(_ popover: inout NSPopover, with viewController: NSViewController) {
@@ -124,6 +128,16 @@ class MapView: NSView, NSPopoverDelegate {
 		lineViewController.lineIndex = selectedLineIndex
 		linePopover.show(relativeTo: line.bounds, of: line, preferredEdge: .maxX)
 	}
+	
+	func displaySectorPanel(at pointRect: NSView) {
+		var sectorPanel = NSPopover()
+		initPopover(&sectorPanel, with: self.sectorPanel)
+		self.sectorPanel.def = selectedDef
+		//sectorPanel.lineIndex = selectedLineIndex
+		print("sector panel shown")
+		sectorPanel.show(relativeTo: pointRect.bounds, of: pointRect, preferredEdge: .maxX)
+	}
+
 
 	required init?(coder decoder: NSCoder) {
 		fatalError("init(coder:) has not been implemented")
@@ -231,7 +245,7 @@ class MapView: NSView, NSPopoverDelegate {
 		newBounds = convert(newBounds, from: superview)
 		newBounds.origin = convert(origin, from: superview)
 		
-		map = world.updateBounds()
+		map = editWorld.getBounds()
 		
 		newBounds = NSUnionRect(map, newBounds)
 		

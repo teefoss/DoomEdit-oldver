@@ -127,7 +127,14 @@ extension MapView {
 				NSColor.red.set()
 			}
 			NSBezierPath.fill(rect)
-			
+
+			// FIXME: Make this just a rotation
+			if thing.hasDirection {
+				
+				let path = thingArrow(in: rect, direction: thing.angle)
+				NSColor.white.set()
+				path.stroke()
+			}
 		}
 	}
 	
@@ -153,6 +160,58 @@ extension MapView {
 		}
 	}
 	
+	func thingArrow(in thingRect: NSRect, direction: Int) -> NSBezierPath {
+		var path = NSBezierPath()
+		let midx = thingRect.midX
+		let midy = thingRect.midY
+		
+		// all the possible end points of the arrow
+		let degrees_0 = NSPoint(x: midx+8, y: midy+0)
+		let degrees_45 = NSPoint(x: midx+4, y: midy+4)
+		let degrees_90 = NSPoint(x: midx+0, y: midy+8)
+		let degrees_135 = NSPoint(x: midx-4, y: midy+4)
+		let degrees_180 = NSPoint(x: midx-8, y: midy-0)
+		let degrees_225 = NSPoint(x: midx-4, y: midy-4)
+		let degrees_270 = NSPoint(x: midx-0, y: midy-8)
+		let degrees_315 = NSPoint(x: midx+4, y: midy-4)
+		let diagArrowEnd_45 = NSPoint(x: midx+8, y: midy+8)
+		let diagArrowEnd_135 = NSPoint(x: midx-8, y: midy+8)
+		let diagArrowEnd_225 = NSPoint(x: midx-8, y: midy-8)
+		let diagArrowEnd_315 = NSPoint(x: midx+8, y: midy-8)
+
+		switch direction {
+		case 0:
+			makeArrowPath(&path, p1: degrees_180, p2: degrees_0, p3: degrees_45, p4: degrees_315)
+		case 45:
+			makeArrowPath(&path, p1: diagArrowEnd_225, p2: diagArrowEnd_45, p3: degrees_90, p4: degrees_0)
+		case 90:
+			makeArrowPath(&path, p1: degrees_270, p2: degrees_90, p3: degrees_135, p4: degrees_45)
+		case 135:
+			makeArrowPath(&path, p1: diagArrowEnd_315, p2: diagArrowEnd_135, p3: degrees_180, p4: degrees_90)
+		case 180:
+			makeArrowPath(&path, p1: degrees_0, p2: degrees_180, p3: degrees_225, p4: degrees_135)
+		case 225:
+			makeArrowPath(&path, p1: diagArrowEnd_45, p2: diagArrowEnd_225, p3: degrees_270, p4: degrees_180)
+		case 270:
+			makeArrowPath(&path, p1: degrees_90, p2: degrees_270, p3: degrees_315, p4: degrees_225)
+		case 315:
+			makeArrowPath(&path, p1: diagArrowEnd_135, p2: diagArrowEnd_315, p3: degrees_0, p4: degrees_270)
+		default:
+			break
+		}
+		
+		return path
+	}
+	
+	func makeArrowPath(_ path: inout NSBezierPath, p1: NSPoint, p2: NSPoint, p3: NSPoint, p4: NSPoint) {
+		path.move(to: p1)
+		path.line(to: p2)
+		path.line(to: p3)
+		path.move(to: p4)
+		path.line(to: p2)
+		path.lineJoinStyle = .roundLineJoinStyle
+		path.lineWidth = 2.0
+	}
 	
 	// =====================
 	// MARK: - Line Dragging
@@ -163,6 +222,7 @@ extension MapView {
 		// TODO: Draw the 'tick' mark while adding a line
 		
 		// animated drawing is done in view coord system
+		editWorld.deselectAll()
 		self.startPoint = getViewGridPoint(from: event.locationInWindow)
 		shapeLayer = CAShapeLayer()
 		shapeLayer.lineWidth = 1.0
@@ -195,12 +255,14 @@ extension MapView {
 			// convert endPoint to world coord
 			let pt2 = convert(endPoint, to: superview)
 			// if line didn't end where it started
-			if pt1.x != pt2.x && pt1.y != pt2.y {
+			if pt1.x == pt2.x && pt1.y == pt2.y {
+				return
+			} else {
 				line.end1.coord = pt1
 				line.end2.coord = pt2
-				world.newLine(line: &line)
-				selectLine(numLines-1)
-				frame = world.updateBounds()
+				editWorld.newLine(line: &line)
+				editWorld.selectLine(numLines-1)
+				frame = editWorld.getBounds()
 				setNeedsDisplay(bounds)
 			}
 		}

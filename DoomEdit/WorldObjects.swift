@@ -27,20 +27,14 @@ struct Point {
 
 struct Side {
 
-	var x_offset: Int
-	var y_offset: Int
+	var x_offset: Int = 0
+	var y_offset: Int = 0
 	var middleTexture: String?
 	var upperTexture: String?
 	var lowerTexture: String?
-	var ends: SectorDef
-	var sector: Int
+	var ends: SectorDef = SectorDef()
+	var sector: Int = 0
 	
-	init() {
-		x_offset = 0
-		y_offset = 0
-		ends = SectorDef()
-		sector = 0
-	}
 }
 
 struct Sector {

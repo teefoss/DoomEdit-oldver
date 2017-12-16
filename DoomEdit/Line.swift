@@ -23,14 +23,18 @@ struct Line {
 	var end1, end2: Point
 	var pt1, pt2: Int
 	
-	var front: Side
-	var back: Side?
+//	var front: Side
+//	var back: Side?
+
+	var side: [Side?]
 	
 	var flags: Int
 	var special: Int
 	var tag: Int
 	
 	var isSelected: Bool
+	var backSelected: Bool = false
+	var frontSelected: Bool = false
 	
 	// TODO: - var length
 	var midpoint: NSPoint
@@ -53,18 +57,18 @@ struct Line {
 	var color: NSColor {
 		if special != 0 {
 			return Color.lineSpecial
-		} else if back != nil {
+		} else if side[1] != nil {
 			return Color.lineTwoSided
 		}
 		return NSColor.black
 	}
 	
 	init() {
+		side = Array(repeating: nil, count: 2)
 		end1 = Point()
 		end2 = Point()
 		pt1 = 0
 		pt2 = 0
-		front = Side()
 		flags = 0
 		special = 0
 		tag = 0

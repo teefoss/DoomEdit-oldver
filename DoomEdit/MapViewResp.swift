@@ -95,7 +95,7 @@ extension MapView {
 			print("scale = \(scale*100)%")
 			let mouseLoc = worldCoord(for: event.locationInWindow)
 			delegate?.zoom(to: mouseLoc, with: scale)
-			frame = world.updateBounds()
+			frame = editWorld.getBounds()
 		} else {
 			NSSound.beep()
 		}
@@ -108,7 +108,7 @@ extension MapView {
 			print("scale = \(scale*100)%")
 			let mouseLoc = worldCoord(for: event.locationInWindow)
 			delegate?.zoom(to: mouseLoc, with: scale)
-			frame = world.updateBounds()
+			frame = editWorld.getBounds()
 		} else {
 			NSSound.beep()
 		}
@@ -196,7 +196,6 @@ extension MapView {
 			self.addSubview(thingView)
 			displayThingPopover(at: thingView)
 			didClickThing = false
-			//delegate?.updateThingWindow(with: clickedThing)
 		} else if didClickLine {
 			let lineRect = NSRect(x: selectedLine.midpoint.x-16, y: selectedLine.midpoint.y-16, width: 32, height: 32)
 			let newLineRect = convert(lineRect, from: superview)
@@ -204,6 +203,17 @@ extension MapView {
 			self.addSubview(lineView)
 			displayLinePopover(at: lineView)
 			didClickLine = false
+		} else if didClickSector {
+			let pointRect = NSRect(x: event.locationInWindow.x-16, y: event.locationInWindow.y-16, width: 32, height: 32)
+			let newPointRect = convert(pointRect, from: nil)
+			let pointView = NSView(frame: newPointRect)
+			self.addSubview(pointView)
+			let clickpoint = worldCoord(for: event.locationInWindow)
+			print (clickpoint)
+			blockWorld.floodFillSector(from: clickpoint)
+			displaySectorPanel(at: pointView)
+			didClickSector = false
+			setNeedsDisplay(self.bounds)
 		}
 
 	}
@@ -268,12 +278,12 @@ extension MapView {
 			} else {
 				// shift is not being held
 				if !event.modifierFlags.contains(.shift) {
-					deselectAll()
-					selectPoint(pointIndex)
+					editWorld.deselectAll()
+					editWorld.selectPoint(pointIndex)
 					dragObjects_LMDown(with: event)
 					return
 				} else {
-					selectPoint(pointIndex)
+					editWorld.selectPoint(pointIndex)
 					dragObjects_LMDown(with: event)
 					return
 				}
@@ -331,8 +341,8 @@ extension MapView {
 				} else {
 					// shift if not held
 					if !event.modifierFlags.contains(.shift) {
-						deselectAll()
-						selectLine(i)
+						editWorld.deselectAll()
+						editWorld.selectLine(i)
 						dragObjects_LMDown(with: event)
 						didClickLine = true
 						selectedLine = lines[i]
@@ -341,7 +351,7 @@ extension MapView {
 						return
 					// shift is held
 					} else {
-						selectLine(i)
+						editWorld.selectLine(i)
 						dragObjects_LMDown(with: event)
 						didClickLine = true
 						selectedLine = lines[i]
@@ -399,8 +409,8 @@ extension MapView {
 			// Thing is not already selected
 			} else {
 				if !event.modifierFlags.contains(.shift) {
-					deselectAll()
-					selectThing(thingIndex)
+					editWorld.deselectAll()
+					editWorld.selectThing(thingIndex)
 					dragObjects_LMDown(with: event)
 					didClickThing = true
 					selectedThing = things[thingIndex]
@@ -408,7 +418,7 @@ extension MapView {
 
 					return
 				} else {
-					selectThing(thingIndex)
+					editWorld.selectThing(thingIndex)
 					dragObjects_LMDown(with: event)
 					didClickThing = true
 					selectedThing = things[thingIndex]
@@ -422,7 +432,15 @@ extension MapView {
 		//  Hit nothing
 		//
 		if !event.modifierFlags.contains(.shift) {
-			deselectAll()
+			editWorld.deselectAll()
+			didClickSector = true
+			if let def = getSector(from: event.locationInWindow) {
+				selectedDef = def
+			} else {
+				didClickSector = false
+			}
+		} else {
+			
 		}
 		
 		shouldDragSelectionBox = true
@@ -475,7 +493,7 @@ extension MapView {
 		for i in 0..<points.count {
 			let pt = points[i].coord
 			if NSPointInRect(pt, selectionBox) {
-				selectPoint(i)
+				editWorld.selectPoint(i)
 			}
 		}
 		
@@ -494,7 +512,7 @@ extension MapView {
 			}
 			
 			if lineInRect(x0: &p1.x, y0: &p1.y, x1: &p2.x, y1: &p2.y, rect: selectionBox) {
-				selectLine(i)
+				editWorld.selectLine(i)
 			}
 		}
 		
@@ -502,70 +520,9 @@ extension MapView {
 		for i in 0..<things.count {
 			let org = things[i].origin
 			if NSPointInRect(org, selectionBox) {
-				selectThing(i)
+				editWorld.selectThing(i)
 			}
 		}
-	}
-
-
-	
-	
-	func selectPoint(_ i: Int) {
-		points[i].isSelected = true
-	}
-	
-	func deselectPoint(_ i: Int) {
-		points[i].isSelected = false
-	}
-	
-	func deselectAllPoints() {
-		for i in 0..<points.count {
-			points[i].isSelected = false
-		}
-	}
-	
-	func selectLine(_ i: Int) {
-		lines[i].isSelected = true
-		
-		
-		// also select its points
-		points[lines[i].pt1].isSelected = true
-		points[lines[i].pt2].isSelected = true
-	}
-	
-	func deselectLine(_ i: Int) {
-		lines[i].isSelected = false
-		
-		// also deselect its points
-		points[lines[i].pt1].isSelected = false
-		points[lines[i].pt2].isSelected = false
-
-	}
-	
-	func deselectAllLines() {
-		for i in 0..<lines.count {
-			lines[i].isSelected = false
-		}
-	}
-	
-	func selectThing(_ i: Int) {
-		things[i].isSelected = true
-	}
-	
-	func deselectThing(_ i: Int) {
-		things[i].isSelected = false
-	}
-	
-	func deselectAllThings() {
-		for i in 0..<things.count {
-			things[i].isSelected = false
-		}
-	}
-	
-	func deselectAll() {
-		deselectAllPoints()
-		deselectAllLines()
-		deselectAllThings()
 	}
 	
 	
@@ -682,7 +639,7 @@ extension MapView {
 
 			// TODO: update line normals
 			for i in 0..<lineCount {
-				world.updateLineNormal(lineList[i])
+				editWorld.updateLineNormal(lineList[i])
 			}
 			
 			// redraw new frame
@@ -716,7 +673,7 @@ extension MapView {
 				let newPoint = points[i]
 				points[i].coord.x -= totalMoved.x
 				points[i].coord.y -= totalMoved.y
-				world.changePoint(i, to: newPoint)
+				editWorld.changePoint(i, to: newPoint)
 				// TODO: set project dirty
 				// if (totalmoved.x || totalmoved.y)
 				// [doomproject_i	setDirtyMap:TRUE];
@@ -725,7 +682,124 @@ extension MapView {
 		}
 		
 	}
+	
+	
+	// =============
+	// MARK: Sectors
+	// =============
 
+	func lineByPoint(point: NSPoint, side: inout Int) -> Int {
+		
+		var pt = point
+		var bestDistance: CGFloat = CGFloat.greatestFiniteMagnitude
+		var p1, p2: NSPoint
+		var frac, xIntercept, distance: CGFloat
+		var bestLine: Int = -1
+		
+		pt.x += 0.5
+		pt.y += 0.5
+		
+		// find the closest line to the given point
+		for l in 0..<lines.count {
+			
+			p1 = points[lines[l].pt1].coord
+			p2 = points[lines[l].pt2].coord
+			
+			if p1.y == p2.y {
+				continue
+			}
+			
+			if p1.y < p2.y {
+				frac = (pt.y - p1.y) / (p2.y - p1.y)
+				if frac < 0 || frac > 1 {
+					continue
+				}
+				xIntercept = p1.x + frac*(p2.x - p1.x)
+			}
+			
+			else {
+				frac = (pt.y - p2.y) / (p1.y - p2.y)
+				if frac < 0 || frac > 1 {
+					continue
+				}
+				xIntercept = p2.x + frac*(p1.x - p2.x)
+			}
+			
+			distance = abs(xIntercept - pt.x)
+			if distance < bestDistance {
+				bestDistance = distance
+				bestLine = l
+			}
+		}
+		
+		// if no line is intercepted, the point was outside all areas
+		if bestDistance == CGFloat.greatestFiniteMagnitude {
+			side = 0
+			return -1
+		}
+		side = lineSideToPoint(lines[bestLine], to: pt)
+		return bestLine
+	}
+	
+	func lineSideToPoint(_ line: Line, to point: NSPoint) -> Int {
+
+		var p1, p2: NSPoint
+		var slope, yintercept: CGFloat
+		var direction, test: Int
+		
+		p1 = points[line.pt1].coord
+		p2 = points[line.pt2].coord
+		
+		if p1.y == p2.y {
+			var r1, r2: Int
+			p1.x < p2.x ? (r1 = 1) : (r1 = 0)
+			point.y < p1.y ? (r2 = 1) : (r2 = 0)
+			return r1 ^ r2
+		}
+		if p1.x == p2.x {
+			var r1, r2: Int
+			p1.y < p2.y ? (r1 = 1) : (r1 = 0)
+			point.x > p1.x ? (r2 = 1) : (r2 = 0)
+			return r1 ^ r2
+		}
+		
+		slope = (p2.y - p1.y) / (p2.x - p1.x)
+		yintercept = p1.y - slope*p1.x
+		
+		// for y > mx+b, substitute in the normal point, which is on the front
+		if line.normal.y > slope*line.normal.x + yintercept {
+			direction = 1
+		} else {
+			direction = 0
+		}
+		if point.y > slope*point.x + yintercept {
+			test = 1
+		} else {
+			test = 0
+		}
+		if direction == test {
+			return 0	// front side
+		}
+		return 1		// back side
+	}
+	
+	
+	
+	func getSector(from point: NSPoint) -> SectorDef? {
+		
+		var pt: NSPoint
+		var line: Int
+		var side: Int = 0
+		
+		pt = worldCoord(for: point)
+		line = lineByPoint(point: pt, side: &side)
+		
+		if let def = lines[line].side[side]?.ends {
+			return def
+		}
+		return nil
+	}
+	
 	
 	
 }
