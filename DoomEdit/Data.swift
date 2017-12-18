@@ -27,10 +27,16 @@ class Data {
 	var stairsSpecials: [String] = []
 	var teleportSpecials: [String] = []
 
+	var doomThingMenu: [[String]] = [[]]
+	
+	var doom1Monsters: [String] = ["Zombieman",
+								   "Shotgun Guy",
+								   "Imp"]
 	
 	init() {
 		loadThingNames()
 		loadLineSpecials()
+//		loadDoomThingMenu()
 		
 		/*
 		for i in 0..<lineSpecials.count {
@@ -122,5 +128,34 @@ class Data {
 		}
 		return false
 }
+	
+//	func loadDoomThingMenu() -> [[String]] {
+//		var menu: [[String]]
+//
+//		var monsters = ["Zombieman",
+//						"Shotgun Guy",
+//						"Imp",
+//						"Demon",
+//						"Lost Soul",
+//						"Cacodemon",
+//						"Baron of Hell",
+//						"Cyberdemon",
+//						"Spider Mastermind"]
+//
+//		menu.append(monsters)
+//	}
 
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 }

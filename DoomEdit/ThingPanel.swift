@@ -12,6 +12,12 @@ class ThingPanel: NSViewController {
 	
 	var thing = Thing()
 	var thingIndex: Int = 0
+	var monsterIndex = 0
+	
+	override var acceptsFirstResponder: Bool { return true }
+	override func becomeFirstResponder() -> Bool { return true }
+	override func resignFirstResponder() -> Bool { return true }
+
 	
 	@IBOutlet weak var typeButton: NSPopUpButton!
 	@IBOutlet weak var easyButton: NSButton!
@@ -27,12 +33,14 @@ class ThingPanel: NSViewController {
 	@IBOutlet weak var southwestButton: NSButton!
 	@IBOutlet weak var northwestButton: NSButton!
 	@IBOutlet weak var southeastButton: NSButton!
+	@IBOutlet weak var thingImageView: NSImageView!
 	
+	@IBOutlet weak var monsterMenu: NSMenu!
 	
 	
 	var directionButtons: [NSButton] = []
 	
-    override func viewDidLoad() {
+	override func viewDidLoad() {
         super.viewDidLoad()
 		
 		directionButtons.append(eastButton)			// 0
@@ -43,11 +51,10 @@ class ThingPanel: NSViewController {
 		directionButtons.append(southwestButton)	// 225
 		directionButtons.append(southButton)		// 270
 		directionButtons.append(southeastButton)	// 315
-		
-		typeButton.removeAllItems()
-		typeButton.addItems(withTitles: data.things)
+
 
     }
+	
 	
 	override func viewWillAppear() {
 		super.viewWillAppear()
@@ -136,6 +143,43 @@ class ThingPanel: NSViewController {
 //			button.state = .off
 //		}
 //	}
+	
+	
+	func updateThing(_ type: Int) {
+		things[thingIndex].type = type
+		thingImageView.image = NSImage(named: NSImage.Name(rawValue: things[thingIndex].imageName))
+		typeButton.removeItem(at: 0)
+		typeButton.insertItem(withTitle: things[thingIndex].name, at: 0)
+		typeButton.selectItem(at: 0)
+	}
+	
+	
+	// ==================
+	// Mark: - IB Actions
+	// ==================
+	
+	@IBAction func selectZombieman(_ sender: NSMenuItem) {
+		updateThing(3004)
+	}
+	
+	@IBAction func selectShotgunGuy(_ sender: NSMenuItem) {
+		updateThing(9)
+	}
+	
+	@IBAction func selectImp(_ sender: NSMenuItem) {
+		updateThing(3001)
+	}
+	
+	// FIXME: get key presses
+	override func keyDown(with event: NSEvent) {
+		switch event.keyCode {
+		case KEY_1:
+			updateThing(3004)
+		default:
+			break
+		}
+	}
+	
 	
     
 }

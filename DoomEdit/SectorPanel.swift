@@ -8,7 +8,7 @@
 
 import Cocoa
 
-class SectorPanel: NSViewController {
+class SectorPanel: NSViewController, NSTextDelegate {
 
 	var def = SectorDef()
 	
@@ -25,6 +25,7 @@ class SectorPanel: NSViewController {
 	@IBOutlet weak var ceilingLabel: NSTextField!
 	@IBOutlet weak var floorLabel: NSTextField!
 	@IBOutlet weak var specialButton: NSPopUpButton!
+	@IBOutlet weak var specialTextField: NSTextField!
 	
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -41,8 +42,12 @@ class SectorPanel: NSViewController {
 		heightLabel.integerValue = def.ceilingHeight - def.floorHeight
 		tagTextField.integerValue = def.tag
 		lightTextField.integerValue = def.lightLevel
+		lightSlider.integerValue = def.lightLevel
 		ceilingLabel.stringValue = def.ceilingFlat
 		floorLabel.stringValue = def.floorFlat
+		specialTextField.integerValue = def.special
+		
+		specialButton.selectItem(withTag: def.special)
 
 		// Because doom texture and flat have the same name. Flat STEP1 changed to STEP1_FL etc
 		if def.ceilingFlat == "STEP1" {
@@ -61,5 +66,28 @@ class SectorPanel: NSViewController {
 			floorImageView.image = NSImage(named: NSImage.Name(rawValue: def.floorFlat))
 		}
 	}
-    
+	
+	@IBAction func suggestTagClicked(_ sender: NSButton) {
+
+		var maxTag = 0
+		
+		for line in lines {
+			for side in line.side {
+				if let tag = side?.ends.tag {
+					if tag > maxTag {
+						maxTag = tag
+					}
+				}
+			}
+		}
+		
+		tagTextField.integerValue = maxTag + 1
+	}
+	
+	
+	
+	@IBAction func specialChanged(_ sender: NSPopUpButton) {
+		specialTextField.integerValue = sender.selectedItem?.tag ?? 0
+	}
+	
 }

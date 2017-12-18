@@ -11,4 +11,15 @@ extension NSWindowController {
 			window.setFrameOrigin(NSPoint(x: leftOffset, y: originY))
 		}
 	}
+	
+	func centerWindowWith(size: CGFloat) {
+		if let window = window, let screen = window.screen {
+			let screenFrame = screen.visibleFrame
+			let rect = NSRect(x: screenFrame.origin.x + screenFrame.size.width * size,
+							  y: screenFrame.origin.y + screenFrame.size.height * size,
+							  width: screenFrame.size.width * size,
+							  height: screenFrame.size.height * size)
+			window.setFrame(rect, display: true)
+		}
+	}
 }

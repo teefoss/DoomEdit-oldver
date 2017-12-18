@@ -32,8 +32,6 @@
 		30B16B221FDE15A70066DEC3 /* EX_Int.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30B16B211FDE15A70066DEC3 /* EX_Int.swift */; };
 		30B16B251FDE376A0066DEC3 /* LineViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30B16B231FDE376A0066DEC3 /* LineViewController.swift */; };
 		30B16B261FDE376A0066DEC3 /* LineViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 30B16B241FDE376A0066DEC3 /* LineViewController.xib */; };
-		30B6AC4A1FE0C8D2003FCB00 /* LineSpecialWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30B6AC481FE0C8D2003FCB00 /* LineSpecialWindow.swift */; };
-		30B6AC4B1FE0C8D2003FCB00 /* LineSpecialWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 30B6AC491FE0C8D2003FCB00 /* LineSpecialWindow.xib */; };
 		30E827E31FC9FC7B00992422 /* e4m1.dwd in Resources */ = {isa = PBXBuildFile; fileRef = 30E827E21FC9FC7B00992422 /* e4m1.dwd */; };
 		30FBF6371FC52D500035671D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30FBF6361FC52D500035671D /* AppDelegate.swift */; };
 		30FBF6391FC52D500035671D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 30FBF6381FC52D500035671D /* Assets.xcassets */; };
@@ -78,8 +76,6 @@
 		30B16B211FDE15A70066DEC3 /* EX_Int.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EX_Int.swift; sourceTree = "<group>"; };
 		30B16B231FDE376A0066DEC3 /* LineViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LineViewController.swift; sourceTree = "<group>"; };
 		30B16B241FDE376A0066DEC3 /* LineViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LineViewController.xib; sourceTree = "<group>"; };
-		30B6AC481FE0C8D2003FCB00 /* LineSpecialWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LineSpecialWindow.swift; sourceTree = "<group>"; };
-		30B6AC491FE0C8D2003FCB00 /* LineSpecialWindow.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LineSpecialWindow.xib; sourceTree = "<group>"; };
 		30E827E21FC9FC7B00992422 /* e4m1.dwd */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = e4m1.dwd; sourceTree = "<group>"; };
 		30FBF6331FC52D500035671D /* DoomEdit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DoomEdit.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		30FBF6361FC52D500035671D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -182,7 +178,6 @@
 				30FBF64A1FC52F6A0035671D /* Geometry.swift */,
 				30399CCA1FD3049E00503DB4 /* Line.swift */,
 				30B16B231FDE376A0066DEC3 /* LineViewController.swift */,
-				30B6AC481FE0C8D2003FCB00 /* LineSpecialWindow.swift */,
 				30FBF6441FC52DB70035671D /* MapWindowController.swift */,
 				30FBF6531FC52F8A0035671D /* MapView.swift */,
 				30FBF6541FC52F8A0035671D /* MapViewDraw.swift */,
@@ -201,7 +196,6 @@
 				30FBF6451FC52DB70035671D /* MapWindowController.xib */,
 				30533AA81FE45E620039DCFB /* SectorPanel.xib */,
 				30B16B241FDE376A0066DEC3 /* LineViewController.xib */,
-				30B6AC491FE0C8D2003FCB00 /* LineSpecialWindow.xib */,
 				30B16B1E1FDE01CB0066DEC3 /* ThingPanel.xib */,
 				30FBF63D1FC52D500035671D /* Info.plist */,
 				30FBF63E1FC52D500035671D /* DoomEdit.entitlements */,
@@ -277,7 +271,6 @@
 				30FBF65E1FC52F930035671D /* e1m1.dwd in Resources */,
 				3085C4541FD61A79001049A8 /* e5m1.dwd in Resources */,
 				30A00BAF1FD6F1AF00EBCA27 /* texture1.dsp in Resources */,
-				30B6AC4B1FE0C8D2003FCB00 /* LineSpecialWindow.xib in Resources */,
 				30B16B201FDE01CB0066DEC3 /* ThingPanel.xib in Resources */,
 				30A00BAC1FD6F1AF00EBCA27 /* sectorspecials.dsp in Resources */,
 				30533AAA1FE45E620039DCFB /* SectorPanel.xib in Resources */,
@@ -301,7 +294,6 @@
 				30FBF6461FC52DB70035671D /* MapWindowController.swift in Sources */,
 				30FBF64C1FC52F6A0035671D /* WorldObjects.swift in Sources */,
 				30533AA41FE17CC70039DCFB /* BlockWorld.swift in Sources */,
-				30B6AC4A1FE0C8D2003FCB00 /* LineSpecialWindow.swift in Sources */,
 				30FBF65C1FC52F8A0035671D /* MapViewResp.swift in Sources */,
 				30FBF65A1FC52F8A0035671D /* MapViewDraw.swift in Sources */,
 				30399CCD1FD3050800503DB4 /* Thing.swift in Sources */,

@@ -22,7 +22,6 @@ class MapWindowController: NSWindowController, MapViewDelegate {
 
 //	var windowList: [NSWindowController]?
 //	var thingWindow: ThingWindowController?
-	var lineSpecialWindow: LineSpecialWindow?
 	
 	var mapView = MapView()
 	var delegate: NSWindowDelegate?
@@ -41,12 +40,9 @@ class MapWindowController: NSWindowController, MapViewDelegate {
         super.windowDidLoad()
 		
 		window?.title = "\(fullFileName) : Edit Mode"
-		
-		let lineSpecialWindow = LineSpecialWindow()
-		lineSpecialWindow.showWindow(self)
-		self.lineSpecialWindow = lineSpecialWindow
-		
+				
 		positionWindowTopLeft(leftOffset: 50, topOffset: 50)
+//		centerWindowWith(size: 0.25)
 		delegate = self
 		
 		// Load world and set up the map view

@@ -33,6 +33,9 @@ extension MapView {
 		drawLines(in: dirtyRect)
 		drawPoints(in: dirtyRect)
 		
+		print(dirtyRect.size.width)
+		print(dirtyRect.origin)
+		
 	}
 
 	/// Draws the 64x64 fixed tiles and the adjustable grid
@@ -51,15 +54,23 @@ extension MapView {
 			context.flush()
 		}
 		
+		func convVert(_ i: Int) -> Int {
+			return i - Int(bounds.origin.y - frame.origin.y)
+		}
+		
+		func convHor(_ i: Int) -> Int {
+			return i - Int(bounds.origin.x - frame.origin.x)
+		}
+
 		NSBezierPath.defaultLineWidth = LINE_WIDTH
 		
 		//draw horizontal lines
 		for i in bottom...top {
-			if i % 64 == 0 {
+			if convVert(i) % 64 == 0 {
 				let current_y = CGFloat(i) - offSet
 				tileColor.set()
 				NSBezierPath.strokeLine(from: CGPoint(x: 0.0, y: current_y), to: CGPoint(x: CGFloat(right), y: current_y))
-			} else if i % gridSize == 0 {
+			} else if convVert(i) % gridSize == 0 {
 				let current_y = CGFloat(i) - offSet
 				gridColor.set()
 				NSBezierPath.strokeLine(from: CGPoint(x: 0.0, y: current_y), to: CGPoint(x: CGFloat(right), y: current_y))
@@ -67,17 +78,19 @@ extension MapView {
 		}
 		
 		//draw verticle lines
+		
 		for i in left...right {
-			if i % 64 == 0 {
+			if convHor(i) % 64 == 0 {
 				let current_x = CGFloat(i) - offSet
 				tileColor.set()
 				NSBezierPath.strokeLine(from: CGPoint(x: current_x, y: 0), to: CGPoint(x: current_x, y: CGFloat(top)))
-			} else if i % gridSize == 0 {
+			} else if convHor(i) % gridSize == 0 {
 				let current_x = CGFloat(i) - offSet
 				gridColor.set()
 				NSBezierPath.strokeLine(from: CGPoint(x: current_x, y: 0), to: CGPoint(x: current_x, y: CGFloat(top)))
 			}
 		}
+		
 	}
 
 	///  Draw all world lines

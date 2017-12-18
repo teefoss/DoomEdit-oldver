@@ -138,7 +138,6 @@ class MapView: NSView, NSPopoverDelegate {
 		sectorPanel.show(relativeTo: pointRect.bounds, of: pointRect, preferredEdge: .maxX)
 	}
 
-
 	required init?(coder decoder: NSCoder) {
 		fatalError("init(coder:) has not been implemented")
 	}
@@ -154,7 +153,6 @@ class MapView: NSView, NSPopoverDelegate {
 	}
 	
 	
-
 	
 	
 	// =========================

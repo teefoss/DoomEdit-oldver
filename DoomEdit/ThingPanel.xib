@@ -13,6 +13,7 @@
                 <outlet property="eastButton" destination="0K3-0g-8lR" id="kIK-nb-eei"/>
                 <outlet property="easyButton" destination="Pov-m6-jtg" id="USN-rG-49M"/>
                 <outlet property="hardButton" destination="c13-PU-H89" id="TJV-cL-3L7"/>
+                <outlet property="monsterMenu" destination="8t3-A9-IzJ" id="ZRH-h5-40C"/>
                 <outlet property="networkButton" destination="lOV-3D-1kU" id="zYg-HC-9mC"/>
                 <outlet property="normalButton" destination="pjf-GR-vTG" id="Vy9-vK-1yE"/>
                 <outlet property="northButton" destination="4dJ-2u-he9" id="AvE-ae-H0d"/>
@@ -21,6 +22,7 @@
                 <outlet property="southButton" destination="IuA-Xf-2Jd" id="8Ad-Hy-2Fi"/>
                 <outlet property="southeastButton" destination="rve-XI-dWM" id="hcI-tj-qTU"/>
                 <outlet property="southwestButton" destination="XVd-bv-Byl" id="vBI-Th-2uy"/>
+                <outlet property="thingImageView" destination="OUA-pR-P1v" id="5RF-53-Bzo"/>
                 <outlet property="typeButton" destination="dvb-DC-Vja" id="HcD-u8-W4Y"/>
                 <outlet property="view" destination="Hz6-mo-xeY" id="0bl-1N-x8E"/>
                 <outlet property="westButton" destination="N2u-Vc-9ix" id="7DN-rg-SOA"/>
@@ -42,19 +44,81 @@
                             <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="OUA-pR-P1v">
                                 <rect key="frame" x="46" y="57" width="96" height="96"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" imageFrameStyle="grayBezel" id="3g3-Ii-9CZ"/>
+                                <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyUpOrDown" imageFrameStyle="grayBezel" id="3g3-Ii-9CZ"/>
                             </imageView>
                             <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dvb-DC-Vja">
                                 <rect key="frame" x="18" y="16" width="154" height="26"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="Lvh-09-oJu" id="l0f-2U-guj">
+                                <popUpButtonCell key="cell" type="push" title="Item" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="CVd-6V-s2v" id="l0f-2U-guj">
                                     <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="menu"/>
-                                    <menu key="menu" id="cu9-TR-GuM">
+                                    <menu key="menu" showsStateColumn="NO" id="cu9-TR-GuM">
                                         <items>
-                                            <menuItem title="Item 1" state="on" id="Lvh-09-oJu"/>
-                                            <menuItem title="Item 2" id="D63-VX-vlf"/>
-                                            <menuItem title="Item 3" id="V9r-cf-Uxe"/>
+                                            <menuItem title="Item" id="CVd-6V-s2v">
+                                                <modifierMask key="keyEquivalentModifierMask"/>
+                                            </menuItem>
+                                            <menuItem isSeparatorItem="YES" id="riV-E5-tFg"/>
+                                            <menuItem title="Player" state="on" id="0rc-AU-Ozl">
+                                                <modifierMask key="keyEquivalentModifierMask"/>
+                                                <menu key="submenu" title="Player" id="TAj-GM-Phu">
+                                                    <items>
+                                                        <menuItem title="Player 1 Start" id="c8D-pc-9Yj">
+                                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                                        </menuItem>
+                                                    </items>
+                                                </menu>
+                                            </menuItem>
+                                            <menuItem title="Demons" id="U9L-Jf-tjI">
+                                                <modifierMask key="keyEquivalentModifierMask"/>
+                                                <menu key="submenu" title="Demons" id="8t3-A9-IzJ">
+                                                    <items>
+                                                        <menuItem title="Zombieman" id="7fy-WX-ifV">
+                                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                                            <connections>
+                                                                <action selector="selectZombieman:" target="-2" id="olW-zo-XFp"/>
+                                                            </connections>
+                                                        </menuItem>
+                                                        <menuItem title="Shotgun Guy" id="0HE-6U-wQz">
+                                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                                            <connections>
+                                                                <action selector="selectShotgunGuy:" target="-2" id="8rX-0f-LR5"/>
+                                                            </connections>
+                                                        </menuItem>
+                                                        <menuItem title="Imp" id="8MJ-V4-gEg">
+                                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                                            <connections>
+                                                                <action selector="selectImp:" target="-2" id="70H-H0-t0m"/>
+                                                            </connections>
+                                                        </menuItem>
+                                                    </items>
+                                                </menu>
+                                            </menuItem>
+                                            <menuItem isSeparatorItem="YES" id="6Jh-rP-9B0"/>
+                                            <menuItem title="Weapons" id="zRS-Np-sgX">
+                                                <modifierMask key="keyEquivalentModifierMask"/>
+                                                <menu key="submenu" title="Weapons" id="pq9-Gm-mSG">
+                                                    <items>
+                                                        <menuItem title="Chainsaw" keyEquivalent="1" id="NWr-jz-MxQ">
+                                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                                        </menuItem>
+                                                        <menuItem title="Shotgun" keyEquivalent="3" id="lZb-Yd-9x4">
+                                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                                        </menuItem>
+                                                        <menuItem title="Chaingun" keyEquivalent="4" id="DC6-xh-v0y">
+                                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                                        </menuItem>
+                                                        <menuItem title="Rocket Launcher" id="w7u-5d-728">
+                                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                                        </menuItem>
+                                                        <menuItem title="Plasma Gun" id="I1b-Jf-UXf">
+                                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                                        </menuItem>
+                                                        <menuItem title="BFG9000" id="WQz-RG-yZa">
+                                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                                        </menuItem>
+                                                    </items>
+                                                </menu>
+                                            </menuItem>
                                         </items>
                                     </menu>
                                 </popUpButtonCell>

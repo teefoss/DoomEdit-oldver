@@ -20,6 +20,7 @@
                 <outlet property="lightTextField" destination="YsC-9l-mfc" id="NEI-nA-QZE"/>
                 <outlet property="sectorLabel" destination="8I4-c9-Dat" id="3p2-Bl-g5F"/>
                 <outlet property="specialButton" destination="MYt-OT-3xR" id="GQs-BA-7YI"/>
+                <outlet property="specialTextField" destination="0Z4-S8-D7A" id="7gx-V7-lH0"/>
                 <outlet property="tagTextField" destination="CgI-p0-KSg" id="6Dx-UO-PQd"/>
                 <outlet property="view" destination="Hz6-mo-xeY" id="0bl-1N-x8E"/>
             </connections>
@@ -40,9 +41,12 @@
                             <slider verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6Tu-YK-P13">
                                 <rect key="frame" x="67" y="18" width="319" height="24"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <sliderCell key="cell" state="on" alignment="left" maxValue="255" doubleValue="255.00000000000003" tickMarkPosition="above" numberOfTickMarks="32" allowsTickMarkValuesOnly="YES" sliderType="linear" id="54n-UE-yMZ"/>
+                                <sliderCell key="cell" state="on" alignment="left" maxValue="248" doubleValue="128" tickMarkPosition="above" numberOfTickMarks="32" allowsTickMarkValuesOnly="YES" sliderType="linear" id="54n-UE-yMZ"/>
+                                <connections>
+                                    <action selector="takeIntegerValueFrom:" target="YsC-9l-mfc" id="LNt-YI-9Mq"/>
+                                </connections>
                             </slider>
-                            <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="YsC-9l-mfc">
+                            <textField verticalHuggingPriority="750" fixedFrame="YES" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="YsC-9l-mfc">
                                 <rect key="frame" x="20" y="20" width="41" height="22"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="center" title="255" drawsBackground="YES" id="pUf-kh-eJs">
@@ -50,6 +54,9 @@
                                     <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
+                                <connections>
+                                    <action selector="takeIntegerValueFrom:" target="6Tu-YK-P13" id="xte-67-01K"/>
+                                </connections>
                             </textField>
                         </subviews>
                     </view>
@@ -151,6 +158,9 @@
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
+                                <connections>
+                                    <action selector="suggestTagClicked:" target="-2" id="JS7-Fc-Jh9"/>
+                                </connections>
                             </button>
                         </subviews>
                     </view>
@@ -237,29 +247,24 @@
                                 </textFieldCell>
                             </textField>
                             <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="MYt-OT-3xR">
-                                <rect key="frame" x="105" y="18" width="195" height="26"/>
+                                <rect key="frame" x="81" y="18" width="306" height="26"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <popUpButtonCell key="cell" type="push" title="Damage Nukage" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" tag="7" imageScaling="proportionallyDown" inset="2" selectedItem="HiQ-ku-GgO" id="CnS-eg-Mf9">
+                                <popUpButtonCell key="cell" type="push" title="None" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="xms-US-9Hc" id="CnS-eg-Mf9">
                                     <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="menu"/>
                                     <menu key="menu" id="Whg-6A-sg1">
                                         <items>
-                                            <menuItem title="Ceiling Crush and Raise" tag="6" id="WYj-J8-RX2"/>
+                                            <menuItem title="None" id="xms-US-9Hc">
+                                                <modifierMask key="keyEquivalentModifierMask"/>
+                                            </menuItem>
+                                            <menuItem isSeparatorItem="YES" id="kiZ-o7-BaD"/>
                                             <menuItem title="Damage Nukage" state="on" tag="7" keyEquivalent="1" id="HiQ-ku-GgO"/>
                                             <menuItem title="Damage Hell Slime" tag="5" keyEquivalent="2" id="J28-mQ-QyM"/>
                                             <menuItem title="Damage Super Hell Slime" tag="16" keyEquivalent="3" id="qsU-RU-S3W"/>
                                             <menuItem title="Damage Super Strobe" tag="4" id="1C5-8E-aVQ">
                                                 <modifierMask key="keyEquivalentModifierMask"/>
                                             </menuItem>
-                                            <menuItem title="Door Close in 30 Seconds" tag="10" id="Bpc-yJ-RSj">
-                                                <modifierMask key="keyEquivalentModifierMask"/>
-                                            </menuItem>
-                                            <menuItem title="Door Open in 5 Minutes" tag="14" id="BSd-bK-76c">
-                                                <modifierMask key="keyEquivalentModifierMask"/>
-                                            </menuItem>
-                                            <menuItem title="Exit Super Damage" tag="11" id="I6d-Z9-lJ2">
-                                                <modifierMask key="keyEquivalentModifierMask"/>
-                                            </menuItem>
+                                            <menuItem isSeparatorItem="YES" id="PJ5-rM-eME"/>
                                             <menuItem title="Light Slow Strobe" tag="3" keyEquivalent="4" id="Ahn-aO-96U"/>
                                             <menuItem title="Light Slow Strobe Synced" tag="12" keyEquivalent="5" id="yOr-ah-VoR"/>
                                             <menuItem title="Light Fast Strobe" tag="2" keyEquivalent="6" id="Ss9-mq-Ctd"/>
@@ -267,10 +272,25 @@
                                             <menuItem title="Light Flickering" tag="1" keyEquivalent="8" id="eat-wQ-7G9"/>
                                             <menuItem title="Light Fire Flickering" tag="17" keyEquivalent="9" id="xzq-so-2nw"/>
                                             <menuItem title="Light Glowing" tag="8" keyEquivalent="0" id="Ioj-pv-Unn"/>
+                                            <menuItem isSeparatorItem="YES" id="VpS-wQ-O2e"/>
+                                            <menuItem title="Door Close in 30 Seconds" tag="10" id="Bpc-yJ-RSj">
+                                                <modifierMask key="keyEquivalentModifierMask"/>
+                                            </menuItem>
+                                            <menuItem title="Door Open in 5 Minutes" tag="14" id="BSd-bK-76c">
+                                                <modifierMask key="keyEquivalentModifierMask"/>
+                                            </menuItem>
+                                            <menuItem isSeparatorItem="YES" id="h7y-7M-5Jh"/>
+                                            <menuItem title="Ceiling Crush and Raise" tag="6" id="WYj-J8-RX2"/>
+                                            <menuItem title="Exit Super Damage" tag="11" id="I6d-Z9-lJ2">
+                                                <modifierMask key="keyEquivalentModifierMask"/>
+                                            </menuItem>
                                             <menuItem title="Secret Area" tag="9" keyEquivalent="s" id="fmk-KP-8vT"/>
                                         </items>
                                     </menu>
                                 </popUpButtonCell>
+                                <connections>
+                                    <action selector="specialChanged:" target="-2" id="v82-nm-gRl"/>
+                                </connections>
                             </popUpButton>
                         </subviews>
                     </view>

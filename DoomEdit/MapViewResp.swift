@@ -10,13 +10,7 @@
 
 import Cocoa
 
-// Keys
-fileprivate let KEY_MINUS: 			UInt16 = 27
-fileprivate let KEY_EQUALS: 		UInt16 = 24
-fileprivate let KEY_LEFTBRACKET: 	UInt16 = 33
-fileprivate let KEY_RIGHTBRACKET: 	UInt16 = 30
-fileprivate let KEY_I: 				UInt16 = 34
-fileprivate let KEY_SPACE:			UInt16 = 49
+
 
 // Dragging Objects
 fileprivate var cursor = NSPoint.zero
@@ -225,7 +219,7 @@ extension MapView {
 	// =========================
 	
 	// https://stackoverflow.com/questions/33158513/checking-keydown-event-modifierflags-yields-error
-	/// Selects a point at the mouse location. If no point is present, selects a line, thing, or sector in that order of priority.
+	/// Selects a point at the mouse location. If no point is present, selects a line or thing.
 	func selectObject(at event: NSEvent) {
 		
 		var pointIndex: Int = -1
