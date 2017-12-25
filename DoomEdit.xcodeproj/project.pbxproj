@@ -10,7 +10,7 @@
 		300E0DFE1FDADDC00066134A /* EX_NSPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300E0DFD1FDADDC00066134A /* EX_NSPoint.swift */; };
 		30399CC11FCFAAAC00503DB4 /* EWLoad.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30399CC01FCFAAAC00503DB4 /* EWLoad.swift */; };
 		30399CC71FD06EEE00503DB4 /* dwd-format.txt in Resources */ = {isa = PBXBuildFile; fileRef = 30399CC61FD06EEE00503DB4 /* dwd-format.txt */; };
-		30399CC91FD1E8A600503DB4 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30399CC81FD1E8A600503DB4 /* Constants.swift */; };
+		30399CC91FD1E8A600503DB4 /* Global.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30399CC81FD1E8A600503DB4 /* Global.swift */; };
 		30399CCB1FD3049E00503DB4 /* Line.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30399CCA1FD3049E00503DB4 /* Line.swift */; };
 		30399CCD1FD3050800503DB4 /* Thing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30399CCC1FD3050800503DB4 /* Thing.swift */; };
 		30533AA41FE17CC70039DCFB /* BlockWorld.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30533AA31FE17CC70039DCFB /* BlockWorld.swift */; };
@@ -51,7 +51,7 @@
 		300E0DFD1FDADDC00066134A /* EX_NSPoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EX_NSPoint.swift; sourceTree = "<group>"; };
 		30399CC01FCFAAAC00503DB4 /* EWLoad.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EWLoad.swift; sourceTree = "<group>"; };
 		30399CC61FD06EEE00503DB4 /* dwd-format.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "dwd-format.txt"; sourceTree = "<group>"; };
-		30399CC81FD1E8A600503DB4 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		30399CC81FD1E8A600503DB4 /* Global.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Global.swift; sourceTree = "<group>"; };
 		30399CCA1FD3049E00503DB4 /* Line.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Line.swift; sourceTree = "<group>"; };
 		30399CCC1FD3050800503DB4 /* Thing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Thing.swift; sourceTree = "<group>"; };
 		30533AA31FE17CC70039DCFB /* BlockWorld.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockWorld.swift; sourceTree = "<group>"; };
@@ -171,7 +171,7 @@
 			children = (
 				30FBF6361FC52D500035671D /* AppDelegate.swift */,
 				30533AA31FE17CC70039DCFB /* BlockWorld.swift */,
-				30399CC81FD1E8A600503DB4 /* Constants.swift */,
+				30399CC81FD1E8A600503DB4 /* Global.swift */,
 				30B16B1B1FDCBF930066DEC3 /* Data.swift */,
 				30FBF6491FC52F690035671D /* EditWorld.swift */,
 				30399CC01FCFAAAC00503DB4 /* EWLoad.swift */,
@@ -299,7 +299,7 @@
 				30399CCD1FD3050800503DB4 /* Thing.swift in Sources */,
 				30B16B1F1FDE01CB0066DEC3 /* ThingPanel.swift in Sources */,
 				30399CC11FCFAAAC00503DB4 /* EWLoad.swift in Sources */,
-				30399CC91FD1E8A600503DB4 /* Constants.swift in Sources */,
+				30399CC91FD1E8A600503DB4 /* Global.swift in Sources */,
 				30B16B251FDE376A0066DEC3 /* LineViewController.swift in Sources */,
 				30FBF64D1FC52F6A0035671D /* EditWorld.swift in Sources */,
 				30FBF6371FC52D500035671D /* AppDelegate.swift in Sources */,

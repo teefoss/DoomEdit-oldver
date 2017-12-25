@@ -34,6 +34,9 @@ class MapView: NSView, NSPopoverDelegate {
 	var gridSize: Int = 8
 	var scale: CGFloat = 1.0
 	
+	// dragging objects
+	
+	
 	// for line drawing
 	var inDrawMode: Bool = false
 	var shapeLayer: CAShapeLayer!
@@ -52,6 +55,7 @@ class MapView: NSView, NSPopoverDelegate {
 	
 	var didClickSector = false
 	var selectedDef = SectorDef()
+	var selectedSides: [Int] = []
 	
 
 	
@@ -59,12 +63,10 @@ class MapView: NSView, NSPopoverDelegate {
 		inDrawMode = !inDrawMode
 		if inDrawMode {
 			currentMode = .draw
-			print("crosshair set")
 			// FIXME: This stopped working?
 			NSCursor.crosshair.set()
 		} else {
 			currentMode = .edit
-			print("arrow set")
 			NSCursor.arrow.set()
 		}
 	}
@@ -133,8 +135,8 @@ class MapView: NSView, NSPopoverDelegate {
 		var sectorPanel = NSPopover()
 		initPopover(&sectorPanel, with: self.sectorPanel)
 		self.sectorPanel.def = selectedDef
+		self.sectorPanel.selectedSides = selectedSides
 		//sectorPanel.lineIndex = selectedLineIndex
-		print("sector panel shown")
 		sectorPanel.show(relativeTo: pointRect.bounds, of: pointRect, preferredEdge: .maxX)
 	}
 
@@ -156,9 +158,29 @@ class MapView: NSView, NSPopoverDelegate {
 	
 	
 	// =========================
-	// MARK: - Coordinate System
+	// MARK: - View & Coordinate System
 	// =========================
 
+	func displayDirty(dirtyrect: NSRect) {
+		var rect = NSRect()
+		var adjust: CGFloat
+		
+		adjust = CGFloat(POINT_DRAW_SIZE)
+		if adjust <= CGFloat(LINE_NORMAL_LENGTH) {
+			adjust = CGFloat(LINE_NORMAL_LENGTH)+1
+		}
+		
+		rect.origin.x = dirtyrect.origin.x - adjust
+		rect.origin.y = dirtyrect.origin.y - adjust
+		rect.size.width = dirtyrect.size.width + adjust*2
+		rect.size.height = dirtyrect.size.height + adjust*2
+		
+		NSIntegralRect(rect)
+		
+		self.display(rect)
+		
+	}
+	
 	///  Convert a point to the world coordinate system
 	///- parameter point: A point in the view coordinate system
 	func worldCoord(for point: NSPoint) -> NSPoint {

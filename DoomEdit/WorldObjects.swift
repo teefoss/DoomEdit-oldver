@@ -11,18 +11,9 @@
 import Cocoa
 
 struct Point {
-	var coord: NSPoint
-	var isSelected: Bool
-	var hovering: Bool
-	/// A list of the lines connects to this point. These are the same numbers as each `line.ref`
-	var ref: [Int]
-	
-	init() {
-		coord = NSPoint()
-		isSelected = false
-		hovering = false
-		ref = []
-	}
+	var coord = NSPoint()
+	var selected: Int = 0	// -1 = deleted, 0 = unselected, 1 = selected
+	var refcount: Int = 0	// when 0, remove it
 }
 
 struct Side {
@@ -33,13 +24,13 @@ struct Side {
 	var upperTexture: String?
 	var lowerTexture: String?
 	var ends: SectorDef = SectorDef()
-	var sector: Int = 0
+	var sector: Int = -1
 	
 }
 
 struct Sector {
-	var def: SectorDef
-	var lines: [Line]
+	var def = SectorDef()
+	var lines: [Int] = []
 }
 
 struct SectorDef {

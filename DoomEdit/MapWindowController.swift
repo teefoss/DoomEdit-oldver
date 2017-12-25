@@ -31,7 +31,6 @@ class MapWindowController: NSWindowController, MapViewDelegate {
 	@IBOutlet weak var scrollView: NSScrollView!
 	@IBOutlet weak var clipView: NSClipView!
 	
-	
 	override var windowNibName: NSNib.Name? {
 		return .MapWindowController
 	}

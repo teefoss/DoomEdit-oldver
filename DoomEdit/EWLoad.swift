@@ -27,6 +27,8 @@ extension EditWorld {
 		guard let fileLines = fileContents?.components(separatedBy: CharacterSet.newlines) else { return }
 		
 		var line = Line()
+		var p1 = NSPoint()
+		var p2 = NSPoint()
 		var side = Side()
 		var sectorDef = SectorDef()
 		var thing = Thing()
@@ -39,7 +41,7 @@ extension EditWorld {
 		
 		for fileLine in fileLines {
 			
-			if readLineData(from: fileLine, to: &line) {
+			if readLineData(from: fileLine, to: &line, p1: &p1, p2: &p2) {
 				if line.flags&TWO_SIDED == TWO_SIDED {
 					isTwoSided = true
 				}
@@ -76,7 +78,7 @@ extension EditWorld {
 			}
 			
 			if finishedReadingLine {
-				newLine(line: &line)
+				newLine(line: &line, from: p1, to: p2)
 				line = Line()
 				finishedReadingLine = false
 				isTwoSided = false
@@ -96,7 +98,7 @@ extension EditWorld {
 	
 	
 	
-	func readLineData(from fileLine: String, to line: inout Line) -> Bool {
+	func readLineData(from fileLine: String, to line: inout Line, p1: inout NSPoint, p2: inout NSPoint) -> Bool {
 		
 		let scanner = Scanner(string: fileLine)
 		scanner.charactersToBeSkipped = CharacterSet()
@@ -117,10 +119,10 @@ extension EditWorld {
 		{
 			return false
 		} else {
-			line.end1.coord.x = CGFloat(p1x)
-			line.end1.coord.y = CGFloat(p1y)
-			line.end2.coord.x = CGFloat(p2x)
-			line.end2.coord.y = CGFloat(p2y)
+			p1.x = CGFloat(p1x)
+			p1.y = CGFloat(p1y)
+			p2.x = CGFloat(p2x)
+			p2.y = CGFloat(p2y)
 		}
 		return true
 	}

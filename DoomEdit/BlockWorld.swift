@@ -186,13 +186,11 @@ class BlockWorld {
 		if li & SIDEBIT == SIDEBIT {
 			li &= ~SIDEBIT
 			let index = Int(li)
-			lines[index].backSelected = true
-			lines[index].isSelected = true
+			lines[index].selected = 2
 			return
 		}
 		let index = Int(li)
-		lines[index].frontSelected = true
-		lines[index].isSelected = true
+		lines[index].selected = 1
 	}
 	
 	/// Scans for all lines in an enclosed area and selects them.
@@ -308,6 +306,7 @@ class BlockWorld {
 	}
 	
 	/// Displays the block map visually in a window for testing purposes.
+	/*
 	func displayBlockMap() {
 		
 		var aRect: NSRect
@@ -329,68 +328,34 @@ class BlockWorld {
 			}
 		}
 	}
-	
-	/*
-	- displayBlockMap
-	{
-	NXRect	aRect;
-	id		window;
-	unsigned char		*planes[5];
-	int		i,size;
-	short	*src, *dest;
-	
-	NXSetRect (&aRect, 100, 100, brow/WLSIZE, bheight);
-	window = [[Window alloc]
-	initContent:	&aRect
-	style:		NX_TITLEDSTYLE
-	backing:		NX_RETAINED
-	buttonMask:	NX_MINIATURIZEBUTTONMASK|NX_CLOSEBUTTONMASK
-	defer:		NO
-	];
-	
-	[window display];
-	[window orderFront:nil];
-	
-	blockview = [window contentView];
-	size = brow/WLSIZE*bheight;
-	dest = (short *)planes[0] = malloc (size*2);
-	src = bmap;
-	for (i=0 ; i<size; i++)
-	{
-	if (src[WL_MARK])
-	*dest = 0xff;
-	else if (src[0] || src[1] || src[2] || src[3] || src[WL_NWSE] || src[WL_NESW])
-	*dest = 0xffffffff;
-	else
-	*dest = 0;
-	src += WLSIZE;
-	dest++;
-	}
-	
-	aRect.origin.x = aRect.origin.y = 0;
-	
-	[blockview lockFocus];
-	NXDrawBitmap(
-	&aRect,
-	bwidth,
-	bheight,
-	4,
-	3,
-	16,
-	bwidth*2,
-	NO,
-	NO,
-	NX_RGBColorSpace,
-	planes
-	);
-	[blockview unlockFocus];
-	
-	NXPing();
-	
-	free (planes[0]);
-	return self;
-	}
 	*/
+	
+	func makeSector() -> Bool {
+		
+		var newSector = Sector()
+		
+		for i in 0..<lines.count {
+			let line = lines[i]
+			if line.selected < 1 {
+				let side = line.side[line.selected-1]
+				newSector.def = side!.ends
+				if newSector.lines.contains(i) {
+					print("line grouped into sector twice")
+					return false
+				} else {
+					lines[i].side[lines[i].selected-1]!.sector = sectors.count
+					newSector.lines.append(i)
+				}
+				sectors.append(newSector)
+			} else {
+				continue
+			}
+		}
+		return true
+		
+	}
+	
+	
 	
 	
 	

@@ -76,8 +76,8 @@ class LineViewController: NSViewController {
 		frontUpperLabel.stringValue = line.side[0]?.upperTexture ?? "—"
 		frontMiddle.stringValue = line.side[0]?.middleTexture ?? "—"
 		frontLowerLabel.stringValue = line.side[0]?.lowerTexture ?? "—"
-		frontXOffsetTextField.integerValue = (line.side[0]?.x_offset)!
-		frontYOffsetTextField.integerValue = (line.side[0]?.y_offset)!
+		frontXOffsetTextField.integerValue = line.side[0]!.x_offset
+		frontYOffsetTextField.integerValue = line.side[0]!.y_offset
 		backUpperLabel.stringValue = line.side[1]?.upperTexture ?? "-"
 		backMiddleLabel.stringValue = line.side[1]?.middleTexture ?? "-"
 		backLowerLabel.stringValue = line.side[1]?.lowerTexture ?? "-"

@@ -11,6 +11,8 @@ import Cocoa
 class SectorPanel: NSViewController, NSTextDelegate {
 
 	var def = SectorDef()
+	var selectedSides: [Int] = []
+	var newDef = SectorDef()
 	
 	
 	@IBOutlet weak var sectorLabel: NSTextField!
@@ -67,6 +69,36 @@ class SectorPanel: NSViewController, NSTextDelegate {
 		}
 	}
 	
+	override func viewWillDisappear() {
+		super.viewWillDisappear()
+		
+		print("viewWillDisappear")
+		
+		newDef.ceilingHeight = ceilingHeightTextField.integerValue
+		newDef.floorHeight = floorHeightTextField.integerValue
+		newDef.tag = tagTextField.integerValue
+		newDef.lightLevel = lightTextField.integerValue
+		newDef.special = specialTextField.integerValue
+
+		fillSector(with: newDef)
+		
+		
+	}
+	
+	func fillSector(with def: SectorDef) {
+		for i in 0..<selectedSides.count {
+			if selectedSides[i] & SIDE_BIT == SIDE_BIT {
+				var line = selectedSides[i]
+				line &= ~SIDE_BIT
+				lines[line].side[1]?.ends = def
+			} else {
+				let line = selectedSides[i]
+				lines[line].side[0]?.ends = def
+			}
+		}
+	}
+
+	
 	@IBAction func suggestTagClicked(_ sender: NSButton) {
 
 		var maxTag = 0
@@ -82,6 +114,7 @@ class SectorPanel: NSViewController, NSTextDelegate {
 		}
 		
 		tagTextField.integerValue = maxTag + 1
+		newDef.tag = tagTextField.integerValue
 	}
 	
 	

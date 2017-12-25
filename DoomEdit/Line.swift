@@ -20,21 +20,15 @@ let SHOW_ON_MAP = 256
 
 struct Line {
 	
-	var end1, end2: Point
+//	var end1, end2: Point
 	var pt1, pt2: Int
 	
-//	var front: Side
-//	var back: Side?
-
 	var side: [Side?]
 	
 	var flags: Int
 	var special: Int
 	var tag: Int
-	
-	var isSelected: Bool
-	var backSelected: Bool = false
-	var frontSelected: Bool = false
+	var selected: Int = 0
 	
 	// TODO: - var length
 	var midpoint: NSPoint
@@ -57,22 +51,21 @@ struct Line {
 	var color: NSColor {
 		if special != 0 {
 			return Color.lineSpecial
-		} else if side[1] != nil {
+		} else if flags & TWO_SIDED == TWO_SIDED {
 			return Color.lineTwoSided
 		}
-		return NSColor.black
+		return Color.lineOneSided
 	}
 	
 	init() {
 		side = Array(repeating: nil, count: 2)
-		end1 = Point()
-		end2 = Point()
+//		end1 = Point()
+//		end2 = Point()
 		pt1 = 0
 		pt2 = 0
 		flags = 0
 		special = 0
 		tag = 0
-		isSelected = false
 		midpoint = NSPoint()
 		normal = NSPoint()
 	}

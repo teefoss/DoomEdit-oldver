@@ -32,10 +32,7 @@ extension MapView {
 		drawThings(in: dirtyRect)
 		drawLines(in: dirtyRect)
 		drawPoints(in: dirtyRect)
-		
-		print(dirtyRect.size.width)
-		print(dirtyRect.origin)
-		
+				
 	}
 
 	/// Draws the 64x64 fixed tiles and the adjustable grid
@@ -49,7 +46,7 @@ extension MapView {
 		let offSet = CGFloat(0.5)
 		
 		if let context = NSGraphicsContext.current?.cgContext {
-			NSColor.white.setFill()
+			Color.background.setFill()
 			context.fill(rect)
 			context.flush()
 		}
@@ -117,7 +114,7 @@ extension MapView {
 			
 			
 			lines[i].color.set()
-			if lines[i].isSelected {
+			if lines[i].selected > 0 {
 				NSColor.red.set()
 			}
 			NSBezierPath.defaultLineWidth = LINE_WIDTH
@@ -157,12 +154,16 @@ extension MapView {
 		for i in 0..<points.count {
 			let point = points[i]
 			
+			if point.selected == -1 {
+				continue
+			}
+			
 			let origin = convert(point.coord, from: superview)
 			let offset: CGFloat = 2.5
 			let size = NSSize(width: 4, height: 4)
 			let rect = NSRect(x: origin.x-offset, y: origin.y-offset, width: size.width, height: size.height)
 
-			if point.isSelected {
+			if point.selected == 1 {
 				NSColor.red.set()
 				NSBezierPath.fill(rect)
 			} else {
@@ -227,10 +228,10 @@ extension MapView {
 	}
 	
 	// =====================
-	// MARK: - Line Dragging
+	// MARK: - Line Drawing
 	// =====================
 	
-	func dragLine_LMDown(with event: NSEvent) {
+	func drawLine_LMDown(with event: NSEvent) {
 		// TODO: Move all this out into a function
 		// TODO: Draw the 'tick' mark while adding a line
 		
@@ -245,7 +246,7 @@ extension MapView {
 		shapeLayerIndex = layer?.sublayers?.index(of: shapeLayer)
 	}
 	
-	func dragLine_LMDragged(with event: NSEvent) {
+	func drawLine_LMDragged(with event: NSEvent) {
 		didDragLine = true
 		needsDisplay = false		// don't redraw everything while adding a line (???)
 		endPoint = getViewGridPoint(from: event.locationInWindow)
@@ -255,9 +256,10 @@ extension MapView {
 		self.shapeLayer.path = path
 	}
 	
-	func dragLine_LMUp() {
+	func drawLine_LMUp() {
 		
 		var line = Line()
+		line.side[0] = lines.last?.side[0]
 
 		layer?.sublayers?.remove(at: shapeLayerIndex)
 		
@@ -271,9 +273,7 @@ extension MapView {
 			if pt1.x == pt2.x && pt1.y == pt2.y {
 				return
 			} else {
-				line.end1.coord = pt1
-				line.end2.coord = pt2
-				editWorld.newLine(line: &line)
+				editWorld.newLine(line: &line, from: pt1, to: pt2)
 				editWorld.selectLine(numLines-1)
 				frame = editWorld.getBounds()
 				setNeedsDisplay(bounds)

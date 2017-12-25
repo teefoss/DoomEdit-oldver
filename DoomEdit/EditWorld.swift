@@ -104,7 +104,7 @@ class EditWorld {
 	// ===========================
 
 	
-	/// Adds a new point to the `points` storage array
+	/// Adds a new point to the `points` storage array. Return the index of the new point.
 	private func newPoint(_ point: NSPoint) -> Int {
 		
 		boundsDirty = true
@@ -117,36 +117,56 @@ class EditWorld {
 		newPoint.coord.x = roundedPtx
 		newPoint.coord.y = roundedPty
 
-		// check if the point exists already and just add the new ref if needed
-		
+		// use an existing point if equal. increment its refcount
 		for i in 0..<points.count {
 			let pt = points[i]
-			if pt.coord.x == newPoint.coord.x && pt.coord.y == newPoint.coord.y {
+			if pt.selected != -1 && pt.coord.x == newPoint.coord.x && pt.coord.y == newPoint.coord.y {
+				points[i].refcount += 1
 				return i
 			}
 		}
 		
 		points.append(newPoint)
+		
+		// set default values
+		
+		points[points.count-1].refcount = 1
+		points[points.count-1].selected = 0
+		
 		numPoints += 1
+		dirtyPoints = true
 		
 		return numPoints-1
 	}
+	
+	/// Decrements a point's reference count. If unused (i.e. refcount is 0), remove it.
+	func dropRefCount(for point: Int) {
+		if (points[point].refcount - 1) > 0 {
+			points[point].refcount -= 1
+			return
+		}
+		points[point].selected = -1
+		return
+	}
 
 	
-	/// Adds a new line to 'lines' storage array
-	func newLine(line: inout Line) {
+	/// Adds a new line to the `lines` array and returns the index it was put in.
+	@discardableResult
+	func newLine(line: inout Line, from p1: NSPoint, to p2: NSPoint) -> Int {
 
 		numLines += 1
 
-		line.pt1 = newPoint(line.end1.coord)
-		line.pt2 = newPoint(line.end2.coord)
+		line.pt1 = newPoint(p1)
+		line.pt2 = newPoint(p2)
 
-		lines.append(line)
+		changeLine(numLines-1, to: line)
 
 		dirtyPoints = true
 		boundsDirty = true // added
 		
 		updateLineNormal(numLines-1)
+		
+		return numLines - 1
 	}
 	
 	func newThing(_ thing: Thing) {
@@ -183,6 +203,7 @@ class EditWorld {
 				if lines[i].pt1 == num || lines[i].pt2 == num {
 					// TODO: add to dirty rect p1 and p2
 					// TODO: update line normal for line i
+					updateLineNormal(i)
 				}
 			}
 		}
@@ -197,54 +218,66 @@ class EditWorld {
 		}
 		
 		// TODO: Add to dirty rect
-		
+
 		// change the line
-		lines[num] = newLine
-		updateLineNormal(num)
 		
+		//if it's a new addition, it must be appended
+		if num == numLines-1 {
+			lines.append(newLine)
+			updateLineNormal(lines.count-1)
+		} else {
+			lines[num] = newLine
+			updateLineNormal(num)
+		}
+
+		
+	}
+	
+	func changeThing(_ num: Int, to newThing: Thing) {
+		// TODO: changeThing
 	}
 
 	
 	
 	// =======================
-	// MARK: Selection Methods
+	// MARK: - Selection Methods
 	// =======================
 
 	func selectPoint(_ i: Int) {
-		points[i].isSelected = true
+		points[i].selected = 1
 	}
 	
 	func deselectPoint(_ i: Int) {
-		points[i].isSelected = false
+		points[i].selected = 0
 	}
 	
 	func deselectAllPoints() {
 		for i in 0..<points.count {
-			points[i].isSelected = false
+			if points[i].selected == 1 {
+				points[i].selected = 0
+			}
 		}
 	}
 	
 	func selectLine(_ i: Int) {
-		lines[i].isSelected = true
-		
+		lines[i].selected = 1
 		
 		// also select its points
-		points[lines[i].pt1].isSelected = true
-		points[lines[i].pt2].isSelected = true
+		points[lines[i].pt1].selected = 1
+		points[lines[i].pt2].selected = 1
 	}
 	
 	func deselectLine(_ i: Int) {
-		lines[i].isSelected = false
+		lines[i].selected = 0
 		
 		// also deselect its points
-		points[lines[i].pt1].isSelected = false
-		points[lines[i].pt2].isSelected = false
-		
+		points[lines[i].pt1].selected = 0
+		points[lines[i].pt2].selected = 0
 	}
 	
 	func deselectAllLines() {
 		for i in 0..<lines.count {
-			lines[i].isSelected = false
+			lines[i].selected = 0
 		}
 	}
 	
@@ -268,6 +301,80 @@ class EditWorld {
 		deselectAllThings()
 	}
 
+	
+	
+	// ======================================
+	// MARK: - Selection Modification Methods
+	// ======================================
+	
+	func flipSelectedLines() {
+		
+	}
+	
+	func fusePoints() {
+
+		var p1, p2: NSPoint
+		var line: Line
+		
+		for i in 0..<points.count-1 {
+			
+			if points[i].selected != 1 {
+				continue
+			}
+			p1 = points[i].coord
+			
+			// find any points that are on the same spot as point i
+			for j in 0..<points.count-1 {
+				
+				if points[j].selected == -1 || j == i {
+					continue
+				}
+				
+				p2 = points[j].coord
+				if p1.x != p2.x || p1.y != p2.y {
+					continue
+				}
+				
+				// find all lines that use point j
+				for k in 0..<lines.count {
+					line = lines[k]
+					if line.selected == -1 {
+						continue
+					}
+					if line.pt1 == j {
+						lines[k].pt1 = i
+					} else if line.pt2 == j {
+						lines[k].pt2 = i
+					}
+				}
+				points[j].selected = -1
+			}
+		}
+	}
+	
+	func separatePoints() {
+		
+		var line: Line
+		
+		for i in 0..<points.count-1 {
+			if points[i].selected != 1 {
+				continue
+			}
+//			if points[i].refcount < 2 {
+//				continue
+//			}
+		}
+	}
+	
+	
+
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	
