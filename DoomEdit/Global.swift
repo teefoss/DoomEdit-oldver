@@ -9,7 +9,7 @@
 import Cocoa
 
 // File (testing)
-let fileName = "e1m1"
+let fileName = "e4m6"
 let fileExt = "dwd"
 let fullFileName = fileName + "." + fileExt
 

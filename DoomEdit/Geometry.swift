@@ -67,11 +67,11 @@ func makeRect(_ rect: inout NSRect, with pt1: NSPoint, and pt2: NSPoint) {
 
 func enclosePoint(rect: inout NSRect, point: NSPoint) {
 	
-	var right: CGFloat = 0
-	var top: CGFloat = 0
-	
-	right = rect.maxX - 1
-	top = rect.maxY - 1
+//	var right: CGFloat = rect.maxX - 1
+//	var top: CGFloat = rect.maxY - 1
+
+	var right = rect.origin.x + rect.size.width - 1
+	var top = rect.origin.y + rect.size.height - 1
 	
 	if point.x < rect.origin.x {
 		rect.origin.x = point.x

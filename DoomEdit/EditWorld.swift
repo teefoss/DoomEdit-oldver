@@ -129,7 +129,6 @@ class EditWorld {
 		points.append(newPoint)
 		
 		// set default values
-		
 		points[points.count-1].refcount = 1
 		points[points.count-1].selected = 0
 		
@@ -159,7 +158,8 @@ class EditWorld {
 		line.pt1 = newPoint(p1)
 		line.pt2 = newPoint(p2)
 
-		changeLine(numLines-1, to: line)
+		lines.append(line)
+		//changeLine(numLines-1, to: &line)
 
 		dirtyPoints = true
 		boundsDirty = true // added
@@ -200,16 +200,15 @@ class EditWorld {
 		if moved {
 			dirtyPoints = true
 			for i in 0..<lines.count {
-				if lines[i].pt1 == num || lines[i].pt2 == num {
+				if lines[i].selected != -1 && (lines[i].pt1 == num || lines[i].pt2 == num) {
 					// TODO: add to dirty rect p1 and p2
-					// TODO: update line normal for line i
 					updateLineNormal(i)
 				}
 			}
 		}
 	}
 	
-	func changeLine(_ num: Int, to newLine: Line) {
+	func changeLine(_ num: Int, to data: inout Line) {
 		
 		boundsDirty = true
 		
@@ -218,19 +217,18 @@ class EditWorld {
 		}
 		
 		// TODO: Add to dirty rect
+		// Mark the old position of the line as dirty
 
 		// change the line
 		
 		//if it's a new addition, it must be appended
-		if num == numLines-1 {
-			lines.append(newLine)
-			updateLineNormal(lines.count-1)
-		} else {
-			lines[num] = newLine
+		if data.selected != 1 {
+			// TODO: mark the new position of the line as dirty
 			updateLineNormal(num)
+		} else {
+			dropRefCount(for: lines[num].pt1)
+			dropRefCount(for: lines[num].pt2)
 		}
-
-		
 	}
 	
 	func changeThing(_ num: Int, to newThing: Thing) {
@@ -357,12 +355,13 @@ class EditWorld {
 		var line: Line
 		
 		for i in 0..<points.count-1 {
+			
 			if points[i].selected != 1 {
-				continue
-			}
-//			if points[i].refcount < 2 {
-//				continue
-//			}
+				continue }
+			if points[i].refcount < 2 {
+				continue }
+			
+			
 		}
 	}
 	

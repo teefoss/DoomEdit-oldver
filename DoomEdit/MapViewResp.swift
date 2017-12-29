@@ -520,16 +520,20 @@ extension MapView {
 		
 		for i in 0..<lines.count {
 			
-			let pt1selected = points[lines[i].pt1].selected
-			let pt2selected = points[lines[i].pt2].selected
+			if lines[i].selected == -1 {
+				continue
+			}
 			
-			if pt1selected == 1 || pt2selected == 1 {
+			let pt1selected = points[lines[i].pt1].selected == 1
+			let pt2selected = points[lines[i].pt2].selected == 1
+			
+			if pt1selected || pt2selected {
 				lineList.append(i)
 			}
 			
-			if pt1selected == 1 && pt2selected != 1 {
+			if pt1selected && !pt2selected {
 				enclosePoint(rect: &fixedRect, point: points[lines[i].pt2].coord)  // pt2 is fixed
-			} else if pt2selected == 1 && pt1selected != 1 {
+			} else if pt2selected && !pt1selected {
 				enclosePoint(rect: &fixedRect, point: points[lines[i].pt1].coord)  // pt1 is fixed
 			}
 		}
@@ -587,6 +591,9 @@ extension MapView {
 		if pointCount == 1 {
 			points[lastPoint].coord = cursor
 		} else {
+			if cursor.x == moved.x && cursor.y == moved.y {
+				return
+			}
 			
 			moved.x = cursor.x - moved.x
 			moved.y = cursor.y - moved.y
@@ -617,15 +624,30 @@ extension MapView {
 		}
 		
 		// redraw new frame
+		let convertedFixedRect = convert(fixedRect, from: superview)
+		let convertedDragRect = convert(dragRect, from: superview)
+		let convertedOldDragRect = convert(oldDragRect, from: superview)
+		
+//		currentDragRect = convertedDragRect
+//		currentDragRect.origin.x += cursor.x
+//		currentDragRect.origin.y += cursor.y
+//		updateRect = currentDragRect
+//		NSUnionRect(convertedOldDragRect, updateRect)
+//		NSUnionRect(convertedFixedRect, updateRect)
+//		oldDragRect = currentDragRect
+//		self.setNeedsDisplay(updateRect)
+
 		currentDragRect = dragRect
 		currentDragRect.origin.x += cursor.x
 		currentDragRect.origin.y += cursor.y
 		updateRect = currentDragRect
-		NSUnionRect(oldDragRect, updateRect)
-		NSUnionRect(fixedRect, updateRect)
+		updateRect = NSUnionRect(oldDragRect, updateRect)
+		updateRect = NSUnionRect(fixedRect, updateRect)
 		oldDragRect = currentDragRect;
-		self.setNeedsDisplay(updateRect)
+		let viewUpdateRect = convert(updateRect, from: superview)
+		self.setNeedsDisplay(viewUpdateRect)
 		
+		print(viewUpdateRect)
 		
 		
 		
@@ -675,6 +697,10 @@ extension MapView {
 		
 		// find the closest line to the given point
 		for l in 0..<lines.count {
+			
+			if lines[l].selected == -1 {
+				continue
+			}
 			
 			p1 = points[lines[l].pt1].coord
 			p2 = points[lines[l].pt2].coord
