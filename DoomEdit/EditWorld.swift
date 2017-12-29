@@ -105,37 +105,44 @@ class EditWorld {
 
 	
 	/// Adds a new point to the `points` storage array. Return the index of the new point.
-	private func newPoint(_ point: NSPoint) -> Int {
+	private func allocatePoint(_ coord: NSPoint) -> Int {
 		
-		boundsDirty = true
-		dirtyPoints = true
-		
-		let roundedPtx = CGFloat(Int(point.x))
-		let roundedPty = CGFloat(Int(point.y))
-
 		var newPoint = Point()
-		newPoint.coord.x = roundedPtx
-		newPoint.coord.y = roundedPty
-
-		// use an existing point if equal. increment its refcount
-		for i in 0..<points.count {
-			let pt = points[i]
-			if pt.selected != -1 && pt.coord.x == newPoint.coord.x && pt.coord.y == newPoint.coord.y {
-				points[i].refcount += 1
-				return i
-			}
-		}
-		
-		points.append(newPoint)
+		newPoint.coord = coord
 		
 		// set default values
-		points[points.count-1].refcount = 1
-		points[points.count-1].selected = 0
+		newPoint.refcount = 1
+		newPoint.selected = 0
+
+		points.append(newPoint)
 		
 		numPoints += 1
 		dirtyPoints = true
 		
 		return numPoints-1
+	}
+	
+	private func newPoint(_ coord: NSPoint) -> Int {
+		
+		boundsDirty = true
+		dirtyPoints = true
+		
+		let roundedPtx = CGFloat(Int(coord.x))
+		let roundedPty = CGFloat(Int(coord.y))
+
+		var roundedPt = Point()
+		roundedPt.coord.x = roundedPtx
+		roundedPt.coord.y = roundedPty
+
+		// use an existing point if equal. increment its refcount
+		for i in 0..<points.count {
+			let pt = points[i]
+			if pt.selected != -1 && pt.coord.x == roundedPt.coord.x && pt.coord.y == roundedPt.coord.y {
+				points[i].refcount += 1
+				return i
+			}
+		}
+		return allocatePoint(roundedPt.coord)
 	}
 	
 	/// Decrements a point's reference count. If unused (i.e. refcount is 0), remove it.
@@ -350,19 +357,34 @@ class EditWorld {
 		}
 	}
 	
+	/// All selected points that have a refcount greater than one will have clones made
 	func separatePoints() {
 		
 		var line: Line
 		
 		for i in 0..<points.count-1 {
 			
-			if points[i].selected != 1 {
-				continue }
-			if points[i].refcount < 2 {
-				continue }
+			if points[i].selected != 1 { continue }
+			if points[i].refcount < 2 { continue }
 			
-			
+			for k in 0..<lines.count {
+				
+				line = lines[k]
+				if line.selected == -1 { continue }
+				
+				if line.pt1 == i {
+					if points[i].refcount == 1 { break }  // all the other uses have been separated
+					lines[k].pt1 = allocatePoint(points[i].coord)
+					points[i].refcount -= 1
+				} else if line.pt2 == i {
+					if points[i].refcount == 1 { break }
+					lines[k].pt2 = allocatePoint(points[i].coord)
+					points[i].refcount -= 1
+				}
+			}
 		}
+		
+		// TODO: Update windows
 	}
 	
 	

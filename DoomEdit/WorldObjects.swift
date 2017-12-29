@@ -12,20 +12,20 @@ import Cocoa
 
 struct Point {
 	var coord = NSPoint()
-	var selected: Int = 0	// -1 = deleted, 0 = unselected, 1 = selected
+	/// -1: deleted, 0: unselected, 1: selected
+	var selected: Int = 0
+	/// The number of lines connected to this point
 	var refcount: Int = 0	// when 0, remove it
 }
 
 struct Side {
-
 	var x_offset: Int = 0
 	var y_offset: Int = 0
 	var middleTexture: String?
 	var upperTexture: String?
 	var lowerTexture: String?
-	var ends: SectorDef = SectorDef()
+	var ends = SectorDef()
 	var sector: Int = -1
-	
 }
 
 struct Sector {

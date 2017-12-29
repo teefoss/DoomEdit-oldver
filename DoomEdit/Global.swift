@@ -30,6 +30,7 @@ let KEY_I: 				UInt16 = 34
 let KEY_SPACE:			UInt16 = 49
 let KEY_1:				UInt16 = 18
 let KEY_F:				UInt16 = 3
+let KEY_S:				UInt16 = 1
 
 // Colors
 let CLLT_BKG = NSColor.white

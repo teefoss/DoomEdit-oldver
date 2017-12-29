@@ -61,7 +61,8 @@ extension MapView {
 			toggleDrawMode()
 		case KEY_F:
 			editWorld.fusePoints()
-			print("fuse points")
+		case KEY_S:
+			editWorld.separatePoints()
 		default: break
 		}
 	}
@@ -624,19 +625,6 @@ extension MapView {
 		}
 		
 		// redraw new frame
-		let convertedFixedRect = convert(fixedRect, from: superview)
-		let convertedDragRect = convert(dragRect, from: superview)
-		let convertedOldDragRect = convert(oldDragRect, from: superview)
-		
-//		currentDragRect = convertedDragRect
-//		currentDragRect.origin.x += cursor.x
-//		currentDragRect.origin.y += cursor.y
-//		updateRect = currentDragRect
-//		NSUnionRect(convertedOldDragRect, updateRect)
-//		NSUnionRect(convertedFixedRect, updateRect)
-//		oldDragRect = currentDragRect
-//		self.setNeedsDisplay(updateRect)
-
 		currentDragRect = dragRect
 		currentDragRect.origin.x += cursor.x
 		currentDragRect.origin.y += cursor.y
