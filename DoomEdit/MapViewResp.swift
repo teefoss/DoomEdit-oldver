@@ -544,7 +544,7 @@ extension MapView {
 		//
 		// the dragrect encloses all selected points
 		//
-		let offset = CGFloat(THING_DRAW_SIZE/2 + 2)
+		let offset = CGFloat((THING_DRAW_SIZE/2) + 2)
 		
 		for i in 0..<points.count {
 			if points[i].selected == 1 {
@@ -619,7 +619,6 @@ extension MapView {
 			moved = cursor
 		}
 		
-		// TODO: update line normals
 		for i in 0..<lineCount {
 			editWorld.updateLineNormal(lineList[i])
 		}
@@ -632,13 +631,14 @@ extension MapView {
 		updateRect = NSUnionRect(oldDragRect, updateRect)
 		updateRect = NSUnionRect(fixedRect, updateRect)
 		oldDragRect = currentDragRect;
-		let viewUpdateRect = convert(updateRect, from: superview)
+		var viewUpdateRect = convert(updateRect, from: superview)
+		
+		// extend to include any line normals and points
+		viewUpdateRect.origin.x -= CGFloat(LINE_NORMAL_LENGTH)
+		viewUpdateRect.origin.y -= CGFloat(LINE_NORMAL_LENGTH)
+		viewUpdateRect.size.width += CGFloat(LINE_NORMAL_LENGTH*2)
+		viewUpdateRect.size.height += CGFloat(LINE_NORMAL_LENGTH*2)
 		self.setNeedsDisplay(viewUpdateRect)
-		
-		print(viewUpdateRect)
-		
-		
-		
 	}
 	
 	func dragObjects_LMUp(with event: NSEvent) {
@@ -668,9 +668,9 @@ extension MapView {
 	
 	
 	
-	// =============
-	// MARK: Sectors
-	// =============
+	// ====================
+	// MARK: - Sector Stuff
+	// ====================
 	
 	func lineByPoint(point: NSPoint, side: inout Int) -> Int {
 		

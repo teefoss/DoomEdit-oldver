@@ -384,10 +384,8 @@ class EditWorld {
 	// ======================================
 	// MARK: - Selection Modification Methods
 	// ======================================
-	
-	func flipSelectedLines() {
-		
-	}
+
+	// TODO: func flipSelectedLines()
 	
 	// FIXME: This does not work with points that have been separated
 	func fusePoints() {
