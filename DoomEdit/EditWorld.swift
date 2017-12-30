@@ -31,18 +31,6 @@ class EditWorld {
 	var boundsDirty: Bool = false
 	var dirtyRect: NSRect = NSRect.zero
 	var dirtyPoints: Bool = false
-
-	var sectors: [Sector] = []
-	
-	var copiedLines: [Line] = []
-	var copiedSectors: [Sector] = []
-	var copiedThings: [Thing] = []
-
-	
-	
-	// ================
-	// MARK: - Geometry
-	// ================
 	
 	/// Goes through all the points and adjusts the world bounds to encompass them. Returns the new bounds.
 	@discardableResult
@@ -82,6 +70,12 @@ class EditWorld {
 		return bounds
 	}
 
+	
+	
+	// ==============================
+	// MARK: - Visual Related Methods
+	// ==============================
+	
 	func updateLineNormal(_ num: Int) {
 		
 		let p1 = points[lines[num].pt1].coord
@@ -97,6 +91,15 @@ class EditWorld {
 		lines[num].normal.y = lines[num].midpoint.y - dx/length
 	}
 	
+	func addPointToDirtyRect(_ point: NSPoint) {
+		enclosePoint(rect: &dirtyRect, point: point)
+	}
+
+	/// The rect around the two points is added to the dirty rect.
+	func addToDirtyRect(pt1: Int, pt2: Int) {
+		addPointToDirtyRect(points[pt1].coord)
+		addPointToDirtyRect(points[pt2].coord)
+	}
 	
 	
 	// ===========================
@@ -185,15 +188,18 @@ class EditWorld {
 		
 		boundsDirty = true
 		
-		if num < numPoints {
+		if num < numPoints {	// can't get a dirty rect from a single new point
 			if newPoint.coord.x == points[num].coord.x && newPoint.coord.y == points[num].coord.y {
 				// point's position didn't change
-				// TODO: make this happen
-				//self.addToDirtRect
+				addToDirtyRect(pt1: num, pt2: num)
 				moved = false
 			} else {
 				//the dirty rect encloses all the lines that use the point, both before and after the move
-				// TODO: same
+				for i in 0..<lines.count {
+					if lines[i].pt1 == num || lines[i].pt2 == num {
+						addToDirtyRect(pt1: lines[i].pt1, pt2: lines[i].pt2)
+					}
+				}
 				moved = true
 			}
 		}
@@ -208,7 +214,7 @@ class EditWorld {
 			dirtyPoints = true
 			for i in 0..<lines.count {
 				if lines[i].selected != -1 && (lines[i].pt1 == num || lines[i].pt2 == num) {
-					// TODO: add to dirty rect p1 and p2
+					addToDirtyRect(pt1: lines[i].pt1, pt2: lines[i].pt2)
 					updateLineNormal(i)
 				}
 			}
@@ -223,14 +229,17 @@ class EditWorld {
 			fatalError("Error. Sent line \(num) with numLines \(numLines)!")
 		}
 		
-		// TODO: Add to dirty rect
 		// Mark the old position of the line as dirty
+		if lines[num].selected != -1 {
+			addToDirtyRect(pt1: lines[num].pt1, pt2: lines[num].pt2)
+		}
 
 		// change the line
+		lines[num] = data
 		
-		//if it's a new addition, it must be appended
 		if data.selected != 1 {
-			// TODO: mark the new position of the line as dirty
+			// mark the new position of the line as dirty
+			addToDirtyRect(pt1: lines[num].pt1, pt2: lines[num].pt2)
 			updateLineNormal(num)
 		} else {
 			dropRefCount(for: lines[num].pt1)
@@ -248,8 +257,19 @@ class EditWorld {
 	// MARK: - Selection Methods
 	// =======================
 
-	func selectPoint(_ i: Int) {
-		points[i].selected = 1
+	func selectPoint(_ num: Int) {
+		
+		var data: Point
+		
+		if num >= points.count {
+			fatalError("selectPoint: num >= points.count")
+		}
+		data = points[num]
+		if data.selected == -1 {
+			return
+		}
+		data.selected = 1
+		changePoint(num, to: data)
 	}
 	
 	func deselectPoint(_ i: Int) {
@@ -316,6 +336,7 @@ class EditWorld {
 		
 	}
 	
+	// FIXME: This does not work with points that have been separated
 	func fusePoints() {
 
 		var p1, p2: NSPoint
