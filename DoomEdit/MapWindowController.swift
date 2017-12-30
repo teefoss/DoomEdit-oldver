@@ -14,7 +14,7 @@ extension NSNib.Name {
 
 protocol MapViewDelegate {
 	func zoom(to point: NSPoint, with scale: CGFloat)
-	func updateView()
+	func redisplay(_ dirtyrect: NSRect)
 //	func updateThingWindow(with data: Thing)
 }
 
@@ -65,8 +65,8 @@ class MapWindowController: NSWindowController, MapViewDelegate {
 		scrollView.setMagnification(CGFloat(scale), centeredAt: point)
 	}
 	
-	func updateView() {
-		mapView.setNeedsDisplay(mapView.bounds)
+	func redisplay(_ dirtyrect: NSRect) {
+		mapView.setNeedsDisplay(dirtyrect)
 	}
 	
 //	func updateThingWindow(with data: Thing) {

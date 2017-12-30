@@ -101,6 +101,7 @@ class EditWorld {
 		addPointToDirtyRect(points[pt2].coord)
 	}
 	
+	// TODO: updateDisplay()
 	
 	// ===========================
 	// MARK: - New Data Allocation
@@ -253,16 +254,27 @@ class EditWorld {
 
 	
 	
-	// =======================
+	// =========================
 	// MARK: - Selection Methods
-	// =======================
+	// =========================
 
+	func deselectAll() {
+		deselectAllPoints()
+		deselectAllLines()
+		deselectAllThings()
+	}
+
+	
+	
+	// MARK: Points
+	
 	func selectPoint(_ num: Int) {
 		
 		var data: Point
 		
 		if num >= points.count {
-			fatalError("selectPoint: num >= points.count")
+			print("selectPoint: num >= points.count")
+			return
 		}
 		data = points[num]
 		if data.selected == -1 {
@@ -272,40 +284,86 @@ class EditWorld {
 		changePoint(num, to: data)
 	}
 	
-	func deselectPoint(_ i: Int) {
-		points[i].selected = 0
+	func deselectPoint(_ num: Int) {
+		
+		var data: Point
+		
+		if num >= points.count {
+			print("deselectPoint: num >= points.count")
+			return
+		}
+		data = points[num]
+		if data.selected == -1 {
+			print("deselectPoint: deleted")
+			return
+		}
+		data.selected = 0
+		changePoint(num, to: data)
 	}
 	
 	func deselectAllPoints() {
 		for i in 0..<points.count {
-			if points[i].selected == 1 {
+			if points[i].selected > 0 {
 				points[i].selected = 0
+				changePoint(i, to: points[i])
 			}
 		}
 	}
 	
-	func selectLine(_ i: Int) {
-		lines[i].selected = 1
+	
+	
+	// MARK: Lines
+	
+	// NB: Currently points are selected directly instead of calling changePoint (problem?)
+	func selectLine(_ num: Int) {
 		
-		// also select its points
-		points[lines[i].pt1].selected = 1
-		points[lines[i].pt2].selected = 1
+		var data: Line
+
+		if num >= lines.count {
+			print("selectLine: num >= lines.count")
+			return
+		}
+		data = lines[num]
+		if data.selected == -1 {
+			print("selectLine: deleted")
+			return
+		}
+		data.selected = 1
+		changeLine(num, to: &data)
+		points[lines[num].pt1].selected = 1
+		points[lines[num].pt2].selected = 1
 	}
 	
-	func deselectLine(_ i: Int) {
-		lines[i].selected = 0
+	func deselectLine(_ num: Int) {
 		
-		// also deselect its points
-		points[lines[i].pt1].selected = 0
-		points[lines[i].pt2].selected = 0
+		var data: Line
+		
+		if num >= lines.count {
+			print("deselectLines: num >= numliness")
+			return
+		}
+		data = lines[num]
+		if data.selected == -1 {
+			print("deselectLine: deleted point")
+			return
+		}
+		data.selected = 0
+		changeLine(num, to: &data)
 	}
 	
 	func deselectAllLines() {
 		for i in 0..<lines.count {
-			lines[i].selected = 0
+			if lines[i].selected > 0 {
+				var line = lines[i]
+				line.selected = 0
+				changeLine(i, to: &line)
+			}
 		}
 	}
 	
+	
+	
+	// MARK: Things
 	func selectThing(_ i: Int) {
 		things[i].isSelected = true
 	}
@@ -320,11 +378,6 @@ class EditWorld {
 		}
 	}
 	
-	func deselectAll() {
-		deselectAllPoints()
-		deselectAllLines()
-		deselectAllThings()
-	}
 
 	
 	
