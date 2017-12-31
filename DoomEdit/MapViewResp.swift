@@ -60,9 +60,19 @@ extension MapView {
 		case KEY_SPACE:
 			toggleDrawMode()
 		case KEY_F:
-			editWorld.fusePoints()
+			if event.modifierFlags.contains(.command) {
+				print("fuse points")
+				editWorld.fusePoints()
+			} else if event.modifierFlags.contains(.shift) {
+				print("flip lines")
+				editWorld.flipSelectedLines()
+			} else {
+				// Floor quick view
+			}
 		case KEY_S:
 			editWorld.separatePoints()
+		case KEY_DELETE:
+			editWorld.delete()
 		default: break
 		}
 	}
@@ -364,14 +374,14 @@ extension MapView {
 		if thingIndex >= 0 && thingIndex < things.count {
 			
 			// Thing is already selected
-			if things[thingIndex].isSelected {
+			if things[thingIndex].selected == 1 {
 				dragObjects_LMDown(with: event)
 				didClickThing = true
 				selectedThing = things[thingIndex]
 				selectedThingIndex = thingIndex
 				return
 				// Thing is not already selected
-			} else {
+			} else if things[thingIndex].selected == 0 {
 				if !event.modifierFlags.contains(.shift) {
 					editWorld.deselectAll()
 					editWorld.selectThing(thingIndex)
@@ -556,7 +566,7 @@ extension MapView {
 		}
 		
 		for i in 0..<things.count {
-			if things[i].isSelected {
+			if things[i].selected == 1 {
 				var pt: NSPoint
 				
 				pt = things[i].origin
@@ -607,7 +617,7 @@ extension MapView {
 			}
 			
 			for i in 0..<things.count {
-				if things[i].isSelected {
+				if things[i].selected == 1 {
 					things[i].origin.x += moved.x
 					things[i].origin.y += moved.y
 				}
@@ -633,11 +643,12 @@ extension MapView {
 		oldDragRect = currentDragRect;
 		var viewUpdateRect = convert(updateRect, from: superview)
 		
-		// extend to include any line normals and points
-		viewUpdateRect.origin.x -= CGFloat(LINE_NORMAL_LENGTH)
-		viewUpdateRect.origin.y -= CGFloat(LINE_NORMAL_LENGTH)
-		viewUpdateRect.size.width += CGFloat(LINE_NORMAL_LENGTH*2)
-		viewUpdateRect.size.height += CGFloat(LINE_NORMAL_LENGTH*2)
+		// extend to include any line normals and point edges
+		viewUpdateRect.origin.x -= CGFloat(LINE_NORMAL_LENGTH+1)
+		viewUpdateRect.origin.y -= CGFloat(LINE_NORMAL_LENGTH+1)
+		viewUpdateRect.size.width += CGFloat(LINE_NORMAL_LENGTH*2+1)
+		viewUpdateRect.size.height += CGFloat(LINE_NORMAL_LENGTH*2+1)
+
 		self.setNeedsDisplay(viewUpdateRect)
 	}
 	

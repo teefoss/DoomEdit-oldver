@@ -8,6 +8,10 @@
 
 import Cocoa
 
+protocol EditWorldDelegate {
+	func redisplay(_ dirtyRect: NSRect)
+}
+
 
 /**
 View that displays the map
@@ -102,6 +106,8 @@ class MapView: NSView, NSPopoverDelegate {
 										  userInfo: nil)
 		self.trackingArea = trackingArea
 		addTrackingArea(trackingArea)
+
+		editWorld.delegate = self
 		
 //		thingViewController = ThingViewController.init(nibName: NSNib.Name(rawValue: "ThingViewController"), bundle: nil)
 	}

@@ -18,7 +18,7 @@ let NETWORK = 16
 
 struct Thing {
 	
-	var isSelected: Bool = false
+	var selected: Int = 0
 	
 	var origin: NSPoint
 	var angle: Int

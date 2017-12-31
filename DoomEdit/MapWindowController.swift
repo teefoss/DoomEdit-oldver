@@ -66,12 +66,10 @@ class MapWindowController: NSWindowController, MapViewDelegate {
 	}
 	
 	func redisplay(_ dirtyrect: NSRect) {
-		mapView.setNeedsDisplay(dirtyrect)
+		print("mapView.setneedsdisplay called")
+		let newRect = mapView.convert(dirtyrect, from: self.window?.contentView)
+		mapView.setNeedsDisplay(newRect)
 	}
-	
-//	func updateThingWindow(with data: Thing) {
-//		thingWindow?.update(with: data)
-//	}
 }
 
 

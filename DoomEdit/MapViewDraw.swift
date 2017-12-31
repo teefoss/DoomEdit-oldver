@@ -22,7 +22,7 @@ fileprivate let gridColor = NSColor.systemBlue.withAlphaComponent(gridAlpha)
 MapView Drawing-related Methods
 */
 
-extension MapView {
+extension MapView: EditWorldDelegate {
 	
 	override func draw(_ dirtyRect: NSRect) {
 		super.draw(dirtyRect)
@@ -33,6 +33,18 @@ extension MapView {
 		drawLines(in: dirtyRect)
 		drawPoints(in: dirtyRect)
 				
+	}
+	
+	func redisplay(_ dirtyRect: NSRect) {
+
+		// convert from world coord to view coord
+		var rect = convert(dirtyRect, from: superview)
+		
+		// adjust for draw offset
+		rect.origin.x += 0.5
+		rect.origin.y += 0.5
+		
+		setNeedsDisplay(rect)
 	}
 
 	/// Draws the 64x64 fixed tiles and the adjustable grid
@@ -95,6 +107,10 @@ extension MapView {
 
 		for i in 0..<lines.count {
 			
+			if lines[i].selected == -1 {
+				continue
+			}
+			
 			let offset: CGFloat = 0.5
 			
 			// drawing will be in view coord, i.e. origin = (0, 0)...
@@ -127,20 +143,22 @@ extension MapView {
 	private func drawThings(in rect: NSRect) {
 
 		for thing in things {
+			if thing.selected == -1 {
+				continue
+			}
 			let origin = convert(thing.origin, from: superview)
 			let size = NSSize(width: 32, height: 32)
 			let offset: CGFloat = 16.5
 			let rect = NSRect(x: origin.x-offset, y: origin.y-offset, width: size.width, height: size.height)
 			
 			thing.color.set()
-			if thing.isSelected {
+			if thing.selected == 1 {
 				NSColor.red.set()
 			}
 			NSBezierPath.fill(rect)
 
 			// FIXME: Make this just a rotation
 			if thing.hasDirection {
-				
 				let path = thingArrow(in: rect, direction: thing.angle)
 				NSColor.white.set()
 				path.stroke()

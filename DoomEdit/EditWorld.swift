@@ -32,6 +32,8 @@ class EditWorld {
 	var dirtyRect: NSRect = NSRect.zero
 	var dirtyPoints: Bool = false
 	
+	var delegate: EditWorldDelegate?
+	
 	/// Goes through all the points and adjusts the world bounds to encompass them. Returns the new bounds.
 	@discardableResult
 	func getBounds() -> NSRect {
@@ -101,13 +103,20 @@ class EditWorld {
 		addPointToDirtyRect(points[pt2].coord)
 	}
 	
-	// TODO: updateDisplay()
+	func updateWindows() {
+		if dirtyRect.size.width == 0 {
+			return
+		}
+		delegate?.redisplay(dirtyRect)
+		dirtyRect = NSRect.zero
+	}
 	
-	// ===========================
-	// MARK: - New Data Allocation
-	// ===========================
+	
+	
+	// ===============================================
+	// MARK: - Data Allocation / Alteration / Deletion
+	// ===============================================
 
-	
 	/// Adds a new point to the `points` storage array. Return the index of the new point.
 	private func allocatePoint(_ coord: NSPoint) -> Int {
 		
@@ -170,7 +179,7 @@ class EditWorld {
 		line.pt2 = newPoint(p2)
 
 		lines.append(line)
-		//changeLine(numLines-1, to: &line)
+		changeLine(lines.count-1, to: &line)
 
 		dirtyPoints = true
 		boundsDirty = true // added
@@ -180,6 +189,7 @@ class EditWorld {
 		return numLines - 1
 	}
 	
+	// TODO: Expand this
 	func newThing(_ thing: Thing) {
 		things.append(thing)
 	}
@@ -238,7 +248,7 @@ class EditWorld {
 		// change the line
 		lines[num] = data
 		
-		if data.selected != 1 {
+		if data.selected != -1 {
 			// mark the new position of the line as dirty
 			addToDirtyRect(pt1: lines[num].pt1, pt2: lines[num].pt2)
 			updateLineNormal(num)
@@ -248,8 +258,65 @@ class EditWorld {
 		}
 	}
 	
-	func changeThing(_ num: Int, to newThing: Thing) {
-		// TODO: changeThing
+	func changeThing(_ num: Int, to data: inout Thing) {
+		
+		var drect: NSRect
+		
+		boundsDirty = true
+		
+		if num >= things.count {
+			fatalError("Error. Sent thing \(num) with numthings \(things.count)")
+		}
+		
+		// mark the old position as dirty
+		if things[num].selected != -1 {
+			drect = NSRect(x: data.origin.x - CGFloat(THING_DRAW_SIZE/2),
+						   y: data.origin.y - CGFloat(THING_DRAW_SIZE/2),
+						   width: CGFloat(THING_DRAW_SIZE),
+						   height: CGFloat(THING_DRAW_SIZE))
+			dirtyRect = NSUnionRect(drect, dirtyRect)
+		}
+		
+		// change the thing
+		things[num] = data
+		
+		// mark the new position as dirty
+		if things[num].selected != -1 {
+			drect = NSRect(x: data.origin.x - CGFloat(THING_DRAW_SIZE/2),
+						   y: data.origin.y - CGFloat(THING_DRAW_SIZE/2),
+						   width: CGFloat(THING_DRAW_SIZE),
+						   height: CGFloat(THING_DRAW_SIZE))
+			dirtyRect = NSUnionRect(drect, dirtyRect)
+		}
+		
+	}
+	
+	func delete() {
+		
+		var line: Line
+		var thing: Thing
+		
+		// delete any lines that have both end points selected
+		for i in 0..<lines.count {
+			if lines[i].selected < 1 {
+				continue }
+			if points[lines[i].pt1].selected != 1 || points[lines[i].pt2].selected != 1 {
+				continue }
+			line = lines[i]
+			line.selected = -1
+			changeLine(i, to: &line)
+		}
+		
+		// delete any selected things
+		for i in 0..<things.count {
+			if things[i].selected == 1 {
+				thing = things[i]
+				thing.selected = -1		// remove the thing
+				changeThing(i, to: &thing)
+			}
+		}
+		
+		updateWindows()
 	}
 
 	
@@ -364,17 +431,47 @@ class EditWorld {
 	
 	
 	// MARK: Things
-	func selectThing(_ i: Int) {
-		things[i].isSelected = true
+	
+	func selectThing(_ num: Int) {
+		
+		var data: Thing
+		
+		if num >= things.count {
+			print("selectThing: num >= things.count")
+		}
+		data = things[num]
+		if data.selected == -1 {
+			print("selectThing: deleted")
+			return
+		}
+		data.selected = 1
+		changeThing(num, to: &data)
+		// update thing panel
 	}
 	
-	func deselectThing(_ i: Int) {
-		things[i].isSelected = false
+	func deselectThing(_ num: Int) {
+		
+		var data: Thing
+		
+		if num >= things.count {
+			print("deselectThing: num >= things.count")
+		}
+		data = things[num]
+		if data.selected == -1 {
+			print("deselectThing: deleted point")
+			return
+		}
+		data.selected = 0
+		changeThing(num, to: &data)
 	}
 	
 	func deselectAllThings() {
 		for i in 0..<things.count {
-			things[i].isSelected = false
+			if things[i].selected > 0 {
+				var thing = things[i]
+				thing.selected = 0
+				changeThing(i, to: &thing)
+			}
 		}
 	}
 	
@@ -385,7 +482,25 @@ class EditWorld {
 	// MARK: - Selection Modification Methods
 	// ======================================
 
-	// TODO: func flipSelectedLines()
+	// FIXME: not working:
+	func flipSelectedLines() {
+		
+		var line: Line
+		var p1, p2: NSPoint
+		
+		for i in 0..<lines.count {
+			if lines[i].selected == 1 {
+				line = lines[i]
+				p1 = points[line.pt1].coord
+				p2 = points[line.pt2].coord
+				line.selected = -1
+				changeLine(i, to: &line)
+				line.selected = 0
+				newLine(line: &line, from: p2, to: p1)
+			}
+		}
+		updateWindows()
+	}
 	
 	// FIXME: This does not work with points that have been separated
 	func fusePoints() {
