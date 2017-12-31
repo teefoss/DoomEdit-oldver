@@ -514,7 +514,7 @@ class EditWorld {
 		var p1, p2: NSPoint
 		var line: Line
 		
-		for i in 0..<points.count-1 {
+		for i in 0..<points.count {
 			
 			if points[i].selected != 1 {
 				continue
@@ -522,7 +522,7 @@ class EditWorld {
 			p1 = points[i].coord
 			
 			// find any points that are on the same spot as point i
-			for j in 0..<points.count-1 {
+			for j in 0..<points.count {
 				
 				if points[j].selected == -1 || j == i {
 					continue
@@ -541,13 +541,16 @@ class EditWorld {
 					}
 					if line.pt1 == j {
 						lines[k].pt1 = i
+						points[i].refcount += 1
 					} else if line.pt2 == j {
 						lines[k].pt2 = i
+						points[i].refcount += 1
 					}
 				}
-				points[j].selected = -1
+				points[j].selected = -1		// remove the duplicate point
 			}
 		}
+		updateWindows()
 	}
 	
 	/// All selected points that have a refcount greater than one will have clones made
@@ -576,8 +579,7 @@ class EditWorld {
 				}
 			}
 		}
-		
-		// TODO: Update windows
+		updateWindows()
 	}
 	
 	

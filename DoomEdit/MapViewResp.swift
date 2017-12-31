@@ -70,6 +70,7 @@ extension MapView {
 				// Floor quick view
 			}
 		case KEY_S:
+			print("separate points")
 			editWorld.separatePoints()
 		case KEY_DELETE:
 			editWorld.delete()
