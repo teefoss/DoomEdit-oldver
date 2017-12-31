@@ -493,9 +493,15 @@ class EditWorld {
 				line = lines[i]
 				p1 = points[line.pt1].coord
 				p2 = points[line.pt2].coord
+				
+				// delete the old line
 				line.selected = -1
 				changeLine(i, to: &line)
+
+				// deselect the line & add a new one
 				line.selected = 0
+				points[line.pt1].selected = 0
+				points[line.pt2].selected = 0
 				newLine(line: &line, from: p2, to: p1)
 			}
 		}

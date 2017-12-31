@@ -257,6 +257,8 @@ extension MapView {
 		
 		for i in 0..<points.count {
 			pt = points[i]
+			if pt.selected == -1 {
+				continue }	// deleted point
 			// if the point is inside the box
 			if pt.coord.x > left && pt.coord.x < right &&
 				pt.coord.y < top && pt.coord.y > bottom {
@@ -294,6 +296,10 @@ extension MapView {
 		//
 		
 		for i in 0..<lines.count {
+			
+			if lines[i].selected == -1 {
+				continue
+			}
 			
 			let p1 = points[lines[i].pt1].coord
 			let p2 = points[lines[i].pt2].coord
@@ -364,6 +370,10 @@ extension MapView {
 		for i in 0..<things.count {
 			
 			let thing = things[i]
+			
+			if thing.selected == -1 {
+				continue
+			}
 			if thing.origin.x > left && thing.origin.x < right
 				&& thing.origin.y < top && thing.origin.y > bottom {
 				thingIndex = i
@@ -403,7 +413,7 @@ extension MapView {
 		}
 		
 		//
-		//  Hit nothing
+		//  Hit nothing, drag a selection box & get the sector def
 		//
 		if !event.modifierFlags.contains(.shift) {
 			editWorld.deselectAll()
