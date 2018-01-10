@@ -50,6 +50,13 @@ struct SectorDef {
 	}
 }
 
+struct Texture {
+	var WADindex: Int = 0
+	var name: String = ""
+	var width: Int = 0
+	var height: Int = 0
+}
+
 
 
 

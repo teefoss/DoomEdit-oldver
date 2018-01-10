@@ -10,7 +10,13 @@ import Cocoa
 
 let data = Data()
 
+/**
+Reads all the data out of the `.dsp` files and stores it.
+*/
+
 class Data {
+	
+	var doom1Textures: [Texture] = []
 	
 	var things: [String] = []
 	
@@ -36,6 +42,7 @@ class Data {
 	init() {
 		loadThingNames()
 		loadLineSpecials()
+		loadTextures()
 //		loadDoomThingMenu()
 		
 		/*
@@ -51,6 +58,11 @@ class Data {
 		*/
 	}
 	
+	
+	
+	// =================================
+	// MARK: - Initialize Storage Arrays
+	// =================================
 	func loadThingNames() {
 		
 		var fileContents: String?		// to store the entire file
@@ -93,6 +105,56 @@ class Data {
 		}
 
 	}
+	
+	func loadTextures() {
+		
+		var texture1Contents: String?
+		var texture2Contents: String?
+		
+		if let filepath1 = Bundle.main.path(forResource: "texture1", ofType: "dsp") {
+			do {
+				texture1Contents = try String(contentsOfFile: filepath1)
+			} catch {
+				print("Error, the file could not be loaded")
+			}
+		}
+		
+		if let filepath2 = Bundle.main.path(forResource: "texture2", ofType: "dsp") {
+			do {
+				texture2Contents = try String(contentsOfFile: filepath2)
+			} catch {
+				print("Error, the file could not be loaded")
+			}
+		}
+		
+		guard let tex1FileLines = texture1Contents?.components(separatedBy: .newlines) else { return }
+		guard let tex2FileLines = texture2Contents?.components(separatedBy: .newlines) else { return }
+		
+		for fileLine in tex1FileLines {
+			
+			var texture = Texture()
+			
+			if readTextures(from: fileLine, name: &texture.name, width: &texture.width, height: &texture.height) {
+				doom1Textures.append(texture)
+			}
+		}
+		
+		for fileLine in tex2FileLines {
+			
+			var texture = Texture()
+			
+			if readTextures(from: fileLine, name: &texture.name, width: &texture.width, height: &texture.height) {
+				doom1Textures.append(texture)
+			}
+		}
+
+	}
+	
+	
+	
+	// ====================
+	// MARK: - Data Reading
+	// ====================
 
 	func readLineSpecial(from fileLine: String, to string: inout String, to index: inout Int) -> Bool {
 		
@@ -127,7 +189,37 @@ class Data {
 			return true
 		}
 		return false
-}
+	}
+	
+	// Format:
+	// AASTINKY 24, 72, 2
+	func readTextures(from fileLine: String, name: inout String, width: inout Int, height: inout Int) -> Bool {
+		
+		var nsString: NSString?
+		let scanner = Scanner(string: fileLine)
+		scanner.charactersToBeSkipped = CharacterSet()
+
+		if fileLine.first == " " {
+			return false
+		}
+		if scanner.scanUpTo(" ", into: &nsString) &&
+			scanner.scanString(" ", into: nil) &&
+			scanner.scanInt(&width) &&
+			scanner.scanString(", ", into: nil) &&
+			scanner.scanInt(&height)
+		{
+			if nsString == "numtextures:" {
+				return false
+			} else {
+				name = nsString! as String
+				return true
+			}
+		}
+		return false
+	}
+	
+	
+	
 	
 //	func loadDoomThingMenu() -> [[String]] {
 //		var menu: [[String]]

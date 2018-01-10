@@ -23,7 +23,7 @@ struct Line {
 //	var end1, end2: Point
 	var pt1, pt2: Int
 	
-	var side: [Side?]
+	var side: [Side?]	// side[0] front, side[1] back
 	
 	var flags: Int
 	var special: Int

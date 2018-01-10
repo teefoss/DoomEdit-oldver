@@ -147,8 +147,7 @@ extension MapView {
 	// =====================
 	
 	override func mouseDown(with event: NSEvent) {
-		
-		
+				
 		switch currentMode {
 		case .edit:
 			selectObject(at: event)
@@ -158,7 +157,7 @@ extension MapView {
 		case .draw:
 			drawLine_LMDown(with: event)
 		}
-		setNeedsDisplay(bounds)
+		editWorld.updateWindows()
 	}
 	
 	override func mouseDragged(with event: NSEvent) {
@@ -209,22 +208,33 @@ extension MapView {
 			let newLineRect = convert(lineRect, from: superview)
 			let lineView = NSView(frame: newLineRect)
 			self.addSubview(lineView)
+			editWorld.selectLine(selectedLineIndex)
+			//editWorld.updateWindows()
 			displayLinePopover(at: lineView)
 			didClickLine = false
 		} else if didClickSector {
-			let pointRect = NSRect(x: event.locationInWindow.x-16, y: event.locationInWindow.y-16, width: 32, height: 32)
-			let newPointRect = convert(pointRect, from: nil)
-			let pointView = NSView(frame: newPointRect)
-			self.addSubview(pointView)
-			let clickpoint = worldCoord(for: event.locationInWindow)
-			print (clickpoint)
-			blockWorld.floodFillSector(from: clickpoint)
-			setCurrentSector()
-			displaySectorPanel(at: pointView)
-			selectedSides = []
-			didClickSector = false
-			setNeedsDisplay(self.bounds)
+			if !event.modifierFlags.contains(.shift) {
+				let pointRect = NSRect(x: event.locationInWindow.x-16, y: event.locationInWindow.y-16, width: 32, height: 32)
+				let newPointRect = convert(pointRect, from: nil)
+				let pointView = NSView(frame: newPointRect)
+				self.addSubview(pointView)
+				let clickpoint = worldCoord(for: event.locationInWindow)
+				blockWorld.floodFillSector(from: clickpoint)
+				setCurrentSector()
+				displaySectorPanel(at: pointView)
+				selectedSides = []
+				didClickSector = false
+				setNeedsDisplay(self.bounds)
+			} else {
+				let clickpoint = worldCoord(for: event.locationInWindow)
+				blockWorld.floodFillSector(from: clickpoint)
+				setCurrentSector()
+				selectedSides = []
+				didClickSector = false
+				setNeedsDisplay(self.bounds)
+			}
 		}
+		editWorld.updateWindows()
 	}
 	
 	
@@ -276,7 +286,7 @@ extension MapView {
 			if points[pointIndex].selected == 1 {
 				dragObjects_LMDown(with: event)
 				return
-				// point is not already selected
+			// point is not already selected
 			} else {
 				// shift is not being held
 				if !event.modifierFlags.contains(.shift) {

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="13771" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="13771"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="TextureCollectionViewItem" customModule="DoomEdit" customModuleProvider="target">
+            <connections>
+                <outlet property="view" destination="Hz6-mo-xeY" id="0bl-1N-x8E"/>
+            </connections>
+        </customObject>
+        <collectionViewItem id="Yy6-le-4RJ" customClass="TextureCollectionViewItem" customModule="DoomEdit" customModuleProvider="target">
+            <connections>
+                <outlet property="imageView" destination="QLl-Bl-7Vo" id="i5n-Kn-bbL"/>
+                <outlet property="view" destination="Hz6-mo-xeY" id="z3L-GR-Z47"/>
+            </connections>
+        </collectionViewItem>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <customView id="Hz6-mo-xeY">
+            <rect key="frame" x="0.0" y="0.0" width="480" height="272"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+            <subviews>
+                <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="QLl-Bl-7Vo">
+                    <rect key="frame" x="5" y="5" width="470" height="262"/>
+                    <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" id="tL1-s0-kFs"/>
+                </imageView>
+            </subviews>
+            <constraints>
+                <constraint firstItem="QLl-Bl-7Vo" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="5" id="B8i-It-6kR"/>
+                <constraint firstAttribute="trailing" secondItem="QLl-Bl-7Vo" secondAttribute="trailing" constant="5" id="XxO-ip-tx0"/>
+                <constraint firstAttribute="bottom" secondItem="QLl-Bl-7Vo" secondAttribute="bottom" constant="5" id="YIE-dN-d7a"/>
+                <constraint firstItem="QLl-Bl-7Vo" firstAttribute="top" secondItem="Hz6-mo-xeY" secondAttribute="top" constant="5" id="tCR-sO-FMM"/>
+            </constraints>
+        </customView>
+    </objects>
+</document>

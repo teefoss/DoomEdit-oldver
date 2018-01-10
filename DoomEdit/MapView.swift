@@ -19,7 +19,7 @@ View that displays the map
 class MapView: NSView, NSPopoverDelegate {
 
 	var thingViewController = ThingPanel()
-	var lineViewController = LineViewController()
+	var linePanel = LinePanel()
 	var sectorPanel = SectorPanel()
 	
 	var delegate: MapViewDelegate?
@@ -131,9 +131,9 @@ class MapView: NSView, NSPopoverDelegate {
 	
 	func displayLinePopover(at line: NSView) {
 		var linePopover = NSPopover()
-		initPopover(&linePopover, with: lineViewController)
-		lineViewController.line = selectedLine
-		lineViewController.lineIndex = selectedLineIndex
+		initPopover(&linePopover, with: linePanel)
+		linePanel.line = selectedLine
+		linePanel.lineIndex = selectedLineIndex
 		linePopover.show(relativeTo: line.bounds, of: line, preferredEdge: .maxX)
 	}
 	
@@ -163,9 +163,9 @@ class MapView: NSView, NSPopoverDelegate {
 	
 	
 	
-	// =========================
+	// ================================
 	// MARK: - View & Coordinate System
-	// =========================
+	// ================================
 
 	func displayDirty(dirtyrect: NSRect) {
 		var rect = NSRect()
