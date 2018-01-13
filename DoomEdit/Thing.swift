@@ -176,7 +176,7 @@ struct Thing {
 		case 4: return "Player 4 Start"
 		case 11: return "Deathmatch Start"
 		case 14: return "Teleport Destination"
-		default: return "It's F@#ked!!"
+		default: return "Error. Thing number does not exist!."
 
 		}
 	}
@@ -245,7 +245,7 @@ struct Thing {
 			case 4: return "PLAYA1"
 			case 11: return "PLAYA1"
 			case 14: return "PLAYA1"
-			default: return "It's F@#ked!!"
+			default: return ""
 				
 			}
 	}

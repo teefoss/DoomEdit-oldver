@@ -116,7 +116,7 @@ class MapView: NSView, NSPopoverDelegate {
 		popover = NSPopover.init()
 		popover.contentViewController = viewController
 		popover.appearance = NSAppearance.init(named: .vibrantLight)
-		popover.animates = true
+		popover.animates = false
 		popover.behavior = .transient
 		popover.delegate = self
 	}

@@ -11,7 +11,8 @@ import Cocoa
 let data = Data()
 
 /**
-Reads all the data out of the `.dsp` files and stores it.
+Storage Object for all assets data.
+Methods to reads all the data out of the `.dsp` files.
 */
 
 class Data {
@@ -146,6 +147,10 @@ class Data {
 			if readTextures(from: fileLine, name: &texture.name, width: &texture.width, height: &texture.height) {
 				doom1Textures.append(texture)
 			}
+		}
+		
+		for i in 0..<doom1Textures.count {
+			doom1Textures[i].index = i
 		}
 
 	}

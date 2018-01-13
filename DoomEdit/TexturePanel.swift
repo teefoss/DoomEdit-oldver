@@ -27,11 +27,24 @@ class TexturePanel: NSViewController, NSCollectionViewDataSource, NSCollectionVi
 	@IBOutlet weak var searchField: NSSearchField!
 	@IBOutlet weak var titleLabel: NSTextField!
 	@IBOutlet weak var sizeLabel: NSTextField!
+	@IBOutlet weak var widthTextField: NSTextField!
+	@IBOutlet weak var heightTextField: NSTextField!
 	
 	var filteredTextures: [Texture] = []
 	
+
+	
+	// =================================
+	// MARK: - ViewController Life Cycle
+	// =================================
+
 	override func viewDidLoad() {
 		super.viewDidLoad()
+		
+		filteredTextures = data.doom1Textures
+		
+		searchField.sendsSearchStringImmediately = true
+		searchField.sendsWholeSearchString = false
 		
 		collectionView.dataSource = self
 		collectionView.delegate = self
@@ -41,27 +54,25 @@ class TexturePanel: NSViewController, NSCollectionViewDataSource, NSCollectionVi
 	override func viewWillAppear() {
 		super.viewWillAppear()
 		
-		print("texturePosition = \(texturePosition)")
 		window = self.view.window
-		
-		collectionView.deselectAll(nil)
-		
-		// select texture
+		searchField.stringValue = ""
+		filteredTextures = data.doom1Textures
 		if selectedTextureIndex != -1 {
-			let indexPath = IndexPath(item: selectedTextureIndex, section: 0)
-			let indexSet: Set = [indexPath]
-			collectionView.selectItems(at: indexSet, scrollPosition: .centeredVertically)
+			selectTexture()
 		} else {
 			collectionView.deselectAll(nil)
+			collectionView.scrollToItems(at: indexSet(for: 0), scrollPosition: .top)
+			titleLabel.stringValue = "--"
+			sizeLabel.stringValue = ""
 		}
-		
 	}
 	
-	//	override func viewDidAppear() {
-	//		super.viewDidAppear()
-	//
-	//	}
+
 	
+	// ======================
+	// MARK: - Helper Methods
+	// ======================
+
 	fileprivate func configureCollectionView() {
 		
 		collectionView.isSelectable = true
@@ -69,6 +80,7 @@ class TexturePanel: NSViewController, NSCollectionViewDataSource, NSCollectionVi
 		collectionView.allowsMultipleSelection = false
 		
 		let flowLayout = NSCollectionViewFlowLayout()
+		flowLayout.scrollDirection = .vertical
 		flowLayout.sectionInset = NSEdgeInsets(top: 10.0, left: 20.0, bottom: 10.0, right: 20.0)
 		flowLayout.minimumInteritemSpacing = 20.0
 		flowLayout.minimumLineSpacing = 20.0
@@ -77,6 +89,31 @@ class TexturePanel: NSViewController, NSCollectionViewDataSource, NSCollectionVi
 		
 		view.wantsLayer = true
 		collectionView.layer?.backgroundColor = NSColor.black.cgColor
+	}
+
+	func indexSet(for item: Int) -> Set<IndexPath> {
+		let indexPath = IndexPath(item: item, section: 0)
+		let indexSet: Set = [indexPath]
+		return indexSet
+	}
+
+	
+	
+	// ================
+	// MARK: - Textures
+	// ================
+	
+	func selectTexture() {
+
+		collectionView.deselectAll(nil)
+		
+		for i in 0..<filteredTextures.count {
+			if filteredTextures[i].index == selectedTextureIndex {
+				collectionView.selectItems(at: indexSet(for: i), scrollPosition: .centeredVertically)
+				updateLabels(texture: filteredTextures[i])
+				return
+			}
+		}
 	}
 	
 	func setTexture() {
@@ -113,18 +150,24 @@ class TexturePanel: NSViewController, NSCollectionViewDataSource, NSCollectionVi
 		}
 	}
 	
+	func updateLabels(texture: Texture) {
+		titleLabel.stringValue = texture.name
+		sizeLabel.stringValue = "\(texture.width) × \(texture.height)"
+	}
+
 	
 	
-	// ======================
+	
+	// =======================
 	// MARK: - Collection View
-	// ======================
+	// =======================
 	
 	func numberOfSections(in collectionView: NSCollectionView) -> Int {
 		return 1
 	}
 	
 	func collectionView(_ collectionView: NSCollectionView, numberOfItemsInSection section: Int) -> Int {
-		return data.doom1Textures.count
+		return filteredTextures.count
 	}
 	
 	
@@ -134,7 +177,7 @@ class TexturePanel: NSViewController, NSCollectionViewDataSource, NSCollectionVi
 		let item = collectionView.makeItem(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "TextureCollectionViewItem"), for: indexPath)
 		guard let collectionViewItem = item as? TextureCollectionViewItem else { return item }
 		
-		let texture = data.doom1Textures[indexPath.item]
+		let texture = filteredTextures[indexPath.item]
 		
 		collectionViewItem.imageView?.image = NSImage(named: NSImage.Name(rawValue: texture.name))
 		collectionViewItem.name = texture.name
@@ -148,7 +191,7 @@ class TexturePanel: NSViewController, NSCollectionViewDataSource, NSCollectionVi
 	// sizeForItem
 	
 	func collectionView(_ collectionView: NSCollectionView, layout collectionViewLayout: NSCollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> NSSize {
-		let image = NSImage(named: NSImage.Name(rawValue: data.doom1Textures[indexPath.item].name))
+		let image = NSImage(named: NSImage.Name(rawValue: filteredTextures[indexPath.item].name))
 		
 		var size = NSSize()
 		size.width = (image?.size.width)!+SPACING*2
@@ -166,14 +209,10 @@ class TexturePanel: NSViewController, NSCollectionViewDataSource, NSCollectionVi
 		
 		// store the selection index
 		for indexPath in indexPaths {
-			selectedTex = data.doom1Textures[indexPath.item]
-			selectedTextureIndex = indexPath.item
+			selectedTex = filteredTextures[indexPath.item]
+			selectedTextureIndex = selectedTex.index
 		}
-		
-		// Set the texture panel info
-		titleLabel.stringValue = selectedTex.name
-		sizeLabel.stringValue = "\(selectedTex.width) × \(selectedTex.height)"
-		
+		updateLabels(texture: selectedTex)
 	}
 	
 	
@@ -192,38 +231,101 @@ class TexturePanel: NSViewController, NSCollectionViewDataSource, NSCollectionVi
 	
 	@IBAction func updateFilter(_ sender: Any) {
 		
+		print("updateFilter called")
 		let searchString = searchField.stringValue
 		
-		filteredTextures = data.doom1Textures.filter({( texture : Texture) -> Bool in
-			return texture.name.lowercased().contains(searchString.lowercased())
-		})
-		
-		collectionView.reloadData()
-		
+		if searchBarIsEmpty() {
+			filteredTextures = data.doom1Textures
+			collectionView.reloadData()
+			selectTexture()
+		} else {
+			filteredTextures = data.doom1Textures.filter({( texture : Texture) -> Bool in
+				return texture.name.lowercased().contains(searchString.lowercased())
+			})
+			collectionView.reloadData()
+			selectTexture()
+		}
 	}
 	
-}
-
-
-
-// =====================================
-// MARK: - NSSearchFieldDelegate Methods
-// =====================================
-
-extension TexturePanel: NSSearchFieldDelegate {
+	@IBAction func filterButtonPressed(_ sender: NSButton) {
+		
+		searchField.stringValue = sender.title
+		updateFilter(sender)
+	}
 	
+	
+	@IBAction func filterSize(_ sender: NSButton) {
+		
+		updateFilter(sender)
+		
+		var filteringWidth: Bool = false
+		var filteringHeight: Bool = false
+		var filteringBoth: Bool = false
+		
+		var sizeFilteredTextures: [Texture] = []
+		
+		if widthTextField.integerValue != 0 && heightTextField.integerValue == 0 {
+			filteringWidth = true
+		} else if widthTextField.integerValue == 0 && heightTextField.integerValue != 0 {
+			filteringHeight = true
+		} else if widthTextField.integerValue != 0 && heightTextField.integerValue != 0 {
+			filteringBoth = true
+		} else {
+			updateFilter(sender)
+			return
+		}
+
+		if filteringWidth {
+			for texture in filteredTextures {
+				if texture.width == widthTextField.integerValue {
+					sizeFilteredTextures.append(texture)
+				}
+			}
+		}
+		
+		if filteringHeight {
+			for texture in filteredTextures {
+				if texture.height == heightTextField.integerValue {
+					sizeFilteredTextures.append(texture)
+				}
+			}
+		}
+		
+		if filteringBoth {
+			for texture in filteredTextures {
+				if texture.width == widthTextField.integerValue && texture.height == heightTextField.integerValue {
+					sizeFilteredTextures.append(texture)
+				}
+			}
+		}
+		
+		filteredTextures = sizeFilteredTextures
+		collectionView.reloadData()
+		selectTexture()
+
+	}
+	
+	@IBAction func clearFilters(_ sender: NSButton) {
+		
+		widthTextField.stringValue = ""
+		heightTextField.stringValue = ""
+		filterSize(sender)
+	}
+	
+	@IBAction func removeTexture(_ sender: NSButton) {
+		collectionView.deselectAll(nil)
+		okClicked(sender)
+	}
+	
+	
+	// =====================================
+	// MARK: - Search Field
+	// =====================================
+
 	func searchBarIsEmpty() -> Bool {
 		// Returns true if the text is empty or nil
 		return searchField.stringValue.isEmpty
 	}
-	
-	func filterContentForSearchText(_ searchText: String, scope: String = "All") {
-		filteredTextures = data.doom1Textures.filter({( texture : Texture) -> Bool in
-			return texture.name.lowercased().contains(searchText.lowercased())
-		})
-		
-		collectionView.reloadData()
-	}
-	
+
 	
 }

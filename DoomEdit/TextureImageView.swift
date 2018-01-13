@@ -9,7 +9,7 @@
 import Cocoa
 
 /**
-The NSImageViews that display a line's textures in the Line Panel.
+The view that displays a line's textures in the Line Panel.
 Displays the Texture Panel when clicked.
 */
 
@@ -33,7 +33,7 @@ class TextureImageView: NSImageView, NSPopoverDelegate {
 		popover = NSPopover.init()
 		popover.contentViewController = viewController
 		popover.appearance = NSAppearance.init(named: .vibrantLight)
-		popover.animates = true
+		popover.animates = false
 		popover.behavior = .semitransient
 		popover.delegate = self
 	}

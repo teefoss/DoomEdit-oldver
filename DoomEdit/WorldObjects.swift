@@ -55,6 +55,8 @@ struct Texture {
 	var name: String = ""
 	var width: Int = 0
 	var height: Int = 0
+	var index: Int = 0
+	var selected: Bool = false
 }
 
 
