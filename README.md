@@ -5,9 +5,7 @@ A Doom level editor for macOS.
 
 ### Current Status
 
-Almost no features yet!
-
-The map view window appears with a pre-loaded Doom map and draws lines, points, and things.
+The app is in the early stages. The map view window appears with a pre-loaded Doom map in order to test basic functionality. No loading/saving yet.
 
 ## Planned Features
 
