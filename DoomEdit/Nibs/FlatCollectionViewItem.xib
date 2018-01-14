@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="13771" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="13771"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="FlatCollectionViewItem" customModule="DoomEdit" customModuleProvider="target">
+            <connections>
+                <outlet property="view" destination="Hz6-mo-xeY" id="0bl-1N-x8E"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <customView id="Hz6-mo-xeY">
+            <rect key="frame" x="0.0" y="0.0" width="480" height="272"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+            <subviews>
+                <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="F7C-Bu-ftY">
+                    <rect key="frame" x="5" y="5" width="470" height="262"/>
+                    <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" id="BOI-1S-1zt"/>
+                </imageView>
+            </subviews>
+            <constraints>
+                <constraint firstItem="F7C-Bu-ftY" firstAttribute="top" secondItem="Hz6-mo-xeY" secondAttribute="top" constant="5" id="15u-xI-M7I"/>
+                <constraint firstAttribute="trailing" secondItem="F7C-Bu-ftY" secondAttribute="trailing" constant="5" id="giV-bs-PNb"/>
+                <constraint firstAttribute="bottom" secondItem="F7C-Bu-ftY" secondAttribute="bottom" constant="5" id="rjj-Dc-d8c"/>
+                <constraint firstItem="F7C-Bu-ftY" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="5" id="uOI-cp-Jsw"/>
+            </constraints>
+        </customView>
+        <collectionViewItem id="oUa-M3-vUz" customClass="FlatCollectionViewItem" customModule="DoomEdit" customModuleProvider="target">
+            <connections>
+                <outlet property="imageView" destination="F7C-Bu-ftY" id="ZBN-gU-wRU"/>
+                <outlet property="view" destination="Hz6-mo-xeY" id="kOO-nb-ftn"/>
+            </connections>
+        </collectionViewItem>
+    </objects>
+</document>

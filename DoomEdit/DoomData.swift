@@ -8,16 +8,18 @@
 
 import Cocoa
 
-let data = Data()
+let doomData = DoomData()
 
 /**
 Storage Object for all assets data.
 Methods to reads all the data out of the `.dsp` files.
 */
 
-class Data {
+class DoomData {
 	
 	var doom1Textures: [Texture] = []
+	var doom1FlatNames: [String] = []
+	var doom1Flats: [Flat] = []
 	
 	var things: [String] = []
 	
@@ -153,6 +155,22 @@ class Data {
 			doom1Textures[i].index = i
 		}
 
+	}
+	
+	
+	
+	// ===================
+	// MARK: - Information
+	// ===================
+
+	func indexForFlat(named name: String) -> Int {
+		
+		for flat in doom1Flats {
+			if flat.name == name {
+				return flat.index
+			}
+		}
+		return -1
 	}
 	
 	

@@ -151,8 +151,8 @@ class LinePanel: NSViewController, TexturePanelDelegate {
 		
 		if frontUpper != "-" {
 			frontUpperImageView.image = NSImage(named: NSImage.Name(rawValue: frontUpper))
-			for i in 0..<data.doom1Textures.count {
-				let texture = data.doom1Textures[i]
+			for i in 0..<doomData.doom1Textures.count {
+				let texture = doomData.doom1Textures[i]
 				if frontUpper == texture.name {
 					frontUpperImageView.textureIndex = i
 					break
@@ -165,8 +165,8 @@ class LinePanel: NSViewController, TexturePanelDelegate {
 		
 		if frontMiddle != "-" {
 			frontMiddleImageView.image = NSImage(named: NSImage.Name(rawValue: frontMiddle))
-			for i in 0..<data.doom1Textures.count {
-				let texture = data.doom1Textures[i]
+			for i in 0..<doomData.doom1Textures.count {
+				let texture = doomData.doom1Textures[i]
 				if frontMiddle == texture.name {
 					frontMiddleImageView.textureIndex = i
 					break
@@ -179,8 +179,8 @@ class LinePanel: NSViewController, TexturePanelDelegate {
 		
 		if frontLower != "-" {
 			frontLowerImageView.image = NSImage(named: NSImage.Name(rawValue: frontLower))
-			for i in 0..<data.doom1Textures.count {
-				let texture = data.doom1Textures[i]
+			for i in 0..<doomData.doom1Textures.count {
+				let texture = doomData.doom1Textures[i]
 				if frontLower == texture.name {
 					frontLowerImageView.textureIndex = i
 					break
@@ -193,8 +193,8 @@ class LinePanel: NSViewController, TexturePanelDelegate {
 		
 		if backUpper != "-" {
 			backUpperImageView.image = NSImage(named: NSImage.Name(rawValue: backUpper))
-			for i in 0..<data.doom1Textures.count {
-				let texture = data.doom1Textures[i]
+			for i in 0..<doomData.doom1Textures.count {
+				let texture = doomData.doom1Textures[i]
 				if backUpper == texture.name {
 					backUpperImageView.textureIndex = i
 					break
@@ -207,8 +207,8 @@ class LinePanel: NSViewController, TexturePanelDelegate {
 		
 		if backMiddle != "-" {
 			backMiddleImageView.image = NSImage(named: NSImage.Name(rawValue: backMiddle))
-			for i in 0..<data.doom1Textures.count {
-				let texture = data.doom1Textures[i]
+			for i in 0..<doomData.doom1Textures.count {
+				let texture = doomData.doom1Textures[i]
 				if backMiddle == texture.name {
 					backMiddleImageView.textureIndex = i
 					break
@@ -221,8 +221,8 @@ class LinePanel: NSViewController, TexturePanelDelegate {
 		
 		if backLower != "-" {
 			backLowerImageView.image = NSImage(named: NSImage.Name(rawValue: backLower))
-			for i in 0..<data.doom1Textures.count {
-				let texture = data.doom1Textures[i]
+			for i in 0..<doomData.doom1Textures.count {
+				let texture = doomData.doom1Textures[i]
 				if backLower == texture.name {
 					backLowerImageView.textureIndex = i
 					break

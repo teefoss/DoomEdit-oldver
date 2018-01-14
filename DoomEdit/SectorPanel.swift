@@ -8,12 +8,16 @@
 
 import Cocoa
 
-class SectorPanel: NSViewController, NSTextDelegate {
+protocol FlatPanelDelegate {
+	func updatePanel(for position: Int, with flat: String)
+	func updateIndex(for position: Int, with index: Int)
+}
+
+class SectorPanel: NSViewController, NSTextDelegate, FlatPanelDelegate {
 
 	var def = SectorDef()
 	var selectedSides: [Int] = []
 	var newDef = SectorDef()
-	
 	
 	@IBOutlet weak var sectorLabel: NSTextField!
 	@IBOutlet weak var ceilingHeightTextField: NSTextField!
@@ -22,8 +26,8 @@ class SectorPanel: NSViewController, NSTextDelegate {
 	@IBOutlet weak var tagTextField: NSTextField!
 	@IBOutlet weak var lightTextField: NSTextField!
 	@IBOutlet weak var lightSlider: NSSlider!
-	@IBOutlet weak var ceilingImageView: NSImageView!
-	@IBOutlet weak var floorImageView: NSImageView!
+	@IBOutlet weak var ceilingImageView: FlatImageView!
+	@IBOutlet weak var floorImageView: FlatImageView!
 	@IBOutlet weak var ceilingLabel: NSTextField!
 	@IBOutlet weak var floorLabel: NSTextField!
 	@IBOutlet weak var specialButton: NSPopUpButton!
@@ -31,6 +35,12 @@ class SectorPanel: NSViewController, NSTextDelegate {
 	
     override func viewDidLoad() {
         super.viewDidLoad()
+		
+		ceilingImageView.flatPanel.delegate = self
+		floorImageView.flatPanel.delegate = self
+		
+		ceilingImageView.flatPosition = 1
+		floorImageView.flatPosition = 0
 		
     }
 	
@@ -48,8 +58,11 @@ class SectorPanel: NSViewController, NSTextDelegate {
 		ceilingLabel.stringValue = def.ceilingFlat
 		floorLabel.stringValue = def.floorFlat
 		specialTextField.integerValue = def.special
-		
 		specialButton.selectItem(withTag: def.special)
+		ceilingImageView.selectedFlatName = def.ceilingFlat
+		ceilingImageView.selectedFlatIndex = doomData.indexForFlat(named: def.ceilingFlat)
+		floorImageView.selectedFlatName = def.floorFlat
+		floorImageView.selectedFlatIndex = doomData.indexForFlat(named: def.floorFlat)
 
 		// Because doom texture and flat have the same name. Flat STEP1 changed to STEP1_FL etc
 		if def.ceilingFlat == "STEP1" {
@@ -67,6 +80,7 @@ class SectorPanel: NSViewController, NSTextDelegate {
 		} else {
 			floorImageView.image = NSImage(named: NSImage.Name(rawValue: def.floorFlat))
 		}
+		
 	}
 	
 	override func viewWillDisappear() {
@@ -79,7 +93,9 @@ class SectorPanel: NSViewController, NSTextDelegate {
 		newDef.tag = tagTextField.integerValue
 		newDef.lightLevel = lightTextField.integerValue
 		newDef.special = specialTextField.integerValue
-
+		newDef.ceilingFlat = (ceilingImageView.image?.name()?.rawValue)!
+		newDef.floorFlat = (floorImageView.image?.name()?.rawValue)!
+		
 		fillSector(with: newDef)
 		
 		
@@ -97,8 +113,44 @@ class SectorPanel: NSViewController, NSTextDelegate {
 			}
 		}
 	}
-
 	
+	func updatePanel(for position: Int, with flat: String) {
+		
+		var f = flat
+		if f == "STEP1_FL" {
+			f = "STEP1"
+		} else if f == "STEP2_FL" {
+			f = "STEP2"
+		}
+		
+		switch position {
+		case 0:
+			floorLabel.stringValue = flat
+			floorImageView.image = NSImage(named: NSImage.Name(rawValue: flat))
+		case 1:
+			ceilingLabel.stringValue = flat
+			ceilingImageView.image = NSImage(named: NSImage.Name(rawValue: flat))
+		default:
+			fatalError("Invalid FlatImageView position!")
+		}
+	}
+	
+	func updateIndex(for position: Int, with index: Int) {
+		
+		switch position {
+		case 0:
+			floorImageView.selectedFlatIndex = index
+		case 1:
+			ceilingImageView.selectedFlatIndex = index
+		default:
+			fatalError("Invalid FlatImageView position!")
+		}
+	}
+	
+	// =================
+	// MARK: - IBActions
+	// =================
+
 	@IBAction func suggestTagClicked(_ sender: NSButton) {
 
 		var maxTag = 0

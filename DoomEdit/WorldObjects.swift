@@ -59,6 +59,20 @@ struct Texture {
 	var selected: Bool = false
 }
 
+struct Flat {
+	var image: NSImage {
+		if name == "STEP1" {
+			return NSImage(named: NSImage.Name("STEP1_FL"))!
+		} else if name == "STEP2" {
+			return NSImage(named: NSImage.Name("STEP2_FL"))!
+		} else {
+			return NSImage(named: NSImage.Name(name))!
+		}
+	}
+	var name: String = ""
+	var index: Int = 0
+}
+
 
 
 

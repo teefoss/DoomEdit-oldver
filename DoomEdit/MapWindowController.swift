@@ -38,6 +38,11 @@ class MapWindowController: NSWindowController, MapViewDelegate {
     override func windowDidLoad() {
         super.windowDidLoad()
 
+		let wadFile = WadFile()
+		for name in doomData.doom1FlatNames {
+			print(name)
+		}
+		
 		
 		window?.title = "\(fullFileName) : Edit Mode"
 				

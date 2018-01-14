@@ -41,7 +41,7 @@ class TexturePanel: NSViewController, NSCollectionViewDataSource, NSCollectionVi
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		
-		filteredTextures = data.doom1Textures
+		filteredTextures = doomData.doom1Textures
 		
 		searchField.sendsSearchStringImmediately = true
 		searchField.sendsWholeSearchString = false
@@ -56,7 +56,12 @@ class TexturePanel: NSViewController, NSCollectionViewDataSource, NSCollectionVi
 		
 		window = self.view.window
 		searchField.stringValue = ""
-		filteredTextures = data.doom1Textures
+		filteredTextures = doomData.doom1Textures
+	}
+	
+	override func viewWillLayout() {
+		super.viewWillLayout()
+		
 		if selectedTextureIndex != -1 {
 			selectTexture()
 		} else {
@@ -135,7 +140,7 @@ class TexturePanel: NSViewController, NSCollectionViewDataSource, NSCollectionVi
 				return
 			}
 			
-			let newTexture = data.doom1Textures[selectedTextureIndex].name
+			let newTexture = doomData.doom1Textures[selectedTextureIndex].name
 			
 			switch texturePosition {
 			case 1: lines[lineIndex].side[0]?.lowerTexture = newTexture
@@ -183,6 +188,7 @@ class TexturePanel: NSViewController, NSCollectionViewDataSource, NSCollectionVi
 		collectionViewItem.name = texture.name
 		collectionViewItem.width = texture.width
 		collectionViewItem.height = texture.height
+		
 		
 		return item
 	}
@@ -235,11 +241,11 @@ class TexturePanel: NSViewController, NSCollectionViewDataSource, NSCollectionVi
 		let searchString = searchField.stringValue
 		
 		if searchBarIsEmpty() {
-			filteredTextures = data.doom1Textures
+			filteredTextures = doomData.doom1Textures
 			collectionView.reloadData()
 			selectTexture()
 		} else {
-			filteredTextures = data.doom1Textures.filter({( texture : Texture) -> Bool in
+			filteredTextures = doomData.doom1Textures.filter({( texture : Texture) -> Bool in
 				return texture.name.lowercased().contains(searchString.lowercased())
 			})
 			collectionView.reloadData()
@@ -323,7 +329,7 @@ class TexturePanel: NSViewController, NSCollectionViewDataSource, NSCollectionVi
 	// =====================================
 
 	func searchBarIsEmpty() -> Bool {
-		// Returns true if the text is empty or nil
+
 		return searchField.stringValue.isEmpty
 	}
 

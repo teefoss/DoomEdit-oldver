@@ -172,12 +172,12 @@
                         <rect key="frame" x="2" y="2" width="216" height="225"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="7OT-zW-bVm">
+                            <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="7OT-zW-bVm" customClass="FlatImageView" customModule="DoomEdit" customModuleProvider="target">
                                 <rect key="frame" x="17" y="112" width="96" height="96"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyUpOrDown" imageFrameStyle="grayBezel" id="PNt-Po-VcC"/>
                             </imageView>
-                            <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="rbz-2P-dKM">
+                            <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="rbz-2P-dKM" customClass="FlatImageView" customModule="DoomEdit" customModuleProvider="target">
                                 <rect key="frame" x="17" y="14" width="96" height="96"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyUpOrDown" imageFrameStyle="grayBezel" id="5cs-Pw-Awy"/>
@@ -249,16 +249,16 @@
                             <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="MYt-OT-3xR">
                                 <rect key="frame" x="81" y="18" width="306" height="26"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <popUpButtonCell key="cell" type="push" title="None" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="xms-US-9Hc" id="CnS-eg-Mf9">
+                                <popUpButtonCell key="cell" type="push" title="None" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="xms-US-9Hc" id="CnS-eg-Mf9">
                                     <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="menu"/>
                                     <menu key="menu" id="Whg-6A-sg1">
                                         <items>
-                                            <menuItem title="None" id="xms-US-9Hc">
+                                            <menuItem title="None" state="on" id="xms-US-9Hc">
                                                 <modifierMask key="keyEquivalentModifierMask"/>
                                             </menuItem>
                                             <menuItem isSeparatorItem="YES" id="kiZ-o7-BaD"/>
-                                            <menuItem title="Damage Nukage" state="on" tag="7" keyEquivalent="1" id="HiQ-ku-GgO"/>
+                                            <menuItem title="Damage Nukage" tag="7" keyEquivalent="1" id="HiQ-ku-GgO"/>
                                             <menuItem title="Damage Hell Slime" tag="5" keyEquivalent="2" id="J28-mQ-QyM"/>
                                             <menuItem title="Damage Super Hell Slime" tag="16" keyEquivalent="3" id="qsU-RU-S3W"/>
                                             <menuItem title="Damage Super Strobe" tag="4" id="1C5-8E-aVQ">
