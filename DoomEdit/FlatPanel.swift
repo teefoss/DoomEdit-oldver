@@ -194,6 +194,7 @@ class FlatPanel: NSViewController, NSCollectionViewDataSource, NSCollectionViewD
 		}
 	}
 	
+	
 	@IBAction func filterButtonPressed(_ sender: NSButton) {
 		
 		searchField.stringValue = sender.title
@@ -201,9 +202,9 @@ class FlatPanel: NSViewController, NSCollectionViewDataSource, NSCollectionViewD
 	}
 	
 	
-	// =====================================
+	// ====================
 	// MARK: - Search Field
-	// =====================================
+	// ====================
 	
 	func searchBarIsEmpty() -> Bool {
 
