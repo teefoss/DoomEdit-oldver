@@ -9,15 +9,15 @@
 import Cocoa
 
 protocol FlatPanelDelegate {
-	func updatePanel(for position: Int, with flat: String)
-	func updateIndex(for position: Int, with index: Int)
+	func updatePanel(for position: Int, with index: Int)
 }
 
 class SectorPanel: NSViewController, NSTextDelegate, FlatPanelDelegate {
-
+	
 	var def = SectorDef()
 	var selectedSides: [Int] = []
 	var newDef = SectorDef()
+	var wad = WadFile()
 	
 	@IBOutlet weak var sectorLabel: NSTextField!
 	@IBOutlet weak var ceilingHeightTextField: NSTextField!
@@ -32,6 +32,12 @@ class SectorPanel: NSViewController, NSTextDelegate, FlatPanelDelegate {
 	@IBOutlet weak var floorLabel: NSTextField!
 	@IBOutlet weak var specialButton: NSPopUpButton!
 	@IBOutlet weak var specialTextField: NSTextField!
+	
+	
+	
+	// =======================
+	// MARK: - View Life Cycle
+	// =======================
 	
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -59,48 +65,54 @@ class SectorPanel: NSViewController, NSTextDelegate, FlatPanelDelegate {
 		floorLabel.stringValue = def.floorFlat
 		specialTextField.integerValue = def.special
 		specialButton.selectItem(withTag: def.special)
-		ceilingImageView.selectedFlatName = def.ceilingFlat
-		ceilingImageView.selectedFlatIndex = doomData.indexForFlat(named: def.ceilingFlat)
-		floorImageView.selectedFlatName = def.floorFlat
-		floorImageView.selectedFlatIndex = doomData.indexForFlat(named: def.floorFlat)
-
-		// Because doom texture and flat have the same name. Flat STEP1 changed to STEP1_FL etc
-		if def.ceilingFlat == "STEP1" {
-			ceilingImageView.image = NSImage(named: NSImage.Name(rawValue: "STEP1_FL"))
-		} else if def.ceilingFlat == "STEP2" {
-			ceilingImageView.image = NSImage(named: NSImage.Name(rawValue: "STEP2_FL"))
-		} else {
-			ceilingImageView.image = NSImage(named: NSImage.Name(rawValue: def.ceilingFlat))
-		}
 		
-		if def.floorFlat == "STEP1" {
-			floorImageView.image = NSImage(named: NSImage.Name(rawValue: "STEP1_FL"))
-		} else if def.floorFlat == "STEP2" {
-			floorImageView.image = NSImage(named: NSImage.Name(rawValue: "STEP2_FL"))
-		} else {
-			floorImageView.image = NSImage(named: NSImage.Name(rawValue: def.floorFlat))
-		}
+		// Send the current flat indices.
+		ceilingImageView.selectedFlatIndex = indexForFlat(named: def.ceilingFlat)
+		floorImageView.selectedFlatIndex = indexForFlat(named: def.floorFlat)
+
+		// Set the image views with current flats
+		ceilingImageView.image = imageNamed(def.ceilingFlat)
+		floorImageView.image = imageNamed(def.floorFlat)
 		
 	}
 	
 	override func viewWillDisappear() {
 		super.viewWillDisappear()
-		
-		print("viewWillDisappear")
-		
+				
 		newDef.ceilingHeight = ceilingHeightTextField.integerValue
 		newDef.floorHeight = floorHeightTextField.integerValue
 		newDef.tag = tagTextField.integerValue
 		newDef.lightLevel = lightTextField.integerValue
 		newDef.special = specialTextField.integerValue
-		newDef.ceilingFlat = (ceilingImageView.image?.name()?.rawValue)!
-		newDef.floorFlat = (floorImageView.image?.name()?.rawValue)!
+		newDef.ceilingFlat = ceilingLabel.stringValue
+		newDef.floorFlat = floorLabel.stringValue
 		
 		fillSector(with: newDef)
-		
-		
 	}
 	
+	/// Look up the image for the flat name. Called to update the floor/ceiling image views
+	func imageNamed(_ name: String) -> NSImage? {
+		
+		for flat in wad.flats {
+			if flat.name == name {
+				return flat.imageFromWad
+			}
+		}
+		return nil
+	}
+	
+	/// Look up the index of the flat with given name. Called to send selection index to texture panel (via imageview).
+	func indexForFlat(named name: String) -> Int {
+		
+		for flat in wad.flats {
+			if flat.name == name {
+				return flat.index
+			}
+		}
+		return -1
+	}
+	
+	/// Set all the selected lines with the new sector def.
 	func fillSector(with def: SectorDef) {
 		for i in 0..<selectedSides.count {
 			if selectedSides[i] & SIDE_BIT == SIDE_BIT {
@@ -114,38 +126,23 @@ class SectorPanel: NSViewController, NSTextDelegate, FlatPanelDelegate {
 		}
 	}
 	
-	func updatePanel(for position: Int, with flat: String) {
-		
-		var f = flat
-		if f == "STEP1_FL" {
-			f = "STEP1"
-		} else if f == "STEP2_FL" {
-			f = "STEP2"
-		}
+	/// Set the name and image view with the flat selected in the flat panel.
+	func updatePanel(for position: Int, with index: Int) {
 		
 		switch position {
 		case 0:
-			floorLabel.stringValue = flat
-			floorImageView.image = NSImage(named: NSImage.Name(rawValue: flat))
+			floorLabel.stringValue = wad.flats[index].name
+			floorImageView.image = wad.flats[index].imageFromWad
+			floorImageView.selectedFlatIndex = wad.flats[index].index
 		case 1:
-			ceilingLabel.stringValue = flat
-			ceilingImageView.image = NSImage(named: NSImage.Name(rawValue: flat))
+			ceilingLabel.stringValue = wad.flats[index].name
+			ceilingImageView.image = wad.flats[index].imageFromWad
+			ceilingImageView.selectedFlatIndex = wad.flats[index].index
 		default:
 			fatalError("Invalid FlatImageView position!")
 		}
 	}
 	
-	func updateIndex(for position: Int, with index: Int) {
-		
-		switch position {
-		case 0:
-			floorImageView.selectedFlatIndex = index
-		case 1:
-			ceilingImageView.selectedFlatIndex = index
-		default:
-			fatalError("Invalid FlatImageView position!")
-		}
-	}
 	
 	// =================
 	// MARK: - IBActions

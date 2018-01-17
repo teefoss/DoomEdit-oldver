@@ -17,10 +17,10 @@ Displays all the WAD's flats in a collection view.
 class FlatPanel: NSViewController, NSCollectionViewDataSource, NSCollectionViewDelegateFlowLayout {
 	
 	var flatPosition = 0
-	var selectedFlatIndex = -1
-	var selectedFlatName = ""
-	var flatsFromWad: [Flat] = []
-	
+//	var selectedFlatName = ""
+	var selectedFlatIndex: Int = -1
+	var wad = WadFile()
+
 	var window: NSWindow?
 	var delegate: FlatPanelDelegate?
 	
@@ -39,11 +39,6 @@ class FlatPanel: NSViewController, NSCollectionViewDataSource, NSCollectionViewD
     override func viewDidLoad() {
         super.viewDidLoad()
 		
-		let wadFile = WadFile()
-		flatsFromWad = wadFile.flats
-		
-		filteredFlats = flatsFromWad
-		
 		searchField.sendsSearchStringImmediately = true
 		searchField.sendsWholeSearchString = false
 		
@@ -57,7 +52,7 @@ class FlatPanel: NSViewController, NSCollectionViewDataSource, NSCollectionViewD
 		
 		window = self.view.window
 		searchField.stringValue = ""
-		filteredFlats = flatsFromWad
+		filteredFlats = wad.flats
 	}
 	
 	override func viewWillLayout() {
@@ -102,6 +97,7 @@ class FlatPanel: NSViewController, NSCollectionViewDataSource, NSCollectionViewD
 	// MARK: - Flats
 	// =============
 
+	/// Called on view load to select the current flat and update label.
 	func selectFlat() {
 		
 		collectionView.deselectAll(nil)
@@ -115,8 +111,9 @@ class FlatPanel: NSViewController, NSCollectionViewDataSource, NSCollectionViewD
 		}
 	}
 	
+	/// Called when exiting panel to update sector panel with new selection.
 	func setFlat() {
-		delegate?.updatePanel(for: flatPosition, with: selectedFlatName)
+		delegate?.updatePanel(for: flatPosition, with: selectedFlatIndex)
 	}
 
 	func updateLabel(texture: String) {
@@ -136,7 +133,7 @@ class FlatPanel: NSViewController, NSCollectionViewDataSource, NSCollectionViewD
 	
 	func collectionView(_ collectionView: NSCollectionView, numberOfItemsInSection section: Int) -> Int {
 //		return filteredFlats.count
-		return flatsFromWad.count
+		return filteredFlats.count
 	}
 	
 	func collectionView(_ collectionView: NSCollectionView, itemForRepresentedObjectAt indexPath: IndexPath) -> NSCollectionViewItem {
@@ -144,10 +141,7 @@ class FlatPanel: NSViewController, NSCollectionViewDataSource, NSCollectionViewD
 		let item = collectionView.makeItem(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "FlatCollectionViewItem"), for: indexPath)
 		guard let collectionViewItem = item as? FlatCollectionViewItem else { return item }
 		
-//		let flat = filteredFlats[indexPath.item]
-		
-//		collectionViewItem.imageView?.image = flat.image
-		collectionViewItem.imageView?.image = flatsFromWad[indexPath.item].imageFromWad
+		collectionViewItem.imageView?.image = filteredFlats[indexPath.item].imageFromWad
 		
 		return item
 	}
@@ -163,12 +157,12 @@ class FlatPanel: NSViewController, NSCollectionViewDataSource, NSCollectionViewD
 		
 		var selectedFlat = Flat()
 		
+		// Should be only one selection
 		for indexPath in indexPaths {
 			selectedFlat = filteredFlats[indexPath.item]
 			selectedFlatIndex = selectedFlat.index
 		}
 		updateLabel(texture: selectedFlat.name)
-		selectedFlatName = selectedFlat.name
 	}
 	
 	
@@ -179,7 +173,6 @@ class FlatPanel: NSViewController, NSCollectionViewDataSource, NSCollectionViewD
 	
 	@IBAction func setClicked(_ sender: Any) {
 		setFlat()
-		delegate?.updateIndex(for: flatPosition, with: selectedFlatIndex)
 		window?.performClose(nil)
 	}
 	
@@ -188,11 +181,11 @@ class FlatPanel: NSViewController, NSCollectionViewDataSource, NSCollectionViewD
 		let searchString = searchField.stringValue
 		
 		if searchBarIsEmpty() {
-			filteredFlats = doomData.doom1Flats
+			filteredFlats = wad.flats
 			collectionView.reloadData()
 			selectFlat()
 		} else {
-			filteredFlats = doomData.doom1Flats.filter({( flat : Flat) -> Bool in
+			filteredFlats = wad.flats.filter({( flat : Flat) -> Bool in
 				return flat.name.lowercased().contains(searchString.lowercased())
 			})
 			collectionView.reloadData()
