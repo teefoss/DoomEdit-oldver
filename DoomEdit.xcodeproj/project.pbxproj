@@ -44,6 +44,7 @@
 		30C41A55200A7236000E3F9B /* FlatImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30C41A54200A7236000E3F9B /* FlatImageView.swift */; };
 		30C41A58200A79DB000E3F9B /* FlatCollectionViewItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30C41A56200A79DB000E3F9B /* FlatCollectionViewItem.swift */; };
 		30C41A59200A79DB000E3F9B /* FlatCollectionViewItem.xib in Resources */ = {isa = PBXBuildFile; fileRef = 30C41A57200A79DB000E3F9B /* FlatCollectionViewItem.xib */; };
+		30C421BB200FAF54000E3F9B /* ImageFunctions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30C421BA200FAF54000E3F9B /* ImageFunctions.swift */; };
 		30E827E31FC9FC7B00992422 /* e4m1.dwd in Resources */ = {isa = PBXBuildFile; fileRef = 30E827E21FC9FC7B00992422 /* e4m1.dwd */; };
 		30FBF6371FC52D500035671D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30FBF6361FC52D500035671D /* AppDelegate.swift */; };
 		30FBF6391FC52D500035671D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 30FBF6381FC52D500035671D /* Assets.xcassets */; };
@@ -100,6 +101,7 @@
 		30C41A54200A7236000E3F9B /* FlatImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlatImageView.swift; sourceTree = "<group>"; };
 		30C41A56200A79DB000E3F9B /* FlatCollectionViewItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlatCollectionViewItem.swift; sourceTree = "<group>"; };
 		30C41A57200A79DB000E3F9B /* FlatCollectionViewItem.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FlatCollectionViewItem.xib; sourceTree = "<group>"; };
+		30C421BA200FAF54000E3F9B /* ImageFunctions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageFunctions.swift; sourceTree = "<group>"; };
 		30E827E21FC9FC7B00992422 /* e4m1.dwd */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = e4m1.dwd; sourceTree = "<group>"; };
 		30FBF6331FC52D500035671D /* DoomEdit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DoomEdit.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		30FBF6361FC52D500035671D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -221,6 +223,7 @@
 				30C41A4F200A701E000E3F9B /* FlatPanel.swift */,
 				30C41A56200A79DB000E3F9B /* FlatCollectionViewItem.swift */,
 				30FBF64A1FC52F6A0035671D /* Geometry.swift */,
+				30C421BA200FAF54000E3F9B /* ImageFunctions.swift */,
 				30399CCA1FD3049E00503DB4 /* Line.swift */,
 				30B16B231FDE376A0066DEC3 /* LinePanel.swift */,
 				30FBF6441FC52DB70035671D /* MapWindowController.swift */,
@@ -350,6 +353,7 @@
 				30FBF65C1FC52F8A0035671D /* MapViewResp.swift in Sources */,
 				30FBF65A1FC52F8A0035671D /* MapViewDraw.swift in Sources */,
 				30399CCD1FD3050800503DB4 /* Thing.swift in Sources */,
+				30C421BB200FAF54000E3F9B /* ImageFunctions.swift in Sources */,
 				306C8B241FF9A17D00C2C47C /* TextureCollectionViewItem.swift in Sources */,
 				30B16B1F1FDE01CB0066DEC3 /* ThingPanel.swift in Sources */,
 				30C41A4E2009B339000E3F9B /* DataExtension.swift in Sources */,

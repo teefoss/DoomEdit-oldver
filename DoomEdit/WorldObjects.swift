@@ -59,6 +59,24 @@ struct Texture {
 	var selected: Bool = false
 }
 
+
+struct Patch {
+	var originx: Int
+	var originy: Int
+	var patch: Int
+	var stepdir: Int
+	var colorMap: Int
+}
+
+struct MapTexture {
+	var name: String
+	var masked: Bool
+	var width: Int
+	var height: Int
+	var patchCount: Int
+	var patches: [Patch]
+}
+
 struct Flat {
 	var image: NSImage {
 		if name == "STEP1" {
