@@ -69,6 +69,7 @@ struct Flat {
 			return NSImage(named: NSImage.Name(name))!
 		}
 	}
+	var imageFromWad = NSImage()
 	var name: String = ""
 	var index: Int = 0
 }

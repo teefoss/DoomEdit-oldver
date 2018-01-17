@@ -6,7 +6,7 @@
 //  Copyright © 2018 Thomas Foster. All rights reserved.
 //
 
-import Foundation
+import Cocoa
 
 struct WadInfo {
 	var identification: String		// should be IWAD
@@ -24,8 +24,10 @@ class WadFile {
 
 	var lumps: [LumpInfo] = []
 	let data: Data
-	var numLumps: Int32 = 0
+	var numOfLumps: Int32 = 0
 	var dirOffset: Int32 = 0
+	
+	var flats: [Flat] = []
 	
 	init() {
 		let home = FileManager.default.homeDirectoryForCurrentUser
@@ -38,7 +40,7 @@ class WadFile {
 		}
 		readHeader()
 		readDirectory()
-		loadFlatNames()
+		loadFlats()
 	}
 	
 	func readHeader() {
@@ -63,10 +65,10 @@ class WadFile {
 			return
 		}
 		
-		numLumps = data.scan(offset: numLumpsLoc, length: entrySize)
+		numOfLumps = data.scan(offset: numLumpsLoc, length: entrySize)
 		dirOffset = data.scan(offset: dirOffsetLoc, length: entrySize)
 		
-		if numLumps == 0 || dirOffset <= headerSize {
+		if numOfLumps == 0 || dirOffset <= headerSize {
 			print("Error! Empty Wad file.")
 			return
 		}
@@ -76,7 +78,7 @@ class WadFile {
 		
 		let entrySize = 16
 		
-		let directory = data.subdata(in: Int(dirOffset)..<Int(dirOffset)+Int(numLumps)*entrySize)
+		let directory = data.subdata(in: Int(dirOffset)..<Int(dirOffset)+Int(numOfLumps)*entrySize)
 		
 		for i in stride(from: 0, to: directory.count, by: entrySize) {
 			
@@ -109,57 +111,189 @@ class WadFile {
 		}
 	}
 	
-	func loadLump(lump: Int) {
+
+	
+	// ===================
+	// MARK: - Lump Lookup
+	// ===================
+	
+	func numLumps() -> Int {
+		return lumps.count
+	}
+
+	func lumpSize(_ index: Int) -> Int {
 		
-		var lump: LumpInfo
-		var data: Data
-		
+		return Int(lumps[index].length)
 	}
 	
-	func loadFlatNames() {
+	/// Returns the offset of the lump in the WAD
+	func lumpStart(_ index: Int) -> Int {
 		
-		var beginFlats: Bool = false
-		var i: Int = 0
+		return Int(lumps[index].offset)
+	}
 	
-		for lump in lumps {
-			if lump.name == "F1_START" || lump.name == "F1_END" || lump.name == "F2_START" || lump.name == "F2_END" {
-				continue
-			}
-			if lump.name == "F_START" {
-				beginFlats = true
-				continue
-			}
-			if lump.name == "F_END" {
-				break
-			}
-			if beginFlats {
-				var newFlat = Flat(name: lump.name, index: i)
-				doomData.doom1Flats.append(newFlat)
-				i = i+1
+	/// Returns the lump name for a given index
+	func lumpName(_ index: Int) -> String {
+		
+		return lumps[index].name
+	}
+	
+	/// Returns the lump index for a given name.
+	func lumpNamed(_ name: String) -> Int {
+		
+		for i in 0..<lumps.count {
+			let inf = lumps[i]
+			if inf.name.uppercased() == name.uppercased() {
+				return i
 			}
 		}
+		return -1
+	}
+	
+	
+	
+	// ==================
+	// MARK: Lump Loading
+	// ==================
+
+	/// Returns the raw data for lump at given index
+	func loadLump(_ index: Int) -> Data {
+		
+		var inf: LumpInfo
+		var buf: Data
+
+		inf = lumps[index]
+		
+		buf = data.subdata(in: Int(inf.offset)..<Int(inf.offset)+Int(inf.length))
+		return buf
+	}
+	
+	/// Returns the raw data for lump of given name.
+	func loadLump(named name: String) -> Data {
+		
+		return loadLump(lumpNamed(name))
 	}
 	
 	
 	func loadFlats() {
 		
-		var flatStart: Int
-		var flatEnd: Int
-		var shortPal: CUnsignedShort
-		var palLBM: Data
-		var flatData: Data
-		var flat: Flat
+		var wadIndex = 0
 		
-		// Get the palette and convert to 16-bit
+		let palLBMlump = loadLump(named: "playpal")
+		let palLBM: [CUnsignedChar] = palLBMlump.elements()
 		
+		repeat {
+			
+			let flatStart = lumpNamed("F\(wadIndex+1)_START") + 1
+			let flatEnd = lumpNamed("F\(wadIndex+1)_END")
+			
+			if flatStart == -1 || flatEnd == -1 {
+				if wadIndex == 0 {
+					print("Error.")
+				} else {
+					wadIndex = -1
+					continue
+				}
+			}
+			
+			for i in flatStart..<flatEnd {
+				var fl = Flat()
+				let flat = loadLump(i)
+				let flatArray: [CUnsignedChar] = flat.elements()
+				fl.imageFromWad = flatToImage(rawData: flatArray, pal: palLBM)!
+				fl.name = lumpName(i)
+				fl.index = flats.count
+				flats.append(fl)
+			}
+			wadIndex += 1
+			
+		} while wadIndex >= 0
 		
+		for flat in flats {
+			print(flat.index)
+		}
 		
 	}
 	
+	/// Convert a flat's PLAYPAL index data to corresponding RGB values.
+	func flatToRGB(_ flat: [CUnsignedChar], palette: [CUnsignedChar]) -> [CUnsignedChar] {
+
+		var array: [CUnsignedChar] = []
+		
+		for i in 0..<flat.count {
+			let paletteIndex = Int(flat[i])*3
+			let r = palette[paletteIndex]
+			let g = palette[paletteIndex+1]
+			let b = palette[paletteIndex+2]
+			array.append(r)
+			array.append(g)
+			array.append(b)
+		}
+				
+		return array
+	}
 	
+	/// Convert PLAYPAL to 16-bit. (DoomEd original)
+	func LBMPaletteTo16(_ lbmpal: [CUnsignedChar], _ pal: inout [CUnsignedShort]) {
+		
+		var p: Int = 0
+		
+		for i in 0..<256 {
+			
+			let r = lbmpal[p]>>4; p += 1
+			let g = lbmpal[p]>>4; p += 1
+			let b = lbmpal[p]>>4; p += 1
+			let shiftR = r<<12
+			let shiftG = g<<8
+			let shiftB = b<<4
+			let sum = UInt16(shiftR + shiftG + shiftB + 15)
+			pal[i] = NSSwapBigShortToHost(sum)
+		}
+	}
 	
-	
-	
+	/// Coverts raw 64x64 data to an NSImage
+	func flatToImage(rawData: [CUnsignedChar], pal: [CUnsignedChar]) -> NSImage? {
+		var dest: [CUnsignedChar] = []
+		var image: NSImageRep
+		
+		dest = flatToRGB(rawData, palette: pal)
+		
+		// Convert array to raw data
+		// let imgData = Data(buffer: UnsafeBufferPointer(start: dest, count: dest.count))
+		
+		var allocatedBytes = UnsafeMutableRawPointer.allocate(bytes: dest.count, alignedTo: 1)
+		
+		var pointer: UnsafeMutablePointer? = allocatedBytes.bindMemory(to: UInt8.self, capacity: dest.count)
+		pointer?.initialize(to: 0, count: dest.count)
+		
+		for i in 0..<dest.count {
+			pointer?.advanced(by: i).pointee = dest[i]
+		}
+		
+		let ptrptr: UnsafeMutablePointer<UnsafeMutablePointer<CUnsignedChar>?>? = UnsafeMutablePointer<UnsafeMutablePointer<CUnsignedChar>?>?(&pointer)
+
+		defer {
+			pointer?.deinitialize(count: dest.count)
+			ptrptr?.deinitialize(count: dest.count)
+		}
+		
+		image = NSBitmapImageRep(
+			bitmapDataPlanes: ptrptr,
+			pixelsWide: 64,
+			pixelsHigh: 64,
+			bitsPerSample: 8,
+			samplesPerPixel: 3,
+			hasAlpha: false,
+			isPlanar: false,
+			colorSpaceName: .calibratedRGB,
+			bytesPerRow: (64*3),
+			bitsPerPixel: 24)!
+		
+		let img = NSImage()
+		img.addRepresentation(image)
+		
+		return img
+	}
 	
 	
 	

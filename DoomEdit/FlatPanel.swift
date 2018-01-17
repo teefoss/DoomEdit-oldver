@@ -19,6 +19,7 @@ class FlatPanel: NSViewController, NSCollectionViewDataSource, NSCollectionViewD
 	var flatPosition = 0
 	var selectedFlatIndex = -1
 	var selectedFlatName = ""
+	var flatsFromWad: [Flat] = []
 	
 	var window: NSWindow?
 	var delegate: FlatPanelDelegate?
@@ -38,7 +39,10 @@ class FlatPanel: NSViewController, NSCollectionViewDataSource, NSCollectionViewD
     override func viewDidLoad() {
         super.viewDidLoad()
 		
-		filteredFlats = doomData.doom1Flats
+		let wadFile = WadFile()
+		flatsFromWad = wadFile.flats
+		
+		filteredFlats = flatsFromWad
 		
 		searchField.sendsSearchStringImmediately = true
 		searchField.sendsWholeSearchString = false
@@ -53,7 +57,7 @@ class FlatPanel: NSViewController, NSCollectionViewDataSource, NSCollectionViewD
 		
 		window = self.view.window
 		searchField.stringValue = ""
-		filteredFlats = doomData.doom1Flats
+		filteredFlats = flatsFromWad
 	}
 	
 	override func viewWillLayout() {
@@ -131,7 +135,8 @@ class FlatPanel: NSViewController, NSCollectionViewDataSource, NSCollectionViewD
 	}
 	
 	func collectionView(_ collectionView: NSCollectionView, numberOfItemsInSection section: Int) -> Int {
-		return filteredFlats.count
+//		return filteredFlats.count
+		return flatsFromWad.count
 	}
 	
 	func collectionView(_ collectionView: NSCollectionView, itemForRepresentedObjectAt indexPath: IndexPath) -> NSCollectionViewItem {
@@ -139,9 +144,10 @@ class FlatPanel: NSViewController, NSCollectionViewDataSource, NSCollectionViewD
 		let item = collectionView.makeItem(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "FlatCollectionViewItem"), for: indexPath)
 		guard let collectionViewItem = item as? FlatCollectionViewItem else { return item }
 		
-		let flat = filteredFlats[indexPath.item]
+//		let flat = filteredFlats[indexPath.item]
 		
-		collectionViewItem.imageView?.image = flat.image
+//		collectionViewItem.imageView?.image = flat.image
+		collectionViewItem.imageView?.image = flatsFromWad[indexPath.item].imageFromWad
 		
 		return item
 	}

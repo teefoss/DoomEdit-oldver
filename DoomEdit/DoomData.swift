@@ -20,6 +20,8 @@ class DoomData {
 	var doom1Textures: [Texture] = []
 	var doom1FlatNames: [String] = []
 	var doom1Flats: [Flat] = []
+	var doom1FlatImages: [NSImage] = []
+	var doom1LineSpecials: [LineSpecial] = []
 	
 	var things: [String] = []
 	
@@ -89,7 +91,7 @@ class DoomData {
 	func loadLineSpecials() {
 		
 		var fileContents: String?		// to store the entire file
-		if let filepath = Bundle.main.path(forResource: "things", ofType: "dsp") {
+		if let filepath = Bundle.main.path(forResource: "linespecials", ofType: "doom1") {
 			do {
 				fileContents = try String(contentsOfFile: filepath)
 			} catch {
@@ -100,10 +102,13 @@ class DoomData {
 		guard let fileLines = fileContents?.components(separatedBy: .newlines) else { return }
 		
 		for fileLine in fileLines {
-			var string: String = ""
-			var index: Int = 0
-			if readLineSpecial(from: fileLine, to: &string, to: &index) {
-				lineSpecials[index] = string
+//			var string: String = ""
+//			var index: Int = 0
+			
+			var lineSpecial = LineSpecial()
+			
+			if readLineSpecial(from: fileLine, to: &lineSpecial) {
+				doom1LineSpecials.append(lineSpecial)
 			}
 		}
 
@@ -179,20 +184,24 @@ class DoomData {
 	// MARK: - Data Reading
 	// ====================
 
-	func readLineSpecial(from fileLine: String, to string: inout String, to index: inout Int) -> Bool {
+	func readLineSpecial(from fileLine: String, to lineSpecial: inout LineSpecial) -> Bool {
 		
-		var nsString: NSString?
+		var type: NSString?
+		var name: NSString?
 		let scanner = Scanner(string: fileLine)
 		scanner.charactersToBeSkipped = CharacterSet()
 		
 		if fileLine.first == "n" {
 			return false
 		} else if
-			scanner.scanInt(&index) &&
+			scanner.scanInt(&lineSpecial.index) &&
 			scanner.scanString(":", into: nil) &&
-			scanner.scanUpTo("\n", into: &nsString)
+			scanner.scanUpTo("_", into: &type) &&
+			scanner.scanString("_", into: nil) &&
+			scanner.scanUpTo("\n", into: &name)
 		{
-			string = nsString! as String
+			lineSpecial.type = type! as String
+			lineSpecial.name = name! as String
 			return true
 		}
 		return false

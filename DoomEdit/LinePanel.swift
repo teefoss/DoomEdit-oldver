@@ -49,6 +49,7 @@ class LinePanel: NSViewController, TexturePanelDelegate {
 	@IBOutlet weak var backMiddleImageView: TextureImageView!
 	@IBOutlet weak var backLowerImageView: TextureImageView!
 	@IBOutlet weak var backMiddleLabel: NSTextField!
+	@IBOutlet weak var specialsPopUpButton: NSPopUpButton!
 	
 	
 	var flagButtons: [NSButton] = []
@@ -79,6 +80,40 @@ class LinePanel: NSViewController, TexturePanelDelegate {
 		flagButtons.append(blocksSoundButton)
 		flagButtons.append(notOnMapButton)
 		flagButtons.append(onMapButton)
+
+		let manualMenu = NSMenu()
+		let buttonMenu = NSMenu()
+
+		let manualMenuItem = NSMenuItem(title: "Manual", action: nil, keyEquivalent: "")
+		let buttonMenuItem = NSMenuItem(title: "Button", action: nil, keyEquivalent: "")
+
+		manualMenu.setSubmenu(manualMenu, for: manualMenuItem)
+		buttonMenu.setSubmenu(buttonMenu, for: buttonMenuItem)
+		
+		for special in doomData.doom1LineSpecials {
+
+			switch special.type {
+			case "Manual":
+				let item = NSMenuItem()
+				item.title = special.name
+				item.action = #selector(setSpecial)
+				item.tag = special.index
+				manualMenu.addItem(item)
+			case "Button":
+				buttonMenu.addItem(withTitle: special.name, action: #selector(setSpecial), keyEquivalent: "")
+			default:
+				continue
+			}
+		}
+		
+		var menuItems: [NSMenuItem] = []
+		
+		specialsPopUpButton.menu?.removeAllItems()
+		specialsPopUpButton.menu?.addItem(manualMenuItem)
+		specialsPopUpButton.menu?.addItem(buttonMenuItem)
+//		for item in menuItems {
+//			specialsPopUpButton.menu?.addItem(item)
+//		}
     }
 	
 	override func viewWillAppear() {
@@ -108,6 +143,7 @@ class LinePanel: NSViewController, TexturePanelDelegate {
 		backLowerImageView.lineIndex = lineIndex
 		
 		// TODO: set up the rest
+		
 	}
 	
 	func updateTextureLabels() {
@@ -234,6 +270,10 @@ class LinePanel: NSViewController, TexturePanelDelegate {
 		}
 
 		
+	}
+	
+	@objc func setSpecial() {
+		lines[lineIndex].special = specialsPopUpButton.selectedTag()
 	}
 	
 	@IBAction func suggestTagClicked(_ sender: NSButton) {

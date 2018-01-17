@@ -17,4 +17,10 @@ extension Data {
 			return pointer.pointee
 		}
 	}
+	
+	func elements <T> () -> [T] {
+		return withUnsafeBytes {
+			Array(UnsafeBufferPointer<T>(start: $0, count: count/MemoryLayout<T>.size))
+		}
+	}
 }
