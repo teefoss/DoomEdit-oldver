@@ -10,7 +10,7 @@ import Foundation
 
 extension Data {
 	
-	func scan<T: SignedInteger>(offset: Int, length: Int) -> T {
+	func scan<T>(offset: Int, length: Int) -> T {
 		
 		return subdata(in: offset..<offset+length).withUnsafeBytes {
 			(pointer: UnsafePointer<T>) -> T in

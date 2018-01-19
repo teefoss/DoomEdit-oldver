@@ -21,6 +21,7 @@ class MapView: NSView, NSPopoverDelegate {
 	var thingViewController = ThingPanel()
 	var linePanel = LinePanel()
 	var sectorPanel = SectorPanel()
+	var patchWindow: PatchWindow?
 	
 	var delegate: MapViewDelegate?
 	var trackingArea: NSTrackingArea?
@@ -108,6 +109,10 @@ class MapView: NSView, NSPopoverDelegate {
 		addTrackingArea(trackingArea)
 
 		editWorld.delegate = self
+		
+		let patchwin = PatchWindow()
+		patchwin.showWindow(self)
+		self.patchWindow = patchwin
 		
 //		thingViewController = ThingViewController.init(nibName: NSNib.Name(rawValue: "ThingViewController"), bundle: nil)
 	}

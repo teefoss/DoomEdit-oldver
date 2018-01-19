@@ -61,11 +61,11 @@ struct Texture {
 
 
 struct Patch {
-	var originx: Int
-	var originy: Int
-	var patch: Int
-	var stepdir: Int
-	var colorMap: Int
+	var rect = NSRect()
+	var size = NSSize()
+	var name: String = ""
+	var image = NSImage()
+	var WADindex: Int = 0
 }
 
 struct MapTexture {
@@ -78,16 +78,7 @@ struct MapTexture {
 }
 
 struct Flat {
-	var image: NSImage {
-		if name == "STEP1" {
-			return NSImage(named: NSImage.Name("STEP1_FL"))!
-		} else if name == "STEP2" {
-			return NSImage(named: NSImage.Name("STEP2_FL"))!
-		} else {
-			return NSImage(named: NSImage.Name(name))!
-		}
-	}
-	var imageFromWad = NSImage()
+	var image = NSImage()
 	var name: String = ""
 	var index: Int = 0
 }

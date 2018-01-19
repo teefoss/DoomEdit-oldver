@@ -95,7 +95,7 @@ class SectorPanel: NSViewController, NSTextDelegate, FlatPanelDelegate {
 		
 		for flat in wad.flats {
 			if flat.name == name {
-				return flat.imageFromWad
+				return flat.image
 			}
 		}
 		return nil
@@ -132,11 +132,11 @@ class SectorPanel: NSViewController, NSTextDelegate, FlatPanelDelegate {
 		switch position {
 		case 0:
 			floorLabel.stringValue = wad.flats[index].name
-			floorImageView.image = wad.flats[index].imageFromWad
+			floorImageView.image = wad.flats[index].image
 			floorImageView.selectedFlatIndex = wad.flats[index].index
 		case 1:
 			ceilingLabel.stringValue = wad.flats[index].name
-			ceilingImageView.image = wad.flats[index].imageFromWad
+			ceilingImageView.image = wad.flats[index].image
 			ceilingImageView.selectedFlatIndex = wad.flats[index].index
 		default:
 			fatalError("Invalid FlatImageView position!")

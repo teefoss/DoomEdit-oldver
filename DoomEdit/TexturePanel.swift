@@ -189,7 +189,6 @@ class TexturePanel: NSViewController, NSCollectionViewDataSource, NSCollectionVi
 		collectionViewItem.width = texture.width
 		collectionViewItem.height = texture.height
 		
-		
 		return item
 	}
 	

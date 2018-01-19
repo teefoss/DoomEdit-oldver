@@ -68,6 +68,3 @@ func displayAlert(question: String, text: String) {
 	//return alert.runModal() == .alertFirstButtonReturn
 }
 
-
-
-

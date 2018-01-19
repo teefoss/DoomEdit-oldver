@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		300E0DFE1FDADDC00066134A /* NSPointExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300E0DFD1FDADDC00066134A /* NSPointExtension.swift */; };
+		301CC5B42011032D00E208FF /* Junk.swift in Sources */ = {isa = PBXBuildFile; fileRef = 301CC5B32011032D00E208FF /* Junk.swift */; };
+		301CC5B720119EB400E208FF /* PatchWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 301CC5B520119EB400E208FF /* PatchWindow.swift */; };
+		301CC5B820119EB400E208FF /* PatchWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 301CC5B620119EB400E208FF /* PatchWindow.xib */; };
 		30399CC11FCFAAAC00503DB4 /* EWLoad.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30399CC01FCFAAAC00503DB4 /* EWLoad.swift */; };
 		30399CC71FD06EEE00503DB4 /* dwd-format.txt in Resources */ = {isa = PBXBuildFile; fileRef = 30399CC61FD06EEE00503DB4 /* dwd-format.txt */; };
 		30399CC91FD1E8A600503DB4 /* Global.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30399CC81FD1E8A600503DB4 /* Global.swift */; };
@@ -62,6 +65,9 @@
 
 /* Begin PBXFileReference section */
 		300E0DFD1FDADDC00066134A /* NSPointExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSPointExtension.swift; sourceTree = "<group>"; };
+		301CC5B32011032D00E208FF /* Junk.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Junk.swift; sourceTree = "<group>"; };
+		301CC5B520119EB400E208FF /* PatchWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatchWindow.swift; sourceTree = "<group>"; };
+		301CC5B620119EB400E208FF /* PatchWindow.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PatchWindow.xib; sourceTree = "<group>"; };
 		30399CC01FCFAAAC00503DB4 /* EWLoad.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EWLoad.swift; sourceTree = "<group>"; };
 		30399CC61FD06EEE00503DB4 /* dwd-format.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "dwd-format.txt"; sourceTree = "<group>"; };
 		30399CC81FD1E8A600503DB4 /* Global.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Global.swift; sourceTree = "<group>"; };
@@ -186,6 +192,7 @@
 				30FBF6451FC52DB70035671D /* MapWindowController.xib */,
 				30533AA81FE45E620039DCFB /* SectorPanel.xib */,
 				30B16B241FDE376A0066DEC3 /* LinePanel.xib */,
+				301CC5B620119EB400E208FF /* PatchWindow.xib */,
 				306C8B231FF9A17D00C2C47C /* TextureCollectionViewItem.xib */,
 				306C8B1F1FF9610D00C2C47C /* TexturePanel.xib */,
 				30B16B1E1FDE01CB0066DEC3 /* ThingPanel.xib */,
@@ -224,12 +231,14 @@
 				30C41A56200A79DB000E3F9B /* FlatCollectionViewItem.swift */,
 				30FBF64A1FC52F6A0035671D /* Geometry.swift */,
 				30C421BA200FAF54000E3F9B /* ImageFunctions.swift */,
+				301CC5B32011032D00E208FF /* Junk.swift */,
 				30399CCA1FD3049E00503DB4 /* Line.swift */,
 				30B16B231FDE376A0066DEC3 /* LinePanel.swift */,
 				30FBF6441FC52DB70035671D /* MapWindowController.swift */,
 				30FBF6531FC52F8A0035671D /* MapView.swift */,
 				30FBF6541FC52F8A0035671D /* MapViewDraw.swift */,
 				30FBF6561FC52F8A0035671D /* MapViewResp.swift */,
+				301CC5B520119EB400E208FF /* PatchWindow.swift */,
 				30533AA71FE45E620039DCFB /* SectorPanel.swift */,
 				306C8B221FF9A17D00C2C47C /* TextureCollectionViewItem.swift */,
 				306C8B261FFB22D800C2C47C /* TextureImageView.swift */,
@@ -329,6 +338,7 @@
 				30A00BAC1FD6F1AF00EBCA27 /* sectorspecials.dsp in Resources */,
 				30533AAA1FE45E620039DCFB /* SectorPanel.xib in Resources */,
 				30C41A52200A701E000E3F9B /* FlatPanel.xib in Resources */,
+				301CC5B820119EB400E208FF /* PatchWindow.xib in Resources */,
 				30FBF6391FC52D500035671D /* Assets.xcassets in Resources */,
 				306C8B211FF9610D00C2C47C /* TexturePanel.xib in Resources */,
 				30A00BB11FD6F1AF00EBCA27 /* things.dsp in Resources */,
@@ -349,7 +359,9 @@
 				30533AA91FE45E620039DCFB /* SectorPanel.swift in Sources */,
 				30FBF6461FC52DB70035671D /* MapWindowController.swift in Sources */,
 				30FBF64C1FC52F6A0035671D /* WorldObjects.swift in Sources */,
+				301CC5B42011032D00E208FF /* Junk.swift in Sources */,
 				30533AA41FE17CC70039DCFB /* BlockWorld.swift in Sources */,
+				301CC5B720119EB400E208FF /* PatchWindow.swift in Sources */,
 				30FBF65C1FC52F8A0035671D /* MapViewResp.swift in Sources */,
 				30FBF65A1FC52F8A0035671D /* MapViewDraw.swift in Sources */,
 				30399CCD1FD3050800503DB4 /* Thing.swift in Sources */,

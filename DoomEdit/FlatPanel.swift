@@ -141,7 +141,7 @@ class FlatPanel: NSViewController, NSCollectionViewDataSource, NSCollectionViewD
 		let item = collectionView.makeItem(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "FlatCollectionViewItem"), for: indexPath)
 		guard let collectionViewItem = item as? FlatCollectionViewItem else { return item }
 		
-		collectionViewItem.imageView?.image = filteredFlats[indexPath.item].imageFromWad
+		collectionViewItem.imageView?.image = filteredFlats[indexPath.item].image
 		
 		return item
 	}

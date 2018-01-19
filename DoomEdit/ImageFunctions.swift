@@ -8,7 +8,25 @@
 
 import Cocoa
 
-/// Convert a flat's PLAYPAL index data to corresponding RGB values.
+
+struct RGB {
+	
+	var red: UInt8
+	var green: UInt8
+	var blue: UInt8
+	
+	init(red: UInt8, green: UInt8, blue: UInt8) {
+		self.red = red
+		self.green = green
+		self.blue = blue
+	}
+}
+
+struct Palette {
+	var colors: [RGB]	
+}
+
+/// Convert a flat's PLAYPAL index data to corresponding RGB values without alpha.
 func flatToRGB(_ flat: [CUnsignedChar], palette: [CUnsignedChar]) -> [CUnsignedChar] {
 	
 	var array: [CUnsignedChar] = []
@@ -18,11 +36,22 @@ func flatToRGB(_ flat: [CUnsignedChar], palette: [CUnsignedChar]) -> [CUnsignedC
 		let r = palette[paletteIndex]
 		let g = palette[paletteIndex+1]
 		let b = palette[paletteIndex+2]
-		array.append(r)
-		array.append(g)
-		array.append(b)
+		array.append(r); array.append(g); array.append(b)
 	}
+	return array
+}
+
+/// Convert a patch's PLAYPAL index data to corresponding RGB with alpha.
+func patchToRGB (_ data: CUnsignedChar, palette: [CUnsignedChar]) -> [CUnsignedChar] {
 	
+	var array: [CUnsignedChar] = []
+	
+	let paletteIndex = Int(data)*4
+	let r = palette[paletteIndex]
+	let g = palette[paletteIndex+1]
+	let b = palette[paletteIndex+2]
+	array.append(r); array.append(g); array.append(b)
+
 	return array
 }
 
