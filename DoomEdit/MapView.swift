@@ -100,21 +100,14 @@ class MapView: NSView, NSPopoverDelegate {
 	
 	override init(frame frameRect: NSRect) {
 		super.init(frame: frameRect)
-		
-		let trackingArea = NSTrackingArea(rect: bounds,
-										  options: [.activeInKeyWindow, .inVisibleRect, .mouseMoved],
-										  owner: self,
-										  userInfo: nil)
-		self.trackingArea = trackingArea
-		addTrackingArea(trackingArea)
-
+				
 		editWorld.delegate = self
 		
+		/* Testing
 		let patchwin = PatchWindow()
 		patchwin.showWindow(self)
 		self.patchWindow = patchwin
-		
-//		thingViewController = ThingViewController.init(nibName: NSNib.Name(rawValue: "ThingViewController"), bundle: nil)
+		*/
 	}
 
 	func initPopover(_ popover: inout NSPopover, with viewController: NSViewController) {

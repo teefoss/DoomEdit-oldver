@@ -19,6 +19,7 @@ class TexturePanel: NSViewController, NSCollectionViewDataSource, NSCollectionVi
 	var selectedTextureIndex: Int = -1
 	var lineIndex: Int = 0
 	var texturePosition: Int = 0
+	var allTextures: [Texture] = []
 	
 	var window: NSWindow?
 	var delegate: TexturePanelDelegate?
@@ -40,9 +41,7 @@ class TexturePanel: NSViewController, NSCollectionViewDataSource, NSCollectionVi
 
 	override func viewDidLoad() {
 		super.viewDidLoad()
-		
-		filteredTextures = doomData.doom1Textures
-		
+				
 		searchField.sendsSearchStringImmediately = true
 		searchField.sendsWholeSearchString = false
 		
@@ -56,7 +55,11 @@ class TexturePanel: NSViewController, NSCollectionViewDataSource, NSCollectionVi
 		
 		window = self.view.window
 		searchField.stringValue = ""
-		filteredTextures = doomData.doom1Textures
+		filteredTextures = allTextures
+		
+		for texture in filteredTextures {
+			print(texture.index)
+		}
 	}
 	
 	override func viewWillLayout() {
@@ -108,6 +111,8 @@ class TexturePanel: NSViewController, NSCollectionViewDataSource, NSCollectionVi
 	// MARK: - Textures
 	// ================
 	
+
+
 	func selectTexture() {
 
 		collectionView.deselectAll(nil)
@@ -140,15 +145,15 @@ class TexturePanel: NSViewController, NSCollectionViewDataSource, NSCollectionVi
 				return
 			}
 			
-			let newTexture = doomData.doom1Textures[selectedTextureIndex].name
+			let newTextureName = allTextures[selectedTextureIndex].name
 			
 			switch texturePosition {
-			case 1: lines[lineIndex].side[0]?.lowerTexture = newTexture
-			case 2: lines[lineIndex].side[0]?.middleTexture = newTexture
-			case 3: lines[lineIndex].side[0]?.upperTexture = newTexture
-			case -1: lines[lineIndex].side[1]?.lowerTexture = newTexture
-			case -2: lines[lineIndex].side[1]?.middleTexture = newTexture
-			case -3: lines[lineIndex].side[1]?.upperTexture = newTexture
+			case 1: lines[lineIndex].side[0]?.lowerTexture = newTextureName
+			case 2: lines[lineIndex].side[0]?.middleTexture = newTextureName
+			case 3: lines[lineIndex].side[0]?.upperTexture = newTextureName
+			case -1: lines[lineIndex].side[1]?.lowerTexture = newTextureName
+			case -2: lines[lineIndex].side[1]?.middleTexture = newTextureName
+			case -3: lines[lineIndex].side[1]?.upperTexture = newTextureName
 			default:
 				print("Error. No texture position!")
 			}
@@ -184,7 +189,7 @@ class TexturePanel: NSViewController, NSCollectionViewDataSource, NSCollectionVi
 		
 		let texture = filteredTextures[indexPath.item]
 		
-		collectionViewItem.imageView?.image = NSImage(named: NSImage.Name(rawValue: texture.name))
+		collectionViewItem.imageView?.image = texture.image
 		collectionViewItem.name = texture.name
 		collectionViewItem.width = texture.width
 		collectionViewItem.height = texture.height
@@ -196,11 +201,11 @@ class TexturePanel: NSViewController, NSCollectionViewDataSource, NSCollectionVi
 	// sizeForItem
 	
 	func collectionView(_ collectionView: NSCollectionView, layout collectionViewLayout: NSCollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> NSSize {
-		let image = NSImage(named: NSImage.Name(rawValue: filteredTextures[indexPath.item].name))
+		let image = filteredTextures[indexPath.item].image
 		
 		var size = NSSize()
-		size.width = (image?.size.width)!+SPACING*2
-		size.height = (image?.size.height)!+SPACING*2
+		size.width = image.size.width+SPACING*2
+		size.height = image.size.height+SPACING*2
 		
 		return size
 	}
@@ -216,6 +221,7 @@ class TexturePanel: NSViewController, NSCollectionViewDataSource, NSCollectionVi
 		for indexPath in indexPaths {
 			selectedTex = filteredTextures[indexPath.item]
 			selectedTextureIndex = selectedTex.index
+			print(selectedTex.index)
 		}
 		updateLabels(texture: selectedTex)
 	}
@@ -240,11 +246,11 @@ class TexturePanel: NSViewController, NSCollectionViewDataSource, NSCollectionVi
 		let searchString = searchField.stringValue
 		
 		if searchBarIsEmpty() {
-			filteredTextures = doomData.doom1Textures
+			filteredTextures = allTextures
 			collectionView.reloadData()
 			selectTexture()
 		} else {
-			filteredTextures = doomData.doom1Textures.filter({( texture : Texture) -> Bool in
+			filteredTextures = allTextures.filter({( texture : Texture) -> Bool in
 				return texture.name.lowercased().contains(searchString.lowercased())
 			})
 			collectionView.reloadData()

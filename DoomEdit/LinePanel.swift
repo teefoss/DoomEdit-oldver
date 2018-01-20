@@ -20,6 +20,7 @@ class LinePanel: NSViewController, TexturePanelDelegate {
 	var line = Line()
 	var lineIndex: Int = 0
 
+	var allTextures: [Texture] = []
 	
 	@IBOutlet weak var titleLabel: NSTextField!
 	
@@ -57,6 +58,8 @@ class LinePanel: NSViewController, TexturePanelDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
 		
+		createAllTextureImages()
+		
 		frontUpperImageView.texturePanel.delegate = self
 		frontMiddleImageView.texturePanel.delegate = self
 		frontLowerImageView.texturePanel.delegate = self
@@ -70,6 +73,13 @@ class LinePanel: NSViewController, TexturePanelDelegate {
 		backUpperImageView.texturePosition = -3
 		backMiddleImageView.texturePosition = -2
 		backLowerImageView.texturePosition = -1
+		
+		frontUpperImageView.texturePanel.allTextures = allTextures
+		frontMiddleImageView.texturePanel.allTextures = allTextures
+		frontLowerImageView.texturePanel.allTextures = allTextures
+		backUpperImageView.texturePanel.allTextures = allTextures
+		backMiddleImageView.texturePanel.allTextures = allTextures
+		backLowerImageView.texturePanel.allTextures = allTextures
 		
 		flagButtons.append(blocksAllButton)
 		flagButtons.append(blocksMonstersButton)
@@ -146,6 +156,73 @@ class LinePanel: NSViewController, TexturePanelDelegate {
 		
 	}
 	
+	
+	
+	func createAllTextureImages() {
+		
+		allTextures = []
+		
+		for i in 0..<wad.maptextures.count {
+			var t = createTextureImage(for: i)
+			t.index = i
+			allTextures.append(t)
+		}
+	}
+	
+	func createTextureImage(for index: Int) -> Texture {
+		
+		var texture = Texture()
+		var size = NSSize()
+		
+		size.width = CGFloat(wad.maptextures[index].width)
+		size.height = CGFloat(wad.maptextures[index].height)
+		
+		texture.width = Int(size.width)
+		texture.height = Int(size.height)
+		texture.name = wad.maptextures[index].name
+		texture.patchCount = Int(wad.maptextures[index].patchcount)
+		texture.image = NSImage(size: size)
+		texture.image.lockFocus()
+		
+		let color = NSColor(calibratedRed: 1, green: 0, blue: 0, alpha: 1)
+		color.set()
+		texture.rect.fill()
+		
+		for i in 0..<Int(wad.maptextures[index].patchcount) {
+			
+			var p = TexPatch()
+			
+			p.info = wad.maptextures[index].patches[i]	//
+			if let ptch = getPatchImage(for: Int(p.info.patchIndex)) {
+				p.patch = ptch
+			} else {
+				fatalError("Error! While building texture \(i), I couldn't find the '\(p.info.name)' patch!")
+			}
+			
+			p.rect.origin.x = CGFloat(p.info.originx)
+			p.rect.origin.y = CGFloat(wad.maptextures[index].height) - p.patch.size.height - CGFloat(p.info.originy)
+			p.rect.size.width = p.patch.rect.size.width
+			p.rect.size.height = p.patch.rect.size.height
+			p.patch.image.draw(at: p.rect.origin, from: NSRect.zero, operation: .sourceOver, fraction: 1.0)
+		}
+		texture.image.unlockFocus()
+		
+		return texture
+	}
+	
+	func getPatchImage(for index: Int) -> Patch? {
+		
+		let patchName = wad.pnames[index]
+		
+		
+		for i in 0..<wad.patches.count {
+			if patchName.uppercased() == wad.patches[i].name.uppercased() {
+				return wad.patches[i]
+			}
+		}
+		return nil
+	}
+	
 	func updateTextureLabels() {
 
 		frontUpperLabel.stringValue = lines[lineIndex].side[0]?.upperTexture ?? "—"
@@ -186,90 +263,74 @@ class LinePanel: NSViewController, TexturePanelDelegate {
 		// Set the images and send the texture's index to the imageview
 		
 		if frontUpper != "-" {
-			frontUpperImageView.image = NSImage(named: NSImage.Name(rawValue: frontUpper))
-			for i in 0..<doomData.doom1Textures.count {
-				let texture = doomData.doom1Textures[i]
-				if frontUpper == texture.name {
-					frontUpperImageView.textureIndex = i
-					break
-				}
-			}
+			frontUpperImageView.image = imageForTexture(named: frontUpper)
+			frontUpperImageView.textureIndex = indexForTexture(named: frontUpper)
 		} else {
 			frontUpperImageView.image = nil
 			frontUpperImageView.textureIndex = -1
 		}
 		
 		if frontMiddle != "-" {
-			frontMiddleImageView.image = NSImage(named: NSImage.Name(rawValue: frontMiddle))
-			for i in 0..<doomData.doom1Textures.count {
-				let texture = doomData.doom1Textures[i]
-				if frontMiddle == texture.name {
-					frontMiddleImageView.textureIndex = i
-					break
-				}
-			}
+			frontMiddleImageView.image = imageForTexture(named: frontMiddle)
+			frontMiddleImageView.textureIndex = indexForTexture(named: frontMiddle)
 		} else {
 			frontMiddleImageView.image = nil
 			frontMiddleImageView.textureIndex = -1
 		}
 		
 		if frontLower != "-" {
-			frontLowerImageView.image = NSImage(named: NSImage.Name(rawValue: frontLower))
-			for i in 0..<doomData.doom1Textures.count {
-				let texture = doomData.doom1Textures[i]
-				if frontLower == texture.name {
-					frontLowerImageView.textureIndex = i
-					break
-				}
-			}
+			frontLowerImageView.image = imageForTexture(named: frontLower)
+			frontLowerImageView.textureIndex = indexForTexture(named: frontLower)
 		} else {
 			frontLowerImageView.image = nil
 			frontLowerImageView.textureIndex = -1
 		}
 		
 		if backUpper != "-" {
-			backUpperImageView.image = NSImage(named: NSImage.Name(rawValue: backUpper))
-			for i in 0..<doomData.doom1Textures.count {
-				let texture = doomData.doom1Textures[i]
-				if backUpper == texture.name {
-					backUpperImageView.textureIndex = i
-					break
-				}
-			}
+			backUpperImageView.image = imageForTexture(named: backUpper)
+			backUpperImageView.textureIndex = indexForTexture(named: backUpper)
 		} else {
 			backUpperImageView.image = nil
 			backUpperImageView.textureIndex = -1
 		}
 		
 		if backMiddle != "-" {
-			backMiddleImageView.image = NSImage(named: NSImage.Name(rawValue: backMiddle))
-			for i in 0..<doomData.doom1Textures.count {
-				let texture = doomData.doom1Textures[i]
-				if backMiddle == texture.name {
-					backMiddleImageView.textureIndex = i
-					break
-				}
-			}
+			backMiddleImageView.image = imageForTexture(named: backMiddle)
+			backMiddleImageView.textureIndex = indexForTexture(named: backMiddle)
 		} else {
 			backMiddleImageView.image = nil
 			backMiddleImageView.textureIndex = -1
 		}
 		
 		if backLower != "-" {
-			backLowerImageView.image = NSImage(named: NSImage.Name(rawValue: backLower))
-			for i in 0..<doomData.doom1Textures.count {
-				let texture = doomData.doom1Textures[i]
-				if backLower == texture.name {
-					backLowerImageView.textureIndex = i
-					break
-				}
-			}
+			backLowerImageView.image = imageForTexture(named: backLower)
+			backLowerImageView.textureIndex = indexForTexture(named: backLower)
 		} else {
 			backLowerImageView.image = nil
 			backLowerImageView.textureIndex = -1
 		}
 
 		
+	}
+	
+	func imageForTexture(named name: String) -> NSImage? {
+		
+		for texture in allTextures {
+			if texture.name.uppercased() == name.uppercased() {
+				return texture.image
+			}
+		}
+		return nil
+	}
+	
+	func indexForTexture(named name: String) -> Int {
+		
+		for i in 0..<allTextures.count {
+			if allTextures[i].name.uppercased() == name.uppercased() {
+				return i
+			}
+		}
+		return -1
 	}
 	
 	@objc func setSpecial() {

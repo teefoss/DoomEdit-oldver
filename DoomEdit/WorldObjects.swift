@@ -50,32 +50,7 @@ struct SectorDef {
 	}
 }
 
-struct Texture {
-	var WADindex: Int = 0
-	var name: String = ""
-	var width: Int = 0
-	var height: Int = 0
-	var index: Int = 0
-	var selected: Bool = false
-}
 
-
-struct Patch {
-	var rect = NSRect()
-	var size = NSSize()
-	var name: String = ""
-	var image = NSImage()
-	var WADindex: Int = 0
-}
-
-struct MapTexture {
-	var name: String
-	var masked: Bool
-	var width: Int
-	var height: Int
-	var patchCount: Int
-	var patches: [Patch]
-}
 
 struct Flat {
 	var image = NSImage()

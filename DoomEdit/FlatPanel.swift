@@ -19,7 +19,7 @@ class FlatPanel: NSViewController, NSCollectionViewDataSource, NSCollectionViewD
 	var flatPosition = 0
 //	var selectedFlatName = ""
 	var selectedFlatIndex: Int = -1
-	var wad = WadFile()
+//	var wad = WadFile()
 
 	var window: NSWindow?
 	var delegate: FlatPanelDelegate?

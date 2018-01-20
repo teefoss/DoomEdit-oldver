@@ -20,18 +20,18 @@ struct LumpInfo {
 	var name: String
 }
 
-struct PatchInfo {
-	var width: UInt16 = 0
-	var height: UInt16 = 0
-	var xoffset: Int16 = 0
-	var yoffset: Int16 = 0
-	var imageDataLoc: Int {
-		return 8+(4*Int(width))
-	}
-	var columnOffsets: [UInt32] = []
-	var numPixels: [UInt8] = []
-	var imageData: [CUnsignedChar] = []
+struct TextureLumpInfo {
+	var numTextures: Int32 = 0
+	var offsets: [Int32] = []
 }
+
+
+
+// ===============
+// MARK: - WadFile
+// ===============
+
+let wad = WadFile()
 
 class WadFile {
 	
@@ -41,7 +41,10 @@ class WadFile {
 	var dirOffset: Int32 = 0
 	
 	var flats: [Flat] = []
+	var pnames: [String] = []
 	var patches: [Patch] = []
+	var maptextures: [MapTexture] = []
+	//var textures: [Texture] = []
 	
 	init() {
 		let home = FileManager.default.homeDirectoryForCurrentUser
@@ -55,8 +58,16 @@ class WadFile {
 		readHeader()
 		readDirectory()
 		loadFlats()
+		loadPNAMES()
 		loadPatches()
+		loadTextures()
 	}
+	
+	
+	
+	// ===================
+	// MARK: - Wad Parsing
+	// ===================
 	
 	func readHeader() {
 		
@@ -126,7 +137,76 @@ class WadFile {
 		}
 	}
 	
+	func readTexture(at offset: CInt, in lump: Int) -> MapTexture {
+
+		let i = Int(offset)
+		let lump = loadLump(lump)
+		var tex = MapTexture()
+		
+		let nameData = lump.subdata(in: i..<i+8)
+		if let name = makeString(from: nameData) {
+			tex.name = name
+		} else {
+			tex.name = "Whoops!"
+			print("could not parse wad for texture name!")
+		}
+		tex.width = lump.scan(offset: i+12, length: 2)
+		tex.height = lump.scan(offset: i+14, length: 2)
+		tex.patchcount = lump.scan(offset: i+20, length: 2)
+		
+		for j in 0..<Int(tex.patchcount) {
+			let patchData = lump.subdata(in: (i+22)+(j*10)..<(i+22)+(j*10)+10)
+			let patch = readPatch(from: patchData)
+			tex.patches.append(patch)
+		}
+		return tex
+	}
 	
+	func readPatch(from data: Data) -> MapPatch {
+		
+		var patch = MapPatch()
+		
+		patch.originx = data.scan(offset: 0, length: 2)
+		patch.originy = data.scan(offset: 2, length: 2)
+		patch.patchIndex = data.scan(offset: 4, length: 2)
+		patch.name = self.pnames[Int(patch.patchIndex)]
+		
+		return patch
+	}
+
+	func readTextureHeader(of lump: Int) -> TextureLumpInfo {
+		
+		var info = TextureLumpInfo()
+		let lump = loadLump(lump)
+		
+		info.numTextures = lump.scan(offset: 0, length: 4)
+		
+		for i in 0..<Int(info.numTextures) {
+			let offset: Int32 = lump.scan(offset: 4+(i*4), length: 4)
+			info.offsets.append(offset)
+		}
+		
+		return info
+	}
+	
+	
+	func readImageHeader(for lump: Int) -> PatchInfo {
+		
+		var info = PatchInfo()
+		let lump = loadLump(lump)
+		
+		info.width = lump.scan(offset: 0, length: 2)
+		info.height = lump.scan(offset: 2, length: 2)
+		info.xoffset = lump.scan(offset: 4, length: 2)
+		info.yoffset = lump.scan(offset: 6, length: 2)
+		
+		for i in 0..<Int(info.width) {
+			info.columnOffsets.append(lump.scan(offset: 8+(i*4), length: 4))
+		}
+		
+		return info
+	}
+
 	
 	// ===================
 	// MARK: - Lump Lookup
@@ -167,9 +247,9 @@ class WadFile {
 	
 	
 	
-	// ==================
-	// MARK: Lump Loading
-	// ==================
+	// ====================
+	// MARK: - Lump Loading
+	// ====================
 	
 	/// Returns the raw data for lump at given index
 	func loadLump(_ index: Int) -> Data {
@@ -178,7 +258,6 @@ class WadFile {
 		var buf: Data
 		
 		inf = lumps[index]
-		
 		buf = data.subdata(in: Int(inf.offset)..<Int(inf.offset)+Int(inf.length))
 		return buf
 	}
@@ -226,20 +305,17 @@ class WadFile {
 				flats.append(fl)
 			}
 			wadIndex += 1
-			
 		} while wadIndex >= 0
 	}
 	
 	func loadPatches() {
 		
-		let pnames = loadLump(named: "pnames")
 		let playpal = loadLump(named: "playpal")
 		let palette: [CUnsignedChar] = playpal.elements()
 		
 		// TODO: Handle load playpal lump error
 		
 		var wadIndex = 0
-		
 		repeat {
 			
 			let patchStart = lumpNamed("P\(wadIndex+1)_START") + 1
@@ -269,131 +345,47 @@ class WadFile {
 		} while wadIndex >= 0
 	}
 	
-	func patchToImage(_ patchData: [CUnsignedChar], patchInfo: PatchInfo, size: NSSize, palette: [CUnsignedChar]) -> NSImage? {
+	func loadTextures() {
 		
-		var image: NSImageRep
-		
-		let width = Int(size.width)
-		let height = Int(size.height)
-		
-		var dest: [CUnsignedChar] = Array(repeating: 0, count: width*height*3)
-		
-		if width == 0 || height == 0 {
-			print("Can't create an NSBitmapImage of \(size)! Width or height = 0.")
-		}
-		
-		for i in 0..<width {
+		var wadIndex = 0
+		repeat {
 
-			var offset = Int(patchInfo.columnOffsets[i])	// offset from start of patchData
-			
-			repeat {
-
-				let topdelta = patchData[offset]; offset += 1
-				if topdelta == 255 {
-					break
+			let textureLumpIndex = lumpNamed("TEXTURE\(wadIndex+1)")
+			if textureLumpIndex == -1 {
+				if wadIndex == 0 {
+					print("Error! You've got a WAD problem.")
 				}
-				var count = patchData[offset]; offset += 1
-				var index = (Int(topdelta)*width+i)*3
-				offset += 1  // skip the top byte
-				while count != 0 {
-					count -= 1
-					var colorIndex = Int(patchData[offset])
-					dest[index] = palette[colorIndex*3]        // set red
-					dest[index+1] = palette[(colorIndex*3)+1]  // set green
-					dest[index+2] = palette[(colorIndex*3)+2]  // set blue
-					offset += 1
-					index += width*3
-				}
-				offset += 1  // skip the last byte
-			} while true
-		}
-		
-		var allocatedBytes = UnsafeMutableRawPointer.allocate(bytes: dest.count, alignedTo: 1)
-		var pointer: UnsafeMutablePointer? = allocatedBytes.bindMemory(to: UInt8.self, capacity: dest.count)
-		pointer?.initialize(to: 0, count: dest.count)
-		
-		for i in 0..<dest.count {
-			pointer?.advanced(by: i).pointee = dest[i]
-		}
-		
-		let ptrptr: UnsafeMutablePointer<UnsafeMutablePointer<CUnsignedChar>?>? = UnsafeMutablePointer<UnsafeMutablePointer<CUnsignedChar>?>?(&pointer)
-		
-		defer {
-			pointer?.deinitialize(count: dest.count)
-			ptrptr?.deinitialize(count: dest.count)
-		}
-		
-		image = NSBitmapImageRep(bitmapDataPlanes: ptrptr,
-								 pixelsWide: width,
-								 pixelsHigh: height,
-								 bitsPerSample: 8,
-								 samplesPerPixel: 3,
-								 hasAlpha: false,
-								 isPlanar: false,
-								 colorSpaceName: .calibratedRGB,
-								 bytesPerRow: width*3,
-								 bitsPerPixel: 24)!
-		
-		
-		let img = NSImage()
-		img.addRepresentation(image)
-		
-		return img
+				wadIndex = -1
+				continue
+			}
+			let info = readTextureHeader(of: textureLumpIndex)
+						
+			for i in 0..<Int(info.numTextures) {
+				let tex = readTexture(at: info.offsets[i], in: textureLumpIndex)
+				maptextures.append(tex)
+			}
+			wadIndex += 1
+		} while wadIndex >= 0
 	}
 	
-	func addAlpha(to data: inout [CUnsignedChar]) {
+	func loadPNAMES() {
 		
-		var otherData = data
-		let rgbs = data.count/3
+		let pnames = lumpNamed("PNAMES")
 		
-		for i in 0..<rgbs {
-			if data[i*3] == 0 && data[i*3+1] == 0 && data[i*3+2] == 0 {
-				otherData.insert(0, at: i*3+3)
+		if pnames == -1 {
+			print("Error parsing pnames lump!")
+		}
+		let lump = loadLump(pnames)
+		let numPatches: Int32 = lump.scan(offset: 0, length: 4)
+		for i in 0..<Int(numPatches) {
+			let nameData = lump.subdata(in: 4+(i*8)..<4+(i*8)+8)
+			let name = makeString(from: nameData)
+			if let name = name {
+				self.pnames.append(name)
 			} else {
-				otherData.insert(1, at: i*3+3)
+				print("Could not get name from pnames data!")
 			}
 		}
-		data = otherData
-	}
-
-	
-	func columnDataToRGB(_ patchData: [CUnsignedChar], columnOffset: UInt32, palette: [CUnsignedChar]) -> [CUnsignedChar] {
-		
-		let offset = Int(columnOffset)
-		var colArray: [CUnsignedChar] = []
-		
-		let numPixels = patchData[offset+1]
-		
-		let pixelStartIndex = offset+3		// skip the first byte
-		let pixelEndIndex = offset+Int(numPixels)
-		
-		for j in pixelStartIndex..<pixelEndIndex {
-			colArray.append(contentsOf: patchToRGB(patchData[j], palette: palette))
-		}
-		return colArray
-	}
-	
-	func readImageHeader(for lump: Int) -> PatchInfo {
-		
-		var info = PatchInfo()
-		let lump = loadLump(lump)
-		
-		
-		info.width = lump.scan(offset: 0, length: 2)
-		info.height = lump.scan(offset: 2, length: 2)
-		info.xoffset = lump.scan(offset: 4, length: 2)
-		info.yoffset = lump.scan(offset: 6, length: 2)
-		
-		for i in 0..<Int(info.width) {
-			info.columnOffsets.append(lump.scan(offset: 8+(i*4), length: 4))
-		}
-		
-		let imgDataSize = lump.count - info.imageDataLoc
-		
-		let imgData = lump.subdata(in: info.imageDataLoc..<info.imageDataLoc+imgDataSize)
-		info.imageData = imgData.elements()
-		
-		return info
 	}
 	
 	

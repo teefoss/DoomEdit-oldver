@@ -33,6 +33,11 @@ let KEY_F:				UInt16 = 3
 let KEY_S:				UInt16 = 1
 let KEY_DELETE:			UInt16 = 51
 
+// TODO: Enum instead
+enum Key: UInt16 {
+	case minus = 27
+}
+
 // Colors
 let CLLT_BKG = NSColor.white
 let CLDK_BKG = NSColor.black
@@ -56,6 +61,30 @@ struct Color {
 	static let lineTwoSided = NSColor.gray
 	static let lineSpecial = NSColor.green
 }
+
+
+
+// ========================
+// MARK: - Global Functions
+// ========================
+
+/// Turns 8 bytes of data into a string.
+func makeString(from data: Data) -> String? {
+	
+	let string = data.withUnsafeBytes({(pointer: UnsafePointer<CChar>) -> String? in
+		var ptr = pointer
+		for _ in 0..<8 {
+			if ptr.pointee == CChar(0) {
+				break
+			}
+			ptr = ptr.successor()
+		}
+		let position = pointer.distance(to: ptr)
+		return String(data: data.subdata(in: 0..<position), encoding: String.Encoding.ascii)
+	})
+	return string
+}
+
 
 func displayAlert(question: String, text: String) {
 	let alert = NSAlert()

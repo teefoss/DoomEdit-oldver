@@ -37,8 +37,6 @@ class MapWindowController: NSWindowController, MapViewDelegate {
 	
     override func windowDidLoad() {
         super.windowDidLoad()
-
-		let wadFile = WadFile()
 				
 		window?.title = "\(fullFileName) : Edit Mode"
 				

@@ -11,6 +11,7 @@
 		301CC5B42011032D00E208FF /* Junk.swift in Sources */ = {isa = PBXBuildFile; fileRef = 301CC5B32011032D00E208FF /* Junk.swift */; };
 		301CC5B720119EB400E208FF /* PatchWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 301CC5B520119EB400E208FF /* PatchWindow.swift */; };
 		301CC5B820119EB400E208FF /* PatchWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 301CC5B620119EB400E208FF /* PatchWindow.xib */; };
+		301CC5BA201245B300E208FF /* Texture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 301CC5B9201245B300E208FF /* Texture.swift */; };
 		30399CC11FCFAAAC00503DB4 /* EWLoad.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30399CC01FCFAAAC00503DB4 /* EWLoad.swift */; };
 		30399CC71FD06EEE00503DB4 /* dwd-format.txt in Resources */ = {isa = PBXBuildFile; fileRef = 30399CC61FD06EEE00503DB4 /* dwd-format.txt */; };
 		30399CC91FD1E8A600503DB4 /* Global.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30399CC81FD1E8A600503DB4 /* Global.swift */; };
@@ -68,6 +69,7 @@
 		301CC5B32011032D00E208FF /* Junk.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Junk.swift; sourceTree = "<group>"; };
 		301CC5B520119EB400E208FF /* PatchWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatchWindow.swift; sourceTree = "<group>"; };
 		301CC5B620119EB400E208FF /* PatchWindow.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PatchWindow.xib; sourceTree = "<group>"; };
+		301CC5B9201245B300E208FF /* Texture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Texture.swift; sourceTree = "<group>"; };
 		30399CC01FCFAAAC00503DB4 /* EWLoad.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EWLoad.swift; sourceTree = "<group>"; };
 		30399CC61FD06EEE00503DB4 /* dwd-format.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "dwd-format.txt"; sourceTree = "<group>"; };
 		30399CC81FD1E8A600503DB4 /* Global.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Global.swift; sourceTree = "<group>"; };
@@ -240,6 +242,7 @@
 				30FBF6561FC52F8A0035671D /* MapViewResp.swift */,
 				301CC5B520119EB400E208FF /* PatchWindow.swift */,
 				30533AA71FE45E620039DCFB /* SectorPanel.swift */,
+				301CC5B9201245B300E208FF /* Texture.swift */,
 				306C8B221FF9A17D00C2C47C /* TextureCollectionViewItem.swift */,
 				306C8B261FFB22D800C2C47C /* TextureImageView.swift */,
 				306C8B1E1FF9610D00C2C47C /* TexturePanel.swift */,
@@ -381,6 +384,7 @@
 				30FBF64E1FC52F6A0035671D /* Geometry.swift in Sources */,
 				300E0DFE1FDADDC00066134A /* NSPointExtension.swift in Sources */,
 				306C8B271FFB22D800C2C47C /* TextureImageView.swift in Sources */,
+				301CC5BA201245B300E208FF /* Texture.swift in Sources */,
 				306C8B201FF9610D00C2C47C /* TexturePanel.swift in Sources */,
 				30A00B9D1FD6EB4700EBCA27 /* NSWindowControllerExtension.swift in Sources */,
 				30C41A4C20098CD6000E3F9B /* WadFile.swift in Sources */,

@@ -17,7 +17,7 @@ class SectorPanel: NSViewController, NSTextDelegate, FlatPanelDelegate {
 	var def = SectorDef()
 	var selectedSides: [Int] = []
 	var newDef = SectorDef()
-	var wad = WadFile()
+//	var wad = WadFile()
 	
 	@IBOutlet weak var sectorLabel: NSTextField!
 	@IBOutlet weak var ceilingHeightTextField: NSTextField!
