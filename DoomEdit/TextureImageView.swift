@@ -19,7 +19,6 @@ class TextureImageView: NSImageView, NSPopoverDelegate {
 	var lineIndex: Int = 0
 	var texturePosition: Int = 0	// 1,2,3 lower, middle, upper: front
 									// -1,-2,-3 lower, middle, upper: back
-	
 	var texturePanel = TexturePanel()
 	
 	override func mouseDown(with event: NSEvent) {

@@ -14,7 +14,7 @@ protocol TexturePanelDelegate {
 	func updateImages()
 }
 
-class LinePanel: NSViewController, TexturePanelDelegate {
+class LinePanel: NSViewController, TexturePanelDelegate, NSTabViewDelegate {
 
 	// The selected line
 	var line = Line()
@@ -22,8 +22,9 @@ class LinePanel: NSViewController, TexturePanelDelegate {
 
 	var allTextures: [Texture] = []
 	
-	@IBOutlet weak var titleLabel: NSTextField!
 	
+	@IBOutlet weak var tabView: NSTabView!
+	@IBOutlet weak var titleLabel: NSTextField!
 	@IBOutlet weak var blocksAllButton: NSButton!
 	@IBOutlet weak var blocksMonstersButton: NSButton!
 	@IBOutlet weak var blocksSoundButton: NSButton!
@@ -51,14 +52,24 @@ class LinePanel: NSViewController, TexturePanelDelegate {
 	@IBOutlet weak var backLowerImageView: TextureImageView!
 	@IBOutlet weak var backMiddleLabel: NSTextField!
 	@IBOutlet weak var specialsPopUpButton: NSPopUpButton!
+	@IBOutlet weak var specialLabel: NSTextField!
 	
 	
 	var flagButtons: [NSButton] = []
 	
+	
+
+	// =======================
+	// MARK: - View Life Cycle
+	// =======================
+	
     override func viewDidLoad() {
         super.viewDidLoad()
 		
+		tabView.delegate = self
 		createAllTextureImages()
+		
+		// TODO: Use an init
 		
 		frontUpperImageView.texturePanel.delegate = self
 		frontMiddleImageView.texturePanel.delegate = self
@@ -93,38 +104,66 @@ class LinePanel: NSViewController, TexturePanelDelegate {
 
 		let manualMenu = NSMenu()
 		let buttonMenu = NSMenu()
+		let switchMenu = NSMenu()
+		let triggerMenu = NSMenu()
+		let retriggerMenu = NSMenu()
+		let effectMenu = NSMenu()
+		let impactMenu = NSMenu()
 
+		let noneMenuItem = NSMenuItem(title: "None", action: #selector(clearSpecial(sender:)), keyEquivalent: "")
 		let manualMenuItem = NSMenuItem(title: "Manual", action: nil, keyEquivalent: "")
 		let buttonMenuItem = NSMenuItem(title: "Button", action: nil, keyEquivalent: "")
+		let switchMenuItem = NSMenuItem(title: "Switch", action: nil, keyEquivalent: "")
+		let triggerMenuItem = NSMenuItem(title: "Trigger", action: nil, keyEquivalent: "")
+		let retriggerMenuItem = NSMenuItem(title: "Retrigger", action: nil, keyEquivalent: "")
+		let effectMenuItem = NSMenuItem(title: "Effect", action: nil, keyEquivalent: "")
+		let impactMenuItem = NSMenuItem(title: "Impact", action: nil, keyEquivalent: "")
+
 
 		manualMenu.setSubmenu(manualMenu, for: manualMenuItem)
 		buttonMenu.setSubmenu(buttonMenu, for: buttonMenuItem)
+		switchMenu.setSubmenu(switchMenu, for: switchMenuItem)
+		triggerMenu.setSubmenu(triggerMenu, for: triggerMenuItem)
+		retriggerMenu.setSubmenu(retriggerMenu, for: retriggerMenuItem)
+		effectMenu.setSubmenu(effectMenu, for: effectMenuItem)
+		impactMenu.setSubmenu(impactMenu, for: impactMenuItem)
 		
 		for special in doomData.doom1LineSpecials {
-
+			
 			switch special.type {
 			case "Manual":
-				let item = NSMenuItem()
-				item.title = special.name
-				item.action = #selector(setSpecial)
-				item.tag = special.index
-				manualMenu.addItem(item)
+				addSpecial(special, to: manualMenu)
 			case "Button":
-				buttonMenu.addItem(withTitle: special.name, action: #selector(setSpecial), keyEquivalent: "")
+				addSpecial(special, to: buttonMenu)
+			case "Switch":
+				addSpecial(special, to: switchMenu)
+			case "Trigger":
+				addSpecial(special, to: triggerMenu)
+			case "Retrigger":
+				addSpecial(special, to: retriggerMenu)
+			case "Effect":
+				addSpecial(special, to: effectMenu)
+			case "Impact":
+				addSpecial(special, to: impactMenu)
 			default:
+				print("error loading special menu with special \(special.index):\(special.type)\(special.name)")
 				continue
 			}
 		}
-		
-		var menuItems: [NSMenuItem] = []
-		
+				
 		specialsPopUpButton.menu?.removeAllItems()
+		specialsPopUpButton.menu?.addItem(noneMenuItem)
+		specialsPopUpButton.menu?.addItem(NSMenuItem.separator())
 		specialsPopUpButton.menu?.addItem(manualMenuItem)
 		specialsPopUpButton.menu?.addItem(buttonMenuItem)
-//		for item in menuItems {
-//			specialsPopUpButton.menu?.addItem(item)
-//		}
+		specialsPopUpButton.menu?.addItem(switchMenuItem)
+		specialsPopUpButton.menu?.addItem(triggerMenuItem)
+		specialsPopUpButton.menu?.addItem(retriggerMenuItem)
+		specialsPopUpButton.menu?.addItem(impactMenuItem)
+		specialsPopUpButton.menu?.addItem(effectMenuItem)
+		
     }
+	
 	
 	override func viewWillAppear() {
 		super.viewWillAppear()
@@ -134,6 +173,10 @@ class LinePanel: NSViewController, TexturePanelDelegate {
 		// Set the options buttons
 		for i in 0..<flagButtons.count {
 			line.flags & (1 << i) == (1 << i) ? (flagButtons[i].state = .on) : (flagButtons[i].state = .off)
+		}
+		
+		if flagButtons[2].state == .off {
+			
 		}
 		
 		// Set the tag number
@@ -153,11 +196,19 @@ class LinePanel: NSViewController, TexturePanelDelegate {
 		backLowerImageView.lineIndex = lineIndex
 		
 		// TODO: set up the rest
-		
+		updateSpecialLabel(for: line.special)
+		updateSpecialButton(for: line.special)
 	}
 	
-	
-	
+	func addSpecial(_ special: LineSpecial, to menu: NSMenu) {
+		let item = NSMenuItem()
+		item.title = special.name
+		item.tag = special.index
+		item.target = self
+		item.action = #selector(setSpecial(sender:))
+		menu.addItem(item)
+	}
+
 	func createAllTextureImages() {
 		
 		allTextures = []
@@ -169,6 +220,7 @@ class LinePanel: NSViewController, TexturePanelDelegate {
 		}
 	}
 	
+	/// Assemble a texture from its patches
 	func createTextureImage(for index: Int) -> Texture {
 		
 		var texture = Texture()
@@ -214,7 +266,6 @@ class LinePanel: NSViewController, TexturePanelDelegate {
 		
 		let patchName = wad.pnames[index]
 		
-		
 		for i in 0..<wad.patches.count {
 			if patchName.uppercased() == wad.patches[i].name.uppercased() {
 				return wad.patches[i]
@@ -223,6 +274,49 @@ class LinePanel: NSViewController, TexturePanelDelegate {
 		return nil
 	}
 	
+	
+	
+	// =================
+	// MARK: - Update UI
+	// =================
+	
+	/// Set the current line's special from the menu selection
+	@objc func setSpecial(sender: NSMenuItem) {
+		lines[lineIndex].special = sender.tag
+		updateSpecialLabel(for: sender.tag)
+		updateSpecialButton(for: sender.tag)
+	}
+	
+	@objc func clearSpecial(sender: NSMenuItem) {
+		lines[lineIndex].special = 0
+		updateSpecialLabel(for: 0)
+		updateSpecialLabel(for: 0)
+	}
+
+	func updateSpecialLabel(for tag: Int) {
+		
+		for special in doomData.doom1LineSpecials {
+			if lines[lineIndex].special == special.index {
+				specialLabel.stringValue = special.name
+				break
+			} else {
+				specialLabel.stringValue = "--"
+			}
+		}
+	}
+	
+	func updateSpecialButton(for tag: Int) {
+		
+		for special in doomData.doom1LineSpecials {
+			if tag == special.index {
+				specialsPopUpButton.selectItem(withTitle: special.type)
+				break
+			} else {
+				specialsPopUpButton.selectItem(withTitle: "None")
+			}
+		}
+	}
+
 	func updateTextureLabels() {
 
 		frontUpperLabel.stringValue = lines[lineIndex].side[0]?.upperTexture ?? "—"
@@ -260,6 +354,8 @@ class LinePanel: NSViewController, TexturePanelDelegate {
 			backLower = "-"
 		}
 
+		// TODO: Clean this up
+		
 		// Set the images and send the texture's index to the imageview
 		
 		if frontUpper != "-" {
@@ -333,23 +429,24 @@ class LinePanel: NSViewController, TexturePanelDelegate {
 		return -1
 	}
 	
-	@objc func setSpecial() {
-		lines[lineIndex].special = specialsPopUpButton.selectedTag()
-	}
-	
+	/// Suggest the next unused tag number
 	@IBAction func suggestTagClicked(_ sender: NSButton) {
+		
 		var maxTag: Int = 0
 		for line in lines {
 			if line.tag > maxTag {
 				maxTag = line.tag
 			}
 		}
-		
-		if maxTag == 0 {
-			tagTextField.integerValue = 1
-		} else {
-			tagTextField.integerValue = maxTag + 1
-		}
+		tagTextField.integerValue = maxTag + 1
 	}
 	
+	
+	func tabView(_ tabView: NSTabView, shouldSelect tabViewItem: NSTabViewItem?) -> Bool {
+		if tabViewItem == tabView.tabViewItem(at: 0) {
+			return true
+		} else {
+			return flagButtons[2].state == .on
+		}
+	}
 }

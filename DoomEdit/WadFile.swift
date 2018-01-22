@@ -45,6 +45,15 @@ class WadFile {
 	var patches: [Patch] = []
 	var maptextures: [MapTexture] = []
 	//var textures: [Texture] = []
+
+	var progressWindow: ProgressWindowController?
+	
+	/* Testing
+	let patchwin = PatchWindow()
+	patchwin.showWindow(self)
+	self.patchWindow = patchwin
+	*/
+
 	
 	init() {
 		let home = FileManager.default.homeDirectoryForCurrentUser
@@ -55,12 +64,33 @@ class WadFile {
 		} catch {
 			fatalError("Could not parse Wad file. To test, put DOOM.WAD in ~/Documents/Games/WADs")
 		}
+		
+		// TODO: learn how to do a loading window
+		
+		let progressWin = ProgressWindowController()
+		progressWin.window?.title = "Loading WAD"
+		progressWin.showWindow(self)
+
+		progressWin.progressBar.increment(by: 25.0)
+		progressWin.label.stringValue = "Reading WAD directory…"
 		readHeader()
 		readDirectory()
+		
+		progressWin.progressBar.increment(by: 25.0)
+		progressWin.label.stringValue = "Loading Flats…"
 		loadFlats()
+		
+		progressWin.progressBar.increment(by: 25.0)
+		progressWin.label.stringValue = "Loading Patches…"
+
 		loadPNAMES()
 		loadPatches()
+		
+		progressWin.progressBar.increment(by: 25.0)
+		progressWin.label.stringValue = "Loading Textures…"
 		loadTextures()
+		
+		progressWin.close()
 	}
 	
 	

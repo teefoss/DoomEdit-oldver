@@ -17,6 +17,8 @@
 		30399CC91FD1E8A600503DB4 /* Global.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30399CC81FD1E8A600503DB4 /* Global.swift */; };
 		30399CCB1FD3049E00503DB4 /* Line.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30399CCA1FD3049E00503DB4 /* Line.swift */; };
 		30399CCD1FD3050800503DB4 /* Thing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30399CCC1FD3050800503DB4 /* Thing.swift */; };
+		3049E5CA20162A8C00D0FD5C /* ProgressWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3049E5C820162A8C00D0FD5C /* ProgressWindowController.swift */; };
+		3049E5CB20162A8C00D0FD5C /* ProgressWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3049E5C920162A8C00D0FD5C /* ProgressWindowController.xib */; };
 		30533AA41FE17CC70039DCFB /* BlockWorld.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30533AA31FE17CC70039DCFB /* BlockWorld.swift */; };
 		30533AA91FE45E620039DCFB /* SectorPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30533AA71FE45E620039DCFB /* SectorPanel.swift */; };
 		30533AAA1FE45E620039DCFB /* SectorPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 30533AA81FE45E620039DCFB /* SectorPanel.xib */; };
@@ -75,6 +77,8 @@
 		30399CC81FD1E8A600503DB4 /* Global.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Global.swift; sourceTree = "<group>"; };
 		30399CCA1FD3049E00503DB4 /* Line.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Line.swift; sourceTree = "<group>"; };
 		30399CCC1FD3050800503DB4 /* Thing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Thing.swift; sourceTree = "<group>"; };
+		3049E5C820162A8C00D0FD5C /* ProgressWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressWindowController.swift; sourceTree = "<group>"; };
+		3049E5C920162A8C00D0FD5C /* ProgressWindowController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ProgressWindowController.xib; sourceTree = "<group>"; };
 		30533AA31FE17CC70039DCFB /* BlockWorld.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockWorld.swift; sourceTree = "<group>"; };
 		30533AA71FE45E620039DCFB /* SectorPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectorPanel.swift; sourceTree = "<group>"; };
 		30533AA81FE45E620039DCFB /* SectorPanel.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SectorPanel.xib; sourceTree = "<group>"; };
@@ -195,6 +199,7 @@
 				30533AA81FE45E620039DCFB /* SectorPanel.xib */,
 				30B16B241FDE376A0066DEC3 /* LinePanel.xib */,
 				301CC5B620119EB400E208FF /* PatchWindow.xib */,
+				3049E5C920162A8C00D0FD5C /* ProgressWindowController.xib */,
 				306C8B231FF9A17D00C2C47C /* TextureCollectionViewItem.xib */,
 				306C8B1F1FF9610D00C2C47C /* TexturePanel.xib */,
 				30B16B1E1FDE01CB0066DEC3 /* ThingPanel.xib */,
@@ -241,6 +246,7 @@
 				30FBF6541FC52F8A0035671D /* MapViewDraw.swift */,
 				30FBF6561FC52F8A0035671D /* MapViewResp.swift */,
 				301CC5B520119EB400E208FF /* PatchWindow.swift */,
+				3049E5C820162A8C00D0FD5C /* ProgressWindowController.swift */,
 				30533AA71FE45E620039DCFB /* SectorPanel.swift */,
 				301CC5B9201245B300E208FF /* Texture.swift */,
 				306C8B221FF9A17D00C2C47C /* TextureCollectionViewItem.swift */,
@@ -340,6 +346,7 @@
 				30B16B201FDE01CB0066DEC3 /* ThingPanel.xib in Resources */,
 				30A00BAC1FD6F1AF00EBCA27 /* sectorspecials.dsp in Resources */,
 				30533AAA1FE45E620039DCFB /* SectorPanel.xib in Resources */,
+				3049E5CB20162A8C00D0FD5C /* ProgressWindowController.xib in Resources */,
 				30C41A52200A701E000E3F9B /* FlatPanel.xib in Resources */,
 				301CC5B820119EB400E208FF /* PatchWindow.xib in Resources */,
 				30FBF6391FC52D500035671D /* Assets.xcassets in Resources */,
@@ -372,6 +379,7 @@
 				306C8B241FF9A17D00C2C47C /* TextureCollectionViewItem.swift in Sources */,
 				30B16B1F1FDE01CB0066DEC3 /* ThingPanel.swift in Sources */,
 				30C41A4E2009B339000E3F9B /* DataExtension.swift in Sources */,
+				3049E5CA20162A8C00D0FD5C /* ProgressWindowController.swift in Sources */,
 				30399CC11FCFAAAC00503DB4 /* EWLoad.swift in Sources */,
 				30399CC91FD1E8A600503DB4 /* Global.swift in Sources */,
 				30C41A58200A79DB000E3F9B /* FlatCollectionViewItem.swift in Sources */,
