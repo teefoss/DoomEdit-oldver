@@ -54,7 +54,7 @@ class SectorPanel: NSViewController, NSTextDelegate, FlatPanelDelegate {
 		super.viewWillAppear()
 		
 		// TODO: Get the sector number
-		sectorLabel.stringValue = "Sector ? Properties"
+		sectorLabel.stringValue = "Sector Properties"
 		ceilingHeightTextField.integerValue = def.ceilingHeight
 		floorHeightTextField.integerValue = def.floorHeight
 		heightLabel.integerValue = def.ceilingHeight - def.floorHeight

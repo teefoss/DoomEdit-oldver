@@ -19,7 +19,6 @@ class TexturePanel: NSViewController, NSCollectionViewDataSource, NSCollectionVi
 	var selectedTextureIndex: Int = -1
 	var lineIndex: Int = 0
 	var texturePosition: Int = 0
-	var allTextures: [Texture] = []
 	
 	var window: NSWindow?
 	var delegate: TexturePanelDelegate?
@@ -55,11 +54,8 @@ class TexturePanel: NSViewController, NSCollectionViewDataSource, NSCollectionVi
 		
 		window = self.view.window
 		searchField.stringValue = ""
-		filteredTextures = allTextures
-		
-		for texture in filteredTextures {
-			print(texture.index)
-		}
+		filteredTextures = wad.textures
+		print(wad.sprites.count)
 	}
 	
 	override func viewWillLayout() {
@@ -145,7 +141,7 @@ class TexturePanel: NSViewController, NSCollectionViewDataSource, NSCollectionVi
 				return
 			}
 			
-			let newTextureName = allTextures[selectedTextureIndex].name
+			let newTextureName = wad.textures[selectedTextureIndex].name
 			
 			switch texturePosition {
 			case 1: lines[lineIndex].side[0]?.lowerTexture = newTextureName
@@ -246,11 +242,11 @@ class TexturePanel: NSViewController, NSCollectionViewDataSource, NSCollectionVi
 		let searchString = searchField.stringValue
 		
 		if searchBarIsEmpty() {
-			filteredTextures = allTextures
+			filteredTextures = wad.textures
 			collectionView.reloadData()
 			selectTexture()
 		} else {
-			filteredTextures = allTextures.filter({( texture : Texture) -> Bool in
+			filteredTextures = wad.textures.filter({( texture : Texture) -> Bool in
 				return texture.name.lowercased().contains(searchString.lowercased())
 			})
 			collectionView.reloadData()

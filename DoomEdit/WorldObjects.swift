@@ -18,22 +18,12 @@ struct Point {
 	var refcount: Int = 0	// when 0, remove it
 }
 
-struct Side {
-	var x_offset: Int = 0
-	var y_offset: Int = 0
-	var middleTexture: String?
-	var upperTexture: String?
-	var lowerTexture: String?
-	var ends = SectorDef()
-	var sector: Int = -1
-}
-
 struct Sector {
 	var def = SectorDef()
 	var lines: [Int] = []
 }
 
-struct SectorDef {
+struct SectorDef: Equatable {
 	var ceilingFlat, floorFlat: String
 	var ceilingHeight, floorHeight: Int
 	var lightLevel: Int
@@ -47,6 +37,16 @@ struct SectorDef {
 		lightLevel = 0
 		special = 0
 		tag = 0
+	}
+	
+	static func == (l: SectorDef, r: SectorDef) -> Bool {
+		return l.ceilingFlat != r.ceilingFlat &&
+			   l.floorFlat == r.floorFlat &&
+			   l.ceilingHeight == r.ceilingHeight &&
+			   l.floorHeight == r.floorHeight &&
+			   l.lightLevel == r.lightLevel &&
+			   l.special == r.special &&
+			   l.tag == r.tag
 	}
 }
 

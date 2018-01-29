@@ -10,8 +10,6 @@
 
 import Cocoa
 
-
-
 // Dragging Objects
 fileprivate var cursor = NSPoint.zero
 fileprivate var oldDragRect = NSRect.zero
@@ -26,7 +24,6 @@ fileprivate var lineCount: Int = 0
 fileprivate var lastPoint: Int = 0
 fileprivate var pointCount: Int = 0
 fileprivate var totalMoved = NSPoint.zero
-
 
 /**
 MapView Responder Methods
@@ -61,17 +58,26 @@ extension MapView {
 			toggleDrawMode()
 		case KEY_F:
 			if event.modifierFlags.contains(.command) {
-				print("fuse points")
 				editWorld.fusePoints()
 			} else if event.modifierFlags.contains(.shift) {
-				print("flip lines")
 				editWorld.flipSelectedLines()
 			} else {
 				// Floor quick view
 			}
 		case KEY_S:
-			print("separate points")
-			editWorld.separatePoints()
+			if event.modifierFlags.contains(.command) {
+				editWorld.saveMapToDWD()
+			} else if event.modifierFlags.contains(.shift) {
+				// for testing:
+				blockWorld.connectSectors()
+				print(sectors.count)
+				for line in lines {
+					print(line.side[0]?.sector)
+				}
+			} else {
+				print("separate points")
+				editWorld.separatePoints()
+			}
 		case KEY_DELETE:
 			editWorld.delete()
 		default: break
@@ -150,9 +156,13 @@ extension MapView {
 				
 		switch currentMode {
 		case .edit:
-			selectObject(at: event)
-			if shouldDragSelectionBox {
-				dragBox_LMDown(with: event)
+			if event.modifierFlags.contains(.command) {
+				createThing(at: event)
+			} else {
+				selectObject(at: event)
+				if shouldDragSelectionBox {
+					dragBox_LMDown(with: event)
+				}
 			}
 		case .draw:
 			drawLine_LMDown(with: event)
@@ -360,7 +370,6 @@ extension MapView {
 						didClickLine = true
 						selectedLine = lines[i]
 						selectedLineIndex = i
-						
 						return
 					}
 				}
@@ -410,6 +419,7 @@ extension MapView {
 					didClickThing = true
 					selectedThing = things[thingIndex]
 					selectedThingIndex = thingIndex
+					print(things[thingIndex].type)
 					
 					return
 				} else {
@@ -540,7 +550,6 @@ extension MapView {
 		
 		pointList = []
 		thingList = []
-		
 		cursor = getWorldGridPoint(from: event.locationInWindow)
 		
 		// set up negative rects
@@ -670,7 +679,8 @@ extension MapView {
 		viewUpdateRect.size.width += CGFloat(LINE_NORMAL_LENGTH*2+1)
 		viewUpdateRect.size.height += CGFloat(LINE_NORMAL_LENGTH*2+1)
 
-		self.setNeedsDisplay(viewUpdateRect)
+		setNeedsDisplay(viewUpdateRect)
+//		display(viewUpdateRect)
 	}
 	
 	func dragObjects_LMUp(with event: NSEvent) {
@@ -829,6 +839,17 @@ extension MapView {
 			}
 		}
 		print(selectedSides)
+	}
+	
+	func createThing(at event: NSEvent) {
+		
+		let loc = event.locationInWindow
+		let l = worldCoord(for: loc)
+		
+		var newThing = Thing(selected: 0, origin: l, angle: 0, type: things[things.count-1].type, options: 0)
+		things.append(newThing)
+		
+		editWorld.changeThing(things.count-1, to: &newThing)
 	}
 	
 	

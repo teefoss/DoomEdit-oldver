@@ -34,7 +34,23 @@ class BlockWorld {
 	
 	var blockView = NSView()
 	
+	// MARK: -
 
+	func sectorError(message: String, line1: Int, line2: Int) {
+		
+		// panel order out
+		// run panel
+		editWorld.deselectAll()
+		if line1 != -1 {
+			editWorld.selectLine(line1)
+		}
+		if line2 != -1 {
+			editWorld.selectLine(line2)
+		}
+		editWorld.updateWindows()
+		runAlertPanel(title: "Sector Error", message: message)
+	}
+	
 	
 	// ========================
 	// MARK: - World Pixelation
@@ -265,7 +281,7 @@ class BlockWorld {
 			if bmap![dest+WL_SOUTH] != 0 {
 				line = bmap![dest+WL_SOUTH]
 				selectLine(line)
-			} else if y < bheight-1 && bmap![dest+brow+WL_MARK] == 0 {		// TODO: Check here if it breaks
+			} else if y < bheight-1 && bmap![dest+brow+WL_MARK] == 0 {
 				if bmap![dest+brow+WL_NWSE] != 0 {
 					line = bmap![dest+brow+WL_NWSE]
 					selectLine(line^SIDEBIT)
@@ -330,29 +346,146 @@ class BlockWorld {
 	}
 	*/
 	
+	// bcmp()
+	//
+	// The bcmp() function shall compare the first n bytes of the area pointed to by s1 with the area pointed to by s2.
+	// The bcmp() function shall return 0 if s1 and s2 are identical; otherwise, it shall return non-zero. Both areas are assumed to be n bytes long. If the value of n is 0, bcmp() shall return 0.
+	
+	// FIXME: makeSector() : get it working
+	
+	/// Groups all selected sides into a sector.
+	/// Returns `false` and presents an alert panel if there is an error.
 	func makeSector() -> Bool {
 		
+		var side = Side()
+		var backline, frontline: Int
 		var newSector = Sector()
+		var nilSide = false
+		
+		backline = -1
+		frontline = -1
+		
 		
 		for i in 0..<lines.count {
+			
 			let line = lines[i]
-			if line.selected < 1 {
-				let side = line.side[line.selected-1]
-				newSector.def = side!.ends
-				if newSector.lines.contains(i) {
-					print("line grouped into sector twice")
-					return false
-				} else {
-					lines[i].side[lines[i].selected-1]!.sector = sectors.count
-					newSector.lines.append(i)
-				}
-				sectors.append(newSector)
-			} else {
+
+			if line.selected < 1 {  // deleted line
 				continue
 			}
+			
+			// backside of two-sided line selected
+			if line.selected == 2 && (line.flags & TWO_SIDED == 1) {
+				backline = i
+				continue
+			}
+			
+			// flood point outside of level
+//			if line.selected == 2 && (line.flags & TWO_SIDED != 1) {
+//				continue
+//			}
+
+//			// added because sometimes the back side (side[1]) is nil
+			if line.side[line.selected-1] == nil {
+				continue
+			}
+			
+			// shouldn't be nil!(?)
+			side = lines[i].side[line.selected-1]!  // the selected side
+			
+			if frontline == -1 {
+				newSector.def = side.ends
+			} else {
+				if newSector.def == side.ends {
+					newSector.lines = []
+					sectorError(message: "Line side sectordefs differ", line1: i, line2: frontline)
+					return false
+				}
+			}
+			
+			newSector.lines.append(i)
+			frontline = i
+			if lines[i].side[line.selected-1]?.sector != -1 {
+				newSector.lines = []
+				sectorError(message: "Line side grouped into multiple sectors", line1: i, line2: -1)
+				return false
+			} else {
+				lines[i].side[line.selected-1]?.sector = sectors.count
+			}
+			
+//			if nilSide {  // set it back to nil again
+//				lines[i].side[line.selected-1] == nil
+//				nilSide = false
+//			}
 		}
-		return true
 		
+		if backline > -1 && frontline > -1 {
+			newSector.lines = []
+			sectorError(message: "Inside and outside lines grouped together", line1: backline, line2: frontline)
+			return false
+		}
+		if frontline > -1 {
+			sectors.append(newSector)
+		} else {
+			newSector.lines = []
+		}
+		
+		return true
+	}
+	
+	
+	func connectSectors() -> Bool {
+
+		var sector = Sector()
+
+		// clear all sector marks
+		
+		for i in 0..<sectors.count {
+			sector = sectors[i]
+			sector.lines = []
+		}
+		
+		sectors = []
+		
+		for i in 0..<lines.count {
+			lines[i].side[0]?.sector = -1
+			lines[i].side[1]?.sector = -1
+		}
+		
+		// flood fill everything
+		
+		createBlockMap()
+		// TODO: panel
+		var dest = 0
+		for y in 0..<bheight {
+			for x in 0..<bwidth {
+				if bmap![dest+WL_MARK] == 0 && bmap![dest+WL_NWSE] == 0 && bmap![dest+WL_NESW] == 0 {
+					editWorld.deselectAll()
+					floodLine(startx: x, y: y)
+					if makeSector() == false {
+						return false
+					}
+				}
+				dest += WLSIZE
+			}
+		}
+		
+		// check to make sure all line sides were grouped
+		
+		for i in 0..<lines.count {
+			
+			if lines[i].selected < 1 {
+				continue
+			}
+						
+			if lines[i].side[0]?.sector == -1 || ((lines[i].flags & TWO_SIDED) == 1 && lines[i].side[1]?.sector == -1) {
+				sectorError(message: "Line side not grouped", line1: i, line2: -1)
+				return false
+			}
+		}
+		
+		editWorld.deselectAll()
+		return true
 	}
 	
 	

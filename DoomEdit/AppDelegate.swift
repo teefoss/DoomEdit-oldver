@@ -11,13 +11,20 @@ import Cocoa
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate {
 
-
 	var mapWindowController: MapWindowController?
+	var window: NSWindow?
 	
 	func applicationDidFinishLaunching(_ aNotification: Notification) {
+
+//		wad.loadAssets()
+		let progVC = ProgressViewController()
+		let win = NSWindow(contentViewController: progVC)
+		win.makeKeyAndOrderFront(self)
+		self.window = win
+		
 		let mapWindowController = MapWindowController()
 		mapWindowController.showWindow(self)
-		self.mapWindowController = mapWindowController		
+		self.mapWindowController = mapWindowController
 	}
 
 	func applicationWillTerminate(_ aNotification: Notification) {

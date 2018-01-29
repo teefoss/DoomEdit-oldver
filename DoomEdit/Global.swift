@@ -86,7 +86,7 @@ func makeString(from data: Data) -> String? {
 }
 
 
-func displayAlert(question: String, text: String) {
+func displayQuestionAlert(question: String, text: String) {
 	let alert = NSAlert()
 	alert.messageText = question
 	alert.informativeText = text
@@ -95,5 +95,14 @@ func displayAlert(question: String, text: String) {
 	alert.addButton(withTitle: "Cancel")
 	alert.runModal()
 	//return alert.runModal() == .alertFirstButtonReturn
+}
+
+func runAlertPanel(title: String, message: String) {
+	let alert = NSAlert()
+	alert.messageText = title
+	alert.informativeText = message
+	alert.alertStyle = .warning
+	alert.addButton(withTitle: "OK")
+	alert.runModal()
 }
 

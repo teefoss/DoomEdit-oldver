@@ -8,7 +8,9 @@
 
 import Foundation
 
-
+/**
+Handle loading a map from a .DWD file.
+*/
 
 extension EditWorld {
 	

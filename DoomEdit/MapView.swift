@@ -25,11 +25,6 @@ class MapView: NSView, NSPopoverDelegate {
 	
 	var delegate: MapViewDelegate?
 	var trackingArea: NSTrackingArea?
-	var closestPoint: Point? {
-		didSet{
-			self.setNeedsDisplay(bounds)
-		}
-	}
 	
 	var shouldDragSelectionBox: Bool = false
 	var didDragSelectionBox: Bool = false
@@ -103,7 +98,7 @@ class MapView: NSView, NSPopoverDelegate {
 				
 		editWorld.delegate = self
 		
-		/* Testing
+		/* image testing
 		let patchwin = PatchWindow()
 		patchwin.showWindow(self)
 		self.patchWindow = patchwin
@@ -148,6 +143,7 @@ class MapView: NSView, NSPopoverDelegate {
 		fatalError("init(coder:) has not been implemented")
 	}
 	
+	/*
 	override func updateTrackingAreas() {
 		guard var trackingArea = self.trackingArea else {
 			return super.updateTrackingAreas()
@@ -157,7 +153,7 @@ class MapView: NSView, NSPopoverDelegate {
 		self.trackingArea = trackingArea
 		addTrackingArea(trackingArea)
 	}
-	
+	*/
 	
 	
 	
@@ -180,9 +176,9 @@ class MapView: NSView, NSPopoverDelegate {
 		rect.size.height = dirtyrect.size.height + adjust*2
 		
 		NSIntegralRect(rect)
+		displayTestingRect(rect)
 		
 		self.display(rect)
-		
 	}
 	
 	///  Convert a point to the world coordinate system

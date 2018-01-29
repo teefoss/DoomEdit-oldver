@@ -189,11 +189,24 @@ class EditWorld {
 		return numLines - 1
 	}
 	
-	// TODO: Expand this
-	func newThing(_ thing: Thing) {
-		things.append(thing)
+	/// Adds a new thing to the `things` array and returns the index it was put in.
+	@discardableResult
+	func newThing(_ thing: Thing) -> Int {
+		
+		var t = thing
+		
+//		for thing in wad.things {
+//			if t.type == thing.type {
+//				t.image = thing.image
+//			}
+//		}
+		
+		things.append(t)
+		changeThing(things.count-1, to: &t) // call changeThing so the dirty rect is updated
+		
+		return things.count-1
 	}
-	
+		
 	func changePoint(_ num: Int, to newPoint: Point) {
 		var moved: Bool = false
 		
@@ -390,6 +403,9 @@ class EditWorld {
 			print("selectLine: num >= lines.count")
 			return
 		}
+		if num < 0 {  // blockWorld.sectorError may send -1
+			return
+		}
 		data = lines[num]
 		if data.selected == -1 {
 			print("selectLine: deleted")
@@ -397,8 +413,14 @@ class EditWorld {
 		}
 		data.selected = 1
 		changeLine(num, to: &data)
-		points[lines[num].pt1].selected = 1
-		points[lines[num].pt2].selected = 1
+//		points[lines[num].pt1].selected = 1
+//		points[lines[num].pt2].selected = 1
+		selectPoint(lines[num].pt1)
+		selectPoint(lines[num].pt2)
+		
+		if let ends = data.side[0]?.ends {
+			print(ends)
+		}
 	}
 	
 	func deselectLine(_ num: Int) {

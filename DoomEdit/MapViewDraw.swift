@@ -15,7 +15,8 @@ fileprivate let tileAlpha: CGFloat = 0.3		// originally 3 and 1
 fileprivate let gridAlpha: CGFloat = 0.1
 fileprivate let tileColor = NSColor.systemBlue.withAlphaComponent(tileAlpha)
 fileprivate let gridColor = NSColor.systemBlue.withAlphaComponent(gridAlpha)
-
+//fileprivate let tileColor = NSColor.gridColor
+//fileprivate let gridColor = NSColor.gridColor
 
 
 /**
@@ -23,6 +24,8 @@ MapView Drawing-related Methods
 */
 
 extension MapView: EditWorldDelegate {
+	
+//	override var isOpaque: Bool { return true }
 	
 	override func draw(_ dirtyRect: NSRect) {
 		super.draw(dirtyRect)
@@ -33,6 +36,18 @@ extension MapView: EditWorldDelegate {
 		drawLines(in: dirtyRect)
 		drawPoints(in: dirtyRect)
 				
+	}
+	
+	func displayTestingRect(_ rect: NSRect) {
+
+		let r = convert(rect, from: superview)
+		
+		let path = NSBezierPath(rect: r)
+
+		NSColor.red.set()
+		path.lineWidth = 2.0
+		path.stroke()
+
 	}
 	
 	func redisplay(_ dirtyRect: NSRect) {
@@ -151,14 +166,14 @@ extension MapView: EditWorldDelegate {
 			let offset: CGFloat = 16.5
 			let rect = NSRect(x: origin.x-offset, y: origin.y-offset, width: size.width, height: size.height)
 			
-			thing.color.set()
+			thing.def.color.set()
 			if thing.selected == 1 {
 				NSColor.red.set()
 			}
 			NSBezierPath.fill(rect)
 
 			// FIXME: Make this just a rotation
-			if thing.hasDirection {
+			if thing.def.hasDirection {
 				let path = thingArrow(in: rect, direction: thing.angle)
 				NSColor.white.set()
 				path.stroke()

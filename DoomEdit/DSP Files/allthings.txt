@@ -1,0 +1,140 @@
+% Doom and Doom 2 Things
+%
+% Format:
+% Category_Type_Game_Radius_Sprite_Name_
+%
+Player_1_1_16_PLAYA1_Player 1 Start_
+Player_2_1_16_PLAYA1_Player 2 Start_
+Player_3_1_16_PLAYA1_Player 3 Start_
+Player_4_1_16_PLAYA1_Player 4 Start_
+Player_11_1_20_PLAYF1_Deathmatch Start_
+%
+Demon_3004_1_20_POSSA1_Zombieman_
+Demon_9_1_20_SPOSA1_Shotgun Guy_
+Demon_65_2_20_CPOSA1_Heavy Weapon Dude_
+Demon_84_2_20_SSWVA1_Wolfenstein SS_
+Demon_3001_1_20_TROOA1_Imp_
+Demon_3002_1_30_SARGA1_Demon_
+Demon_58_1_30_SARGA1_Spectre_
+Demon_3006_1_16_SKULA1_Lost Soul_
+Demon_3005_1_31_HEADA1_Cacodemon_
+Demon_69_2_24_BOS2A1C1_Hell Knight_
+Demon_3003_1_24_BOSSA1_Baron of Hell_
+Demon_68_2_64_BSPIA1D1_Arachnotron_
+Demon_71_2_31_PAINA1_Pain Elemental_
+Demon_66_2_20_SKELA1_Revenant_
+Demon_67_2_48_FATTA1_Mancubus_
+Demon_64_2_20_VILEA1D1_Arch-Vile_
+Demon_7_1_128_SPIDA1D1_Spider Mastermind_
+Demon_16_1_40_CYBRA1_Cyberdemon_
+%
+Weapon_2005_1_20_CSAWA0_Chainsaw
+Weapon_2001_1_20_SHOTA0_Shotgun_
+Weapon_82_2_20_SGN2A0_Super Shotgun_
+Weapon_2002_1_20_MGUNA0_Chaingun_
+Weapon_2003_1_20_LAUNA0_Rocket Launcher_
+Weapon_2004_1_20_PLASA0_Plasma Rifle_
+Weapon_2006_1_20_BFUGA0_BFG 9000_
+%
+Ammo_2007_1_20_CLIPA0_Ammo Clip_
+Ammo_2008_1_20_SHELA0_Shotgun Shells_
+Ammo_2010_1_20_ROCKA0_Rocket_
+Ammo_2047_1_20_CELLA0_Cell Charge
+Ammo_2048_1_20_AMMOA0_Box of Ammo_
+Ammo_2049_1_20_SBOXA0_Box of Shells_
+Ammo_2046_1_20_BROKA0_Box of Rockets_
+Ammo_17_1_20_CELPA0_Cell Charge Pack_
+Ammo_8_1_20_BPAKA0_Backpack_
+%
+Health_2014_1_20_BON1A0_Health Potion_
+Health_2011_1_20_STIMA0_Stimpack_
+Health_2012_1_20_MEDIA0_Medikit_
+Health_2013_1_20_SOULA0_Supercharge_
+Health_83_2_20_MEGAA0_Megashere_
+%
+Armor_2015_1_20_BON2A0_Armor Bonus_
+Armor_2018_1_20_ARM1A0_Green Armor_
+Armor_2019_1_20_ARM2A0_Blue Armor_
+%
+Power_2025_1_20_SUITA0_Radition Suit_
+Power_2023_1_20_PSTRA0_Berserk_
+Power_2026_1_20_PMAPA0_Computer Map_
+Power_2045_1_20_PVISA0_Light Amplification Visor_
+Power_2024_1_20_PINSA0_Invisibility_
+Power_2022_1_20_PINVA0_Invulnerability_
+
+%
+Card_5_1_20_BKEYA0_Blue Keycard_
+Card_13_1_20_RKEYA0_Red Keycard_
+Card_6_1_20_YKEYA0_Yellow Keycard_
+Card_40_1_20_BSKUA0_Blue Skull Key_
+Card_38_1_20_RSKUA0_Red Skull Key_
+Card_39_1_20_YSKUA0_Yellow Skull Key_
+%
+Light_34_1_16_CANDA0_Candle_
+Light_35_1_16_CBRAA0_Candelabra_
+Light_2028_1_16_COLUA0_Floor Lamp_
+Light_86_2_16_TLP2A0_Short Techno Floor Lamp_
+Light_85_2_16_TLMPA0_Tall Techno Floor Lamp_
+Light_55_1_16_SMBTA0_Short Blue Torch_
+Light_56_1_16_SMGTA0_Short Green Torch_
+Light_57_1_16_SMRTA0_Short Red Torch_
+Light_44_1_16_TBLUA0_Tall Blue Torch_
+Light_45_1_16_TGRNA0_Tall Green Torch_
+Light_46_1_16_TREDA0_Tall Red Torch_
+%
+Decor_2035_1_10_BAR1A0_Barrel_
+Decor_70_2_10_FCANA0_Burning Barrel_
+Decor_30_1_16_COL1A0_Tall Green Column_
+Decor_31_1_16_COL2A0_Short Green Column_
+Decor_32_1_16_COL3A0_Tall Red Column_
+Decor_33_1_16_COL4A0_Short Red Column_
+Decor_36_1_16_COL5A0_Column with Beating Heart_
+Decor_37_1_16_COL6A0_Column with Skull_
+Decor_43_1_16_TRE1A0_Burnt Tree_
+Decor_41_1_16_CEYEA0_Evil Eye_
+Decor_42_1_16_FSKUA0_Floating Skull_
+Decor_54_1_32_TRE2A0_Large Brown Tree_
+Decor_47_1_16_SMITA0_Stalagmite_
+%
+Dead_10_1_20_PLAYW0_Gibs 1_
+Dead_12_1_20_PLAYW0_Gibs 2_
+Dead_18_1_20_POSSL0_Dead Zombieman_
+Dead_19_1_20_SPOSL0_Dead Shotgun Guy_
+Dead_20_1_20_TROOM0_Dead Imp_
+Dead_21_1_30_SARGN0_Dead Demon_
+Dead_22_1_31_HEADL0_Dead Cacodemon_
+Dead_23_1_16_SKULJ0_Dead Lost Soul_
+Dead_15_1_16_PLAYN0_Dead Player_
+%
+Gore_25_1_16_POL1A0_Impaled Human_
+Gore_28_1_16_POL2A0_Five Skulls_
+Gore_29_1_16_POL3A0_Pile of Skulls_
+Gore_27_1_16_POL4A0_Skull on a Pole_
+Gore_24_1_16_POL5A0_Pool of Gore_
+Gore_26_1_16_POL6A0_Impaled Human 2_
+Gore_49_1_16_GOR1A0_Gore 1 (Blocking)_
+Gore_50_1_16_GOR2A0_Gore 2 (Blocking)_
+Gore_51_1_16_GOR3A0_Gore 3 (Blocking)_
+Gore_52_1_16_GOR4A0_Gore 4 (Blocking)_
+Gore_53_1_16_GOR5A0_Gore 5 (Blocking)_
+Gore_63_1_16_GOR1A0_Gore 1_
+Gore_59_1_16_GOR2A0_Gore 2_
+Gore_61_1_16_GOR3A0_Gore 3_
+Gore_60_1_16_GOR4A0_Gore 4_
+Gore_62_1_16_GOR5A0_Gore 5_
+
+Gore_73_2_16_HDB1A0_Handing Dead Body 1_
+Gore_74_2_16_HDB2A0_Handing Dead Body 2_
+Gore_75_2_16_HDB3A0_Hanging Dead Body 3_
+Gore_76_2_16_HDB4A0_Hanging Dead Body 4_
+Gore_77_2_16_HDB5A0_Hanging Dead Body 5_
+Gore_78_2_16_HDB6A0_Hanging Dead Body 6_
+Gore_79_2_16_POB1A0_Pool of Blood 1_
+Gore_80_2_16_POB2A0_Pool of Blood 2_
+Gore_81_2_16_BRS1A0_Brains_
+%
+Other_14_1_20_TFOGB0_Teleport Destination_
+Other_87_2_0_TFOGJ0_Spawn Spot_
+Other_89_2_20_BOSFB0_Spawn Shooter_
+Other_88_2_16_BBRNA0_Boss Brain_

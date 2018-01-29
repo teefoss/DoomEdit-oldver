@@ -15,13 +15,9 @@ extension NSNib.Name {
 protocol MapViewDelegate {
 	func zoom(to point: NSPoint, with scale: CGFloat)
 	func redisplay(_ dirtyrect: NSRect)
-//	func updateThingWindow(with data: Thing)
 }
 
 class MapWindowController: NSWindowController, MapViewDelegate {
-
-//	var windowList: [NSWindowController]?
-//	var thingWindow: ThingWindowController?
 	
 	var mapView = MapView()
 	var delegate: NSWindowDelegate?
@@ -37,9 +33,9 @@ class MapWindowController: NSWindowController, MapViewDelegate {
 	
     override func windowDidLoad() {
         super.windowDidLoad()
-				
+		
 		window?.title = "\(fullFileName) : Edit Mode"
-				
+		
 		positionWindowTopLeft(leftOffset: 50, topOffset: 50)
 //		centerWindowWith(size: 0.25)
 		delegate = self

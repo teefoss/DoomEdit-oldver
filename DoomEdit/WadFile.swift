@@ -25,6 +25,11 @@ struct TextureLumpInfo {
 	var offsets: [Int32] = []
 }
 
+struct Sprite {
+	var name: String = ""	// the lump name
+	var image = NSImage()
+}
+
 
 
 // ===============
@@ -35,6 +40,8 @@ let wad = WadFile()
 
 class WadFile {
 	
+	var game: Int = 0 // 1 = doom, 2 = doom 2
+	
 	var lumps: [LumpInfo] = []
 	let data: Data
 	var numOfLumps: Int32 = 0
@@ -44,53 +51,20 @@ class WadFile {
 	var pnames: [String] = []
 	var patches: [Patch] = []
 	var maptextures: [MapTexture] = []
-	//var textures: [Texture] = []
-
-	var progressWindow: ProgressWindowController?
-	
-	/* Testing
-	let patchwin = PatchWindow()
-	patchwin.showWindow(self)
-	self.patchWindow = patchwin
-	*/
-
+	var textures: [Texture] = []
+	var thingImages: [Thing] = []
+	var sprites: [Sprite] = []
 	
 	init() {
 		let home = FileManager.default.homeDirectoryForCurrentUser
 		let path = "Documents/Games/WADs/DOOM.WAD"
+		game = 2
 		let url = home.appendingPathComponent(path)
 		do {
 			data = try Data(contentsOf: url, options: .alwaysMapped)
 		} catch {
 			fatalError("Could not parse Wad file. To test, put DOOM.WAD in ~/Documents/Games/WADs")
 		}
-		
-		// TODO: learn how to do a loading window
-		
-		let progressWin = ProgressWindowController()
-		progressWin.window?.title = "Loading WAD"
-		progressWin.showWindow(self)
-
-		progressWin.progressBar.increment(by: 25.0)
-		progressWin.label.stringValue = "Reading WAD directory…"
-		readHeader()
-		readDirectory()
-		
-		progressWin.progressBar.increment(by: 25.0)
-		progressWin.label.stringValue = "Loading Flats…"
-		loadFlats()
-		
-		progressWin.progressBar.increment(by: 25.0)
-		progressWin.label.stringValue = "Loading Patches…"
-
-		loadPNAMES()
-		loadPatches()
-		
-		progressWin.progressBar.increment(by: 25.0)
-		progressWin.label.stringValue = "Loading Textures…"
-		loadTextures()
-		
-		progressWin.close()
 	}
 	
 	
@@ -168,7 +142,7 @@ class WadFile {
 	}
 	
 	func readTexture(at offset: CInt, in lump: Int) -> MapTexture {
-
+		
 		let i = Int(offset)
 		let lump = loadLump(lump)
 		var tex = MapTexture()
@@ -203,7 +177,7 @@ class WadFile {
 		
 		return patch
 	}
-
+	
 	func readTextureHeader(of lump: Int) -> TextureLumpInfo {
 		
 		var info = TextureLumpInfo()
@@ -236,7 +210,7 @@ class WadFile {
 		
 		return info
 	}
-
+	
 	
 	// ===================
 	// MARK: - Lump Lookup
@@ -379,7 +353,7 @@ class WadFile {
 		
 		var wadIndex = 0
 		repeat {
-
+			
 			let textureLumpIndex = lumpNamed("TEXTURE\(wadIndex+1)")
 			if textureLumpIndex == -1 {
 				if wadIndex == 0 {
@@ -389,7 +363,7 @@ class WadFile {
 				continue
 			}
 			let info = readTextureHeader(of: textureLumpIndex)
-						
+			
 			for i in 0..<Int(info.numTextures) {
 				let tex = readTexture(at: info.offsets[i], in: textureLumpIndex)
 				maptextures.append(tex)
@@ -419,5 +393,122 @@ class WadFile {
 	}
 	
 	
+	func createAllTextureImages() {
+		
+		for i in 0..<maptextures.count {
+			var t = createTextureImage(for: i)
+			t.index = i
+			textures.append(t)
+		}
+	}
+	
+	/// Assemble a texture from its patches
+	func createTextureImage(for index: Int) -> Texture {
+		
+		var texture = Texture()
+		var size = NSSize()
+		
+		size.width = CGFloat(wad.maptextures[index].width)
+		size.height = CGFloat(wad.maptextures[index].height)
+		
+		texture.width = Int(size.width)
+		texture.height = Int(size.height)
+		texture.name = wad.maptextures[index].name
+		texture.patchCount = Int(wad.maptextures[index].patchcount)
+		texture.image = NSImage(size: size)
+		texture.image.lockFocus()
+		
+		let color = NSColor(calibratedRed: 1, green: 0, blue: 0, alpha: 1)
+		color.set()
+		texture.rect.fill()
+		
+		for i in 0..<Int(wad.maptextures[index].patchcount) {
+			
+			var p = TexPatch()
+			
+			p.info = wad.maptextures[index].patches[i]
+			if let ptch = getPatchImage(for: Int(p.info.patchIndex)) {
+				p.patch = ptch
+			} else {
+				fatalError("Error! While building texture \(i), I couldn't find the '\(p.info.name)' patch!")
+			}
+			
+			p.rect.origin.x = CGFloat(p.info.originx)
+			p.rect.origin.y = CGFloat(wad.maptextures[index].height) - p.patch.size.height - CGFloat(p.info.originy)
+			p.rect.size.width = p.patch.rect.size.width
+			p.rect.size.height = p.patch.rect.size.height
+			p.patch.image.draw(at: p.rect.origin, from: NSRect.zero, operation: .sourceOver, fraction: 1.0)
+		}
+		texture.image.unlockFocus()
+		
+		return texture
+	}
+	
+	func getPatchImage(for index: Int) -> Patch? {
+		
+		let patchName = wad.pnames[index]
+		
+		for i in 0..<patches.count {
+			if patchName.uppercased() == patches[i].name.uppercased() {
+				return patches[i]
+			}
+		}
+		return nil
+	}
+	
+	func imageForLump(named name: String) -> NSImage? {
+		
+		let playpal = loadLump(named: "playpal")
+		let palette: [CUnsignedChar] = playpal.elements()
+		
+		let lumpIndex = lumpNamed(name)
+		
+		if lumpIndex == -1 {
+			fatalError("Could not load WAD's playpal lump!")
+		}
+		
+		let lump = loadLump(lumpIndex)
+		let info = readImageHeader(for: lumpIndex)
+		
+		let lumpData: [CUnsignedChar] = lump.elements()
+		let size = NSSize(width: Int(info.width), height: Int(info.height))
+		let image = patchToImage(lumpData, patchInfo: info, size: size, palette: palette)!
+		
+		return image
+	}
+	
+	func loadSprites() {
+		
+		let playpal = loadLump(named: "playpal")
+		let palette: [CUnsignedChar] = playpal.elements()
+		
+		// TODO: Handle load playpal lump error
+		
+		var spriteNames: [String] = []
+		defLoop: for def in doomData.thingDefs {
+			for name in spriteNames {
+				if name == def.spriteName {
+					continue defLoop
+				}
+			}
+			spriteNames.append(def.spriteName)
+		}
+		
+		for i in 0..<spriteNames.count {
+			
+			let index = lumpNamed(spriteNames[i])
+			if index == -1 {
+				continue
+			}
+			let sprite = loadLump(index)
+			let data: [CUnsignedChar] = sprite.elements()
+			var s = Sprite()
+			let info = readImageHeader(for: index)
+			s.name = spriteNames[i]
+			let size = NSSize(width: Int(info.width), height: Int(info.height))
+			s.image = patchToImage(data, patchInfo: info, size: size, palette: palette)!
+			sprites.append(s)
+		}
+	}
 	
 }

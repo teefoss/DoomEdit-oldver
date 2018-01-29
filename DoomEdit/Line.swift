@@ -18,6 +18,16 @@ let BLOCKS_SOUND = 64
 let NOT_ON_MAP = 128
 let SHOW_ON_MAP = 256
 
+struct Side {
+	var x_offset: Int = 0
+	var y_offset: Int = 0
+	var middleTexture: String?
+	var upperTexture: String?
+	var lowerTexture: String?
+	var ends = SectorDef()
+	var sector: Int = -1
+}
+
 struct Line {
 	
 	var pt1, pt2: Int

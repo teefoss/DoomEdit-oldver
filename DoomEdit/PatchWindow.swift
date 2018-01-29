@@ -19,14 +19,7 @@ class PatchWindow: NSWindowController {
     override func windowDidLoad() {
         super.windowDidLoad()
 		
-		print(wad.maptextures[123])
-		
-		for i in 0..<wad.maptextures.count {
-			let t = createTextureImage(for: i)
-		}
-		
-		let texture = createTextureImage(for: 1)
-		imageView.image = texture.image
+		//imageView.image = wad.sprites[0].image
     }
 
 	func createTextureImage(for index: Int) -> Texture {

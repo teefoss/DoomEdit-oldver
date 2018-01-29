@@ -8,11 +8,57 @@
 
 import Cocoa
 
+struct ThingDef {
+	var type: Int = 0
+	var name: String = ""
+	var category: String = ""
+	var size: Int = 0
+	var game: Int = 0
+	var spriteName: String = ""
+	var image: NSImage? {
+		for sprite in wad.sprites {
+			if sprite.name == spriteName {
+				return sprite.image
+			}
+		}
+		return nil
+	}
+	var color: NSColor {
+		switch category {
+		case "Player": return .systemGreen
+		case "Demon": return .black
+		case "Power": return .systemBlue
+		case "Ammo": return .systemOrange
+		case "Health": return .systemYellow
+		case "Armor": return .systemYellow
+		case "Card": return .systemPurple
+		case "Weapon": return .systemBrown
+		case "Gore": return .darkGray
+		case "Dead": return .darkGray
+		case "Decor": return .lightGray
+		case "Light": return .lightGray
+		case "Other": return .systemPink
+		default: return .systemPink
+		}
+	}
+	var hasDirection: Bool {
+		switch category {
+		case "Player": return true
+		case "Demon": return true
+		case "Other": return true
+		default: return false
+		}
+	}
+
+}
+
+	
+	
 let doomData = DoomData()
 
 /**
-Storage Object for all assets data.
-Methods to reads all the data out of the `.dsp` files.
+Storage Object for data not loaded from WAD: things, specials, etc.
+Methods to reads data out of `.dsp` files.
 */
 
 class DoomData {
@@ -23,7 +69,7 @@ class DoomData {
 	var doom1FlatImages: [NSImage] = []
 	var doom1LineSpecials: [LineSpecial] = []
 	
-	var things: [String] = []
+	var thingDefs: [ThingDef] = []
 	
 	var lineSpecials: [String] = []
 	
@@ -45,22 +91,9 @@ class DoomData {
 								   "Imp"]
 	
 	init() {
-		loadThingNames()
 		loadLineSpecials()
 		loadTextures()
-//		loadDoomThingMenu()
-		
-		/*
-		for i in 0..<lineSpecials.count {
-			switch i {
-			case 1,2,3,4,16,29,31,42,46,50,61,63,75,76,86,90,103,105,106,107,108,109,110,111,112,113,114,115,116,117,118:
-				ceilingsSpecials.append(lineSpecials[i])
-			case 26,28,27,32,33,34,99,134,136,133,135,137:
-				lockedDoorSpecials.append(lineSpecials[i])
-				case
-			}
-		}
-		*/
+		loadThingsDefs()
 	}
 	
 	
@@ -68,10 +101,11 @@ class DoomData {
 	// =================================
 	// MARK: - Initialize Storage Arrays
 	// =================================
-	func loadThingNames() {
+	
+	func loadThingsDefs() {
 		
 		var fileContents: String?		// to store the entire file
-		if let filepath = Bundle.main.path(forResource: "things", ofType: "dsp") {
+		if let filepath = Bundle.main.path(forResource: "allthings", ofType: "txt") {
 			do {
 				fileContents = try String(contentsOfFile: filepath)
 			} catch {
@@ -81,9 +115,12 @@ class DoomData {
 		guard let fileLines = fileContents?.components(separatedBy: CharacterSet.newlines) else { return }
 			
 		for fileLine in fileLines {
-			var string: String = ""
-			if readThingName(from: fileLine, to: &string) {
-				self.things.append(string)
+			var t = ThingDef()
+			if readThingDef(from: fileLine, to: &t) {
+//				if let img = wad.imageForLump(named: t.imageName) {
+//					t.image = img
+//				}
+				thingDefs.append(t)
 			}
 		}
 	}
@@ -207,17 +244,28 @@ class DoomData {
 		return false
 	}
 	
-	func readThingName(from fileLine: String, to string: inout String) -> Bool {
+	func readThingDef(from fileLine: String, to def: inout ThingDef) -> Bool {
 		
 		var nsString: NSString?
+		var catstring: NSString?
+		var sprstring: NSString?
 		let scanner = Scanner(string: fileLine)
 		scanner.charactersToBeSkipped = CharacterSet()
-		
-		if fileLine.first == "n" {
+				
+		if fileLine.first == "%" {
 			return false
 		}
-		if scanner.scanUpTo(" ", into: &nsString) {
-			string = nsString! as String
+		
+		if scanner.scanUpTo("_", into: &catstring) && scanner.scanString("_", into: nil) &&
+			scanner.scanInt(&def.type) && scanner.scanString("_", into: nil) &&
+			scanner.scanInt(&def.game) && scanner.scanString("_", into: nil) &&
+			scanner.scanInt(&def.size) && scanner.scanString("_", into: nil) &&
+			scanner.scanUpTo("_", into: &sprstring) && scanner.scanString("_", into: nil) &&
+			scanner.scanUpTo("_", into: &nsString)
+		{
+			def.category = catstring! as String
+			def.name = nsString! as String
+			def.spriteName = sprstring! as String
 			return true
 		}
 		return false
@@ -249,37 +297,6 @@ class DoomData {
 		}
 		return false
 	}
-	
-	
-	
-	
-//	func loadDoomThingMenu() -> [[String]] {
-//		var menu: [[String]]
-//
-//		var monsters = ["Zombieman",
-//						"Shotgun Guy",
-//						"Imp",
-//						"Demon",
-//						"Lost Soul",
-//						"Cacodemon",
-//						"Baron of Hell",
-//						"Cyberdemon",
-//						"Spider Mastermind"]
-//
-//		menu.append(monsters)
-//	}
-
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	
 	
 }
