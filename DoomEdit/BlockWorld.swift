@@ -64,13 +64,6 @@ class BlockWorld {
 		// find the dimensions of the world and allocate an empty map
 		wbounds = editWorld.getBounds()
 
-		/*
-		for i in 0..<bmap.count {
-			if bmap[i] != 0 {
-				bmap[i] = 0
-			}
-		}
-		*/
 		if bmap != nil {
 			bmap = nil
 		}
@@ -82,7 +75,9 @@ class BlockWorld {
 		
 		// draw all the lines into the map
 		for i in 0..<lines.count {
-			drawBlockLine(i)
+			if lines[i].selected != -1 {
+				drawBlockLine(i)
+			}
 		}
 	}
 	
