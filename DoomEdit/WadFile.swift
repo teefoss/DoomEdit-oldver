@@ -36,14 +36,13 @@ struct Sprite {
 // MARK: - WadFile
 // ===============
 
-let wad = WadFile()
+var wad = WadFile()
 
 class WadFile {
 	
-	var game: Int = 0 // 1 = doom, 2 = doom 2
-	
+	var url: URL!
 	var lumps: [LumpInfo] = []
-	let data: Data
+	var data = Data()
 	var numOfLumps: Int32 = 0
 	var dirOffset: Int32 = 0
 	
@@ -55,16 +54,42 @@ class WadFile {
 	var thingImages: [Thing] = []
 	var sprites: [Sprite] = []
 	
+	/*
 	init() {
+		/*
 		let home = FileManager.default.homeDirectoryForCurrentUser
 		let path = "Documents/Games/WADs/DOOM.WAD"
-		game = 2
-		let url = home.appendingPathComponent(path)
+		*/
+
+		
+//		let url = home.appendingPathComponent(path)
+//		do {
+//			data = try Data(contentsOf: url, options: .alwaysMapped)
+//		} catch {
+//			fatalError("Could not parse Wad file. To test, put DOOM.WAD in ~/Documents/Games/WADs")
+//		}
+	}
+	*/
+	
+	func setWadLoation(_ url: URL) {
+		
 		do {
 			data = try Data(contentsOf: url, options: .alwaysMapped)
 		} catch {
 			fatalError("Could not parse Wad file. To test, put DOOM.WAD in ~/Documents/Games/WADs")
 		}
+	}
+	
+	func loadAssets() {
+		
+		readHeader()
+		readDirectory()
+		loadFlats()
+		loadPNAMES()
+		loadPatches()
+		loadTextures()
+		createAllTextureImages()
+		loadSprites()
 	}
 	
 	

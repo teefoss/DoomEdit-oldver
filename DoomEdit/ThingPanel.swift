@@ -185,7 +185,7 @@ class ThingPanel: NSViewController {
 	}
 	
 	func addThingDef(_ def: ThingDef, to menu: NSMenu) {
-		if def.game <= wad.game {
+		if def.game <= doomProject.projectType.rawValue {
 			let item = NSMenuItem()
 			item.title = def.name
 			item.image = def.image

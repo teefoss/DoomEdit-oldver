@@ -16,9 +16,10 @@ extension EditWorld {
 	
 	// TODO: stores thing data in things
 	/// Reads data from a `.dwd` file and stores all line and thing data
-	func loadWorldFile() {
-		
-		var fileContents: String?		// to store the entire file
+	func loadDWDFile(_ dwd: String) {
+
+		//var fileContents: String?		// to store the entire file
+		/*
 		if let filepath = Bundle.main.path(forResource: fileName, ofType: fileExt) {
 			do {
 				fileContents = try String(contentsOfFile: filepath)
@@ -26,7 +27,9 @@ extension EditWorld {
 				print("Error, the file could not be loaded")
 			}
 		}
-		guard let fileLines = fileContents?.components(separatedBy: CharacterSet.newlines) else { return }
+		*/
+		
+		let fileLines = dwd.components(separatedBy: CharacterSet.newlines)
 		
 		var line = Line()
 		var p1 = NSPoint()

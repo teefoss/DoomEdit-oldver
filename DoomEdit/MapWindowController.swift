@@ -41,7 +41,7 @@ class MapWindowController: NSWindowController, MapViewDelegate {
 		delegate = self
 		
 		// Load world and set up the map view
-		editWorld.loadWorldFile()
+		//editWorld.loadWorldFile()
 		mapView.delegate = self
 		mapView.frame = editWorld.getBounds()
 		
@@ -54,6 +54,7 @@ class MapWindowController: NSWindowController, MapViewDelegate {
 		let center = NSPoint(x: centerx, y: centery)
 		scrollView.scroll(clipView, to: center)
 		zoom(to: center, with: 1.0)
+		window?.makeFirstResponder(mapView)
     }
 	
 	// TODO: Animate zooming

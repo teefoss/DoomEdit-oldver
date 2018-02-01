@@ -55,8 +55,6 @@ class ProgressViewController: NSViewController {
 		wad.loadPatches()
 		wad.loadTextures()
 		wad.createAllTextureImages()
-//		wad.loadThings()
-//		wad.loadThingsImages()
 		wad.loadSprites()
 	}
 }
