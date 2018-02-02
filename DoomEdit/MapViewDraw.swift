@@ -313,6 +313,7 @@ extension MapView: EditWorldDelegate {
 			}
 		}
 		didDragLine = false
+		doomProject.mapDirty = true
 	}
 	
 }

@@ -85,24 +85,24 @@ func makeString(from data: Data) -> String? {
 	return string
 }
 
-
-func displayQuestionAlert(question: String, text: String) {
-	let alert = NSAlert()
-	alert.messageText = question
-	alert.informativeText = text
-	alert.alertStyle = .warning
-	alert.addButton(withTitle: "OK")
-	alert.addButton(withTitle: "Cancel")
-	alert.runModal()
-	//return alert.runModal() == .alertFirstButtonReturn
-}
-
 func runAlertPanel(title: String, message: String) {
+
 	let alert = NSAlert()
 	alert.messageText = title
 	alert.informativeText = message
 	alert.alertStyle = .warning
 	alert.addButton(withTitle: "OK")
 	alert.runModal()
+}
+
+func runDialogPanel(question: String, text: String) -> Bool {
+
+	let alert = NSAlert()
+	alert.messageText = question
+	alert.informativeText = text
+	alert.alertStyle = .warning
+	alert.addButton(withTitle: "OK")
+	alert.addButton(withTitle: "Cancel")
+	return alert.runModal() == .alertFirstButtonReturn
 }
 

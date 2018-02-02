@@ -19,17 +19,46 @@ var doomProject = DoomProject()
 
 class DoomProject {
 	
+	var loaded: Bool = false
 	var projectType: ProjectType!
 	var name: String = ""
 	var directory: URL!
 	var projectURL: URL!
 	var projectMapsURL: URL!
 	var projectFileURL: URL!
+	var currentMapURL: URL {
+		return projectMapsURL.appendingPathComponent(openMap.name)
+	}
+	
 	var maps: [Map] = []
+	var openMap = Map()
+	
+	var mapDirty = false
+	var projectDirty = false
 	
 	enum ProjectType: Int {
 		case doom1 = 1
 		case doom2 = 2
+	}
+	
+	func checkDirtyProject() {
+		
+		if projectDirty == false {
+			return
+		}
+		let val = runDialogPanel(question: "Important", text: "Do you wish to save your project before exiting?")
+		if val {
+			saveProject()
+		}
+	}
+	
+	func saveProject() {
+		
+		if !loaded {
+			return
+		}
+		writeProjectFile(at: projectFileURL)
+		projectDirty = false
 	}
 	
 	func createProject() {
@@ -162,7 +191,6 @@ class DoomProject {
 		}
 	}
 	
-	// FIXME: Debug this
 	func readProject(fileLine: String) {
 		
 		let scanner = Scanner(string: fileLine)

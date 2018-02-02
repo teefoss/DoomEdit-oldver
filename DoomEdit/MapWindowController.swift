@@ -34,7 +34,7 @@ class MapWindowController: NSWindowController, MapViewDelegate {
     override func windowDidLoad() {
         super.windowDidLoad()
 		
-		window?.title = "\(fullFileName) : Edit Mode"
+		window?.title = "\(doomProject.openMap.name) (\(doomProject.openMap.level)) : Edit Mode"
 		
 		positionWindowTopLeft(leftOffset: 50, topOffset: 50)
 //		centerWindowWith(size: 0.25)
@@ -108,6 +108,18 @@ extension MapWindowController: NSWindowDelegate {
 		preResizeOrigin.y += (newScreenOrigin.y - oldScreenOrigin.y) / CGFloat(scale)
 		
 		mapView.setOrigin(for: preResizeOrigin)
+	}
+	
+	func windowWillClose(_ notification: Notification) {
+		if doomProject.mapDirty {
+			let val = runDialogPanel(question: "Hey!", text: "Your map has been modified! Save it?")
+			if val {
+				editWorld.saveMap(sender: nil)
+			}
+		}
+		
+		let appDelegate = NSApplication.shared.delegate as! AppDelegate
+		appDelegate.mapWindowController = nil
 	}
 }
 

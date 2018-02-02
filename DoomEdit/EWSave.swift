@@ -17,7 +17,31 @@ fileprivate let home = FileManager.default.homeDirectoryForCurrentUser
 
 extension EditWorld {
 	
-	func makeDWD() -> String {
+	func saveMap(sender: Any?) {
+		
+		if !loaded {
+			runAlertPanel(title: "Error!", message: "No map open.")
+			return
+		}
+		
+		doomProject.saveProject()
+		saveDWD()
+		
+		dirty = false
+	}
+	
+	func saveDWD() {
+		
+		let dwd = makeDWD()
+		
+		do {
+			try dwd.write(to: doomProject.currentMapURL, atomically: false, encoding: .ascii)
+		} catch {
+			print("Error. Could not save map as dwd at path \(doomProject.currentMapURL.path)!")
+		}
+	}
+
+	private func makeDWD() -> String {
 		
 		var dwd: String = ""
 		
@@ -55,16 +79,4 @@ extension EditWorld {
 		return dwd
 	}
 	
-	func saveMapToDWD() {
-		
-		let path = "Documents/DoomEdit/fucked2.dwd"
-		let URL = home.appendingPathComponent(path)
-		let dwd = makeDWD()
-
-		do {
-			try dwd.write(to: URL, atomically: false, encoding: .ascii)
-		} catch {
-			print("Error. Could not write to file!")
-		}
-	}
 }

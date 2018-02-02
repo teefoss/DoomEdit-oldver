@@ -22,29 +22,21 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 	
 	func applicationDidFinishLaunching(_ aNotification: Notification) {
 
-//		/*
+		// Display the launch window
 		let launch = LaunchWindowController()
 		launch.showWindow(self)
 		self.launchWindowController = launch
-//		*/
 		
-		
-		/*
-		let progVC = ProgressViewController()
-		let win = NSWindow(contentViewController: progVC)
-		win.makeKeyAndOrderFront(self)
-		self.window = win
-		*/
-		
-		/*
-		let mapWindowController = MapWindowController()
-		mapWindowController.showWindow(self)
-		self.mapWindowController = mapWindowController
-		*/
 	}
 
 	func applicationWillTerminate(_ aNotification: Notification) {
-		// Insert code here to tear down your application
+		
+		if mapWindowController != nil {
+			if editWorld.dirty {
+				//save map
+			}
+		}
+		
 	}
 
 	@IBAction func openPreferences(_ sender: Any) {

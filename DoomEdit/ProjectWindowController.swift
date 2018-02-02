@@ -87,7 +87,7 @@ class ProjectWindowController: NSWindowController {
 	@IBAction func openMap(_ sender: Any) {
 		
 		let map = doomProject.maps[tableView.selectedRow]
-		print(map.dwd)
+		doomProject.openMap = map
 		editWorld.loadDWDFile(map.dwd)
 		
 		let appDelegate = NSApplication.shared.delegate as! AppDelegate

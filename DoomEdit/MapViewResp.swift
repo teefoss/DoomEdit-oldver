@@ -66,7 +66,7 @@ extension MapView {
 			}
 		case KEY_S:
 			if event.modifierFlags.contains(.command) {
-				editWorld.saveMapToDWD()
+				editWorld.saveDWD()
 			} else if event.modifierFlags.contains(.shift) {
 				// for testing:
 				blockWorld.connectSectors()
@@ -294,8 +294,13 @@ extension MapView {
 			
 			// if the point is already selected
 			if points[pointIndex].selected == 1 {
-				dragObjects_LMDown(with: event)
-				return
+				if !event.modifierFlags.contains(.shift) {
+					dragObjects_LMDown(with: event)
+					return
+				} else {
+					editWorld.deselectPoint(pointIndex)
+					return
+				}
 			// point is not already selected
 			} else {
 				// shift is not being held
@@ -347,11 +352,16 @@ extension MapView {
 			if newPath.contains(clickPoint) {
 				// line is already selected
 				if lines[i].selected > 0 {
-					dragObjects_LMDown(with: event)
-					didClickLine = true
-					selectedLine = lines[i]
-					selectedLineIndex = i
-					return
+					if !event.modifierFlags.contains(.shift) {
+						dragObjects_LMDown(with: event)
+						didClickLine = true
+						selectedLine = lines[i]
+						selectedLineIndex = i
+						return
+					} else {
+						editWorld.deselectLine(i)
+						return
+					}
 					// line is not already selected
 				} else {
 					// shift if not held
@@ -405,11 +415,16 @@ extension MapView {
 			
 			// Thing is already selected
 			if things[thingIndex].selected == 1 {
-				dragObjects_LMDown(with: event)
-				didClickThing = true
-				selectedThing = things[thingIndex]
-				selectedThingIndex = thingIndex
-				return
+				if !event.modifierFlags.contains(.shift) {
+					dragObjects_LMDown(with: event)
+					didClickThing = true
+					selectedThing = things[thingIndex]
+					selectedThingIndex = thingIndex
+					return
+				} else {
+					editWorld.deselectThing(thingIndex)
+					return
+				}
 				// Thing is not already selected
 			} else if things[thingIndex].selected == 0 {
 				if !event.modifierFlags.contains(.shift) {
