@@ -9,22 +9,25 @@
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="LaunchWindowController" customModule="DoomEdit" customModuleProvider="target">
             <connections>
+                <outlet property="clearListButton" destination="Xgq-ck-XIc" id="E5p-0q-AAU"/>
                 <outlet property="nameTextField" destination="mod-lT-vZY" id="IZv-AW-mXI"/>
+                <outlet property="openRecentButton" destination="ocM-ZP-6dE" id="iYR-Rc-g91"/>
+                <outlet property="tableView" destination="uc9-Of-sW7" id="GaJ-Es-Vvj"/>
                 <outlet property="window" destination="F0z-JX-Cv5" id="gIp-Ho-8D9"/>
             </connections>
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
-        <window allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" animationBehavior="default" tabbingMode="disallowed" titlebarAppearsTransparent="YES" id="F0z-JX-Cv5">
+        <window allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" restorable="NO" oneShot="NO" releasedWhenClosed="NO" animationBehavior="default" tabbingMode="disallowed" titlebarAppearsTransparent="YES" id="F0z-JX-Cv5">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" fullSizeContentView="YES"/>
-            <rect key="contentRect" x="196" y="240" width="444" height="303"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1280" height="778"/>
+            <rect key="contentRect" x="196" y="240" width="444" height="330"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1080"/>
             <view key="contentView" wantsLayer="YES" id="se5-gp-TjO">
-                <rect key="frame" x="0.0" y="0.0" width="444" height="303"/>
+                <rect key="frame" x="0.0" y="0.0" width="444" height="330"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="hpH-K3-S6p">
-                        <rect key="frame" x="18" y="258" width="90" height="25"/>
+                        <rect key="frame" x="18" y="285" width="90" height="25"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="DoomEdit" id="H7h-jq-S6a">
                             <font key="font" metaFont="systemThin" size="21"/>
@@ -33,7 +36,7 @@
                         </textFieldCell>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="7ha-dD-MIZ">
-                        <rect key="frame" x="20" y="233" width="69" height="17"/>
+                        <rect key="frame" x="20" y="260" width="69" height="17"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="version 1.0" id="SvI-bk-WgU">
                             <font key="font" metaFont="system"/>
@@ -42,7 +45,7 @@
                         </textFieldCell>
                     </textField>
                     <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="iBh-6O-svk">
-                        <rect key="frame" x="16" y="20" width="130" height="32"/>
+                        <rect key="frame" x="16" y="13" width="130" height="32"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <buttonCell key="cell" type="push" title="Open Project…" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="dKy-I1-e27">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -53,7 +56,7 @@
                         </connections>
                     </button>
                     <box fixedFrame="YES" title="New Project" translatesAutoresizingMaskIntoConstraints="NO" id="8Li-Bh-oM6">
-                        <rect key="frame" x="17" y="64" width="204" height="146"/>
+                        <rect key="frame" x="19" y="43" width="204" height="146"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <view key="contentView" id="aHe-fE-Fxu">
                             <rect key="frame" x="2" y="2" width="200" height="129"/>
@@ -108,7 +111,7 @@ DQ
                         </view>
                     </box>
                     <scrollView fixedFrame="YES" autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="KPW-lr-l7H">
-                        <rect key="frame" x="226" y="20" width="198" height="263"/>
+                        <rect key="frame" x="226" y="47" width="198" height="263"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <clipView key="contentView" ambiguous="YES" id="IlR-RW-aLR">
                             <rect key="frame" x="1" y="0.0" width="196" height="262"/>
@@ -134,7 +137,7 @@ DQ
                                             </textFieldCell>
                                             <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                             <prototypeCellViews>
-                                                <tableCellView id="4Yb-Dv-TPp">
+                                                <tableCellView identifier="RecentCell" id="4Yb-Dv-TPp">
                                                     <rect key="frame" x="1" y="1" width="193" height="17"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <subviews>
@@ -171,12 +174,34 @@ DQ
                             <autoresizingMask key="autoresizingMask"/>
                         </tableHeaderView>
                     </scrollView>
+                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ocM-ZP-6dE">
+                        <rect key="frame" x="349" y="13" width="81" height="32"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <buttonCell key="cell" type="push" title="Open" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="J0t-LR-OUj">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="openRecent:" target="-2" id="pVE-hb-ofy"/>
+                        </connections>
+                    </button>
+                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Xgq-ck-XIc">
+                        <rect key="frame" x="220" y="13" width="98" height="32"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <buttonCell key="cell" type="push" title="Clear List" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="gWY-eo-JHm">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="clearRecents:" target="-2" id="7eu-uP-dMS"/>
+                        </connections>
+                    </button>
                 </subviews>
             </view>
             <connections>
                 <outlet property="delegate" destination="-2" id="0bl-1N-AYu"/>
             </connections>
-            <point key="canvasLocation" x="121" y="178.5"/>
+            <point key="canvasLocation" x="121" y="192"/>
         </window>
     </objects>
 </document>

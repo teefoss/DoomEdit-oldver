@@ -30,12 +30,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 	}
 
 	func applicationWillTerminate(_ aNotification: Notification) {
-		
-		if mapWindowController != nil {
-			if editWorld.dirty {
-				//save map
-			}
-		}
+
+		doomProject.quit()
 		
 	}
 

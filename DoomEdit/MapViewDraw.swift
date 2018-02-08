@@ -25,7 +25,8 @@ MapView Drawing-related Methods
 
 extension MapView: EditWorldDelegate {
 	
-//	override var isOpaque: Bool { return true }
+	//	override var isOpaque: Bool { return true }
+	//	override var wantsDefaultClipping: Bool { return false }
 	
 	override func draw(_ dirtyRect: NSRect) {
 		super.draw(dirtyRect)
@@ -35,7 +36,7 @@ extension MapView: EditWorldDelegate {
 		drawThings(in: dirtyRect)
 		drawLines(in: dirtyRect)
 		drawPoints(in: dirtyRect)
-				
+		
 	}
 	
 	func displayTestingRect(_ rect: NSRect) {
@@ -117,9 +118,81 @@ extension MapView: EditWorldDelegate {
 		
 	}
 
+	/*
+	func drawLines(in rect: NSRect) {
+		
+		let offset: CGFloat = 0.5
+		var xc = 0; var yc = 0
+		var clippoint: [Int] = Array(repeating: 0, count: points.count)
+		
+		let left = rect.origin.x-1
+		let bottom = rect.origin.y-1
+		let right = rect.origin.x + rect.size.width+2
+		let top = rect.origin.y + rect.size.height+2
+		
+		for p in 0..<points.count {
+			if points[p].selected == -1 {
+				continue
+			}
+			
+			if points[p].coord.x < left {
+				xc = 0
+			} else if points[p].coord.x > right {
+				xc = 2
+			} else {
+				xc = 1
+			}
+			
+			if points[p].coord.y < bottom {
+				yc = 0
+			} else if points[p].coord.y > top {
+				yc = 2
+			} else {
+				yc = 1
+			}
+			clippoint[p] = yc*3+xc
+		}
+		
+		// only draw lines that might intersect the visible rect
+		
+		for line in lines {
+			if line.selected == -1 {
+				continue
+			}
+			if !lineCross[clippoint[line.pt1]][clippoint[line.pt2]] {
+				continue
+			}
+			
+			if line.selected > 0 {
+				NSColor.red.set()
+			} else {
+				line.color.set()
+			}
+			
+			if points[line.pt1].coord.x != points[line.pt2].coord.x ||
+				points[line.pt1].coord.y != points[line.pt2].coord.y
+			{
+				let pt1 = convert(NSPoint(x: points[line.pt1].coord.x-offset, y: points[line.pt1].coord.y-offset), from: superview)
+				let pt2 = convert(NSPoint(x: points[line.pt2].coord.x-offset, y: points[line.pt2].coord.y-offset), from: superview)
+				let midPt = convert(line.midpoint, from: superview)
+				let normPt = convert(line.normal, from: superview)
+				let midPtx = midPt.x - offset
+				let midPty = midPt.y - offset
+				let newMidPt = NSPoint(x: midPtx, y: midPty)
+				let normPtx = normPt.x - offset
+				let normPty = normPt.y - offset
+				let newNormPt = NSPoint(x: normPtx, y: normPty)
+
+				NSBezierPath.defaultLineWidth = LINE_WIDTH
+				NSBezierPath.strokeLine(from: pt1, to: pt2)			// line
+				NSBezierPath.strokeLine(from: newMidPt, to: newNormPt)	// line normal 'tick'
+			}
+		}
+	}
+	*/
 	///  Draw all world lines
 	private func drawLines(in rect: NSRect) {
-
+				
 		for i in 0..<lines.count {
 			
 			if lines[i].selected == -1 {
@@ -129,7 +202,7 @@ extension MapView: EditWorldDelegate {
 			let offset: CGFloat = 0.5
 			
 			// drawing will be in view coord, i.e. origin = (0, 0)...
-			// so use superview's coord system, they are the same as world coord
+			// so convert from superview coord system  (same as world coord)
 			let pt1 = convert(NSPoint(x: points[lines[i].pt1].coord.x-offset, y: points[lines[i].pt1].coord.y-offset), from: superview)
 			let pt2 = convert(NSPoint(x: points[lines[i].pt2].coord.x-offset, y: points[lines[i].pt2].coord.y-offset), from: superview)
 			let midPt = convert(lines[i].midpoint, from: superview)
@@ -144,9 +217,10 @@ extension MapView: EditWorldDelegate {
 			let newNormPt = NSPoint(x: normPtx, y: normPty)
 			
 			
-			lines[i].color.set()
 			if lines[i].selected > 0 {
 				NSColor.red.set()
+			} else {
+				lines[i].color.set()
 			}
 			NSBezierPath.defaultLineWidth = LINE_WIDTH
 			NSBezierPath.strokeLine(from: pt1, to: pt2)			// line
@@ -307,7 +381,7 @@ extension MapView: EditWorldDelegate {
 				return
 			} else {
 				editWorld.newLine(line: &line, from: pt1, to: pt2)
-				editWorld.selectLine(numLines-1)
+				editWorld.selectLine(lines.count-1)
 				frame = editWorld.getBounds()
 				setNeedsDisplay(bounds)
 			}

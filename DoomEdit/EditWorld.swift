@@ -8,7 +8,7 @@
 //  World data
 //
 
-import Foundation
+import Cocoa
 
 fileprivate let BOUNDSBORDER = 128
 fileprivate let selectionRadius: CGFloat = 16
@@ -18,10 +18,6 @@ var editWorld = EditWorld()
 var points: [Point] = []
 var lines: [Line] = []
 var things: [Thing] = []
-
-var numPoints = 0
-var numLines = 0
-var numThings = 0
 
 class EditWorld {
 	
@@ -129,10 +125,9 @@ class EditWorld {
 
 		points.append(newPoint)
 		
-		numPoints += 1
 		dirtyPoints = true
 		
-		return numPoints-1
+		return points.count-1
 	}
 	
 	private func newPoint(_ coord: NSPoint) -> Int {
@@ -173,8 +168,6 @@ class EditWorld {
 	@discardableResult
 	func newLine(line: inout Line, from p1: NSPoint, to p2: NSPoint) -> Int {
 
-		numLines += 1
-
 		line.pt1 = newPoint(p1)
 		line.pt2 = newPoint(p2)
 
@@ -184,9 +177,9 @@ class EditWorld {
 		dirtyPoints = true
 		boundsDirty = true // added
 		
-		updateLineNormal(numLines-1)
+		updateLineNormal(lines.count-1)
 		
-		return numLines - 1
+		return lines.count - 1
 	}
 	
 	/// Adds a new thing to the `things` array and returns the index it was put in.
@@ -194,13 +187,6 @@ class EditWorld {
 	func newThing(_ thing: Thing) -> Int {
 		
 		var t = thing
-		
-//		for thing in wad.things {
-//			if t.type == thing.type {
-//				t.image = thing.image
-//			}
-//		}
-		
 		things.append(t)
 		changeThing(things.count-1, to: &t) // call changeThing so the dirty rect is updated
 		
@@ -212,7 +198,7 @@ class EditWorld {
 		
 		boundsDirty = true
 		
-		if num < numPoints {	// can't get a dirty rect from a single new point
+		if num < points.count {	// can't get a dirty rect from a single new point
 			if newPoint.coord.x == points[num].coord.x && newPoint.coord.y == points[num].coord.y {
 				// point's position didn't change
 				addToDirtyRect(pt1: num, pt2: num)
@@ -228,8 +214,8 @@ class EditWorld {
 			}
 		}
 		
-		if num >= numPoints {
-			fatalError("Error. Sent point \(num) with numPoints \(numPoints)!")
+		if num >= points.count {
+			fatalError("Error. Sent point \(num) with numPoints \(points.count)!")
 		}
 		
 		points[num] = newPoint
@@ -249,8 +235,8 @@ class EditWorld {
 		
 		boundsDirty = true
 		
-		if num >= numLines {
-			fatalError("Error. Sent line \(num) with numLines \(numLines)!")
+		if num >= lines.count {
+			fatalError("Error. Sent line \(num) with numLines \(lines.count)!")
 		}
 		
 		// Mark the old position of the line as dirty
@@ -605,8 +591,49 @@ class EditWorld {
 	}
 	
 	
-
 	
+	// ====================
+	// MARK: - Open / Close
+	// ====================
+	
+	func loadWorldFile(_ dwd: String) {
+		dirtyRect = .zero
+		boundsDirty = false
+		
+		points = []; lines = []; things = []
+		
+		loadDWDFile(dwd)
+		
+		dirty = false
+		dirtyPoints = true
+		loaded = true
+	}
+	
+	func closeWorld() {
+		
+		if doomProject.mapDirty {
+			let val = runDialogPanel(question: "Hey!", text: "Your map has been modified! Save it?")
+			if val {
+				saveWorld()
+			}
+			doomProject.setDirtyMap(false)
+		}
+		
+		points = []; lines = []; things = []
+		let appd = NSApplication.shared.delegate as! AppDelegate
+		appd.mapWindowController?.close()
+		loaded = false
+	}
+	
+	func saveWorld() {
+		
+		if !loaded {
+			runAlertPanel(title: "Error!", message: "No world open")
+			return
+		}
+		saveMap(sender: nil)
+		doomProject.setDirtyMap(false)
+	}
 	
 	
 	

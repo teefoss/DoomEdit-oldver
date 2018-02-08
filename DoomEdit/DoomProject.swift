@@ -26,12 +26,16 @@ class DoomProject {
 	var projectURL: URL!
 	var projectMapsURL: URL!
 	var projectFileURL: URL!
-	var currentMapURL: URL {
-		return projectMapsURL.appendingPathComponent(openMap.name)
+	var currentMapURL: URL? {
+		if let map = openMap {
+			return projectMapsURL.appendingPathComponent(map.name)
+		} else {
+			return nil
+		}
 	}
-	
+	var recentProjects: [URL]? = []
 	var maps: [Map] = []
-	var openMap = Map()
+	var openMap: Map?
 	
 	var mapDirty = false
 	var projectDirty = false
@@ -52,12 +56,28 @@ class DoomProject {
 		}
 	}
 	
+	func quit() {
+		
+		editWorld.closeWorld()
+		checkDirtyProject()
+	}
+	
+	func setDirtyMap(_ bool: Bool) {
+
+		mapDirty = bool
+		let appdel = NSApplication.shared.delegate as! AppDelegate
+		if let mapwin = appdel.mapWindowController {
+			mapwin.setDocumentEdited(bool)
+		}
+	}
+	
 	func saveProject() {
 		
 		if !loaded {
 			return
 		}
 		writeProjectFile(at: projectFileURL)
+		loadMaps()  // update the maps array in case a dwd has changed
 		projectDirty = false
 	}
 	
@@ -65,9 +85,11 @@ class DoomProject {
 		
 		let fm = FileManager.default
 		
+		// Set the url for the project folder
 		let url = directory.appendingPathComponent(name, isDirectory: true)
 		projectURL = url
 		
+		// Create the project folder
 		if !fm.fileExists(atPath: url.path) {
 			do {
 				try fm.createDirectory(at: url, withIntermediateDirectories: true, attributes: nil)
@@ -75,28 +97,33 @@ class DoomProject {
 				runAlertPanel(title: "Error!", message: "Could not create project directory.")
 				return
 			}
+		} else {
+			runAlertPanel(title: "Error", message: "A folder called \(url.lastPathComponent) already exists!")
 		}
 		
+		// Set the url for the maps folder
 		let mapurl = url.appendingPathComponent("maps", isDirectory: true)
 		projectMapsURL = mapurl
 		
+		// Create the maps folder
 		do {
 			try fm.createDirectory(at: mapurl, withIntermediateDirectories: true, attributes: nil)
 		} catch {
 			fatalError("While creating project folder, could not create maps folder.")
 		}
 		
-		let projectFile = url.appendingPathComponent(name, isDirectory: false)
-		let projectFileFull = projectFile.appendingPathExtension("doomedit")
-		projectFileURL = projectFileFull
+		// Set the url for the project file
+		let projectFile = url.appendingPathComponent(name, isDirectory: false).appendingPathExtension("doomedit")
+		projectFileURL = projectFile
+
+		// Create and write the project file
+		fm.createFile(atPath: projectFile.path, contents: nil, attributes: nil)
+		writeProjectFile(at: projectFile)
 		
-		fm.createFile(atPath: projectFileFull.path, contents: nil, attributes: nil)
-		
-		writeProjectFile(at: projectFileFull)
 		loadProject()
-		
 	}
 	
+	/// Gets the right WAD and opens the project window
 	func loadProject() {
 		
 		switch projectType {
@@ -111,18 +138,43 @@ class DoomProject {
 		default:
 			break
 		}
-		
 		wad.loadAssets()
 		
-		let appDelegate = NSApplication.shared.delegate as! AppDelegate
+		mapDirty = false
+		projectDirty = false
+		loaded = true
 		
+		loadRecents()
+		
+		var exists: Bool = false
+		if let recents = recentProjects {
+			for url in recents {
+				if url == projectFileURL {
+					exists = true
+					break
+				}
+			}
+		}
+
+		if !exists {
+			if recentProjects?.count == 50 {
+				recentProjects?.remove(at: 0)
+			}
+			recentProjects?.append(projectFileURL)
+			saveRecents()
+		}
+		
+		let appDelegate = NSApplication.shared.delegate as! AppDelegate
 		let proj = ProjectWindowController()		
 		proj.showWindow(self)
 		appDelegate.projectWindowController = proj
 		
 	}
 	
+	/// Opens a project file and sets project info
 	func openProject(from url: URL) {
+		
+		checkDirtyProject()
 		
 		// Set URLs
 		projectFileURL = url
@@ -138,7 +190,12 @@ class DoomProject {
 			return
 		}
 		
-		// load the maps data
+		loadMaps()
+		loadProject()
+	}
+	
+	func loadMaps() {
+		
 		for m in 0..<maps.count {
 			let url = projectMapsURL.appendingPathComponent(maps[m].name)
 			do {
@@ -147,7 +204,6 @@ class DoomProject {
 				print("Error! Could not load \(maps[m].name).dwd into project.")
 			}
 		}
-		loadProject()
 	}
 	
 	func writeProjectFile(at url: URL) {
@@ -187,11 +243,11 @@ class DoomProject {
 		guard let fileLines = fileContents?.components(separatedBy: .newlines) else { return }
 		
 		for line in fileLines {
-			readProject(fileLine: line)
+			readProjectFileLine(line)
 		}
 	}
 	
-	func readProject(fileLine: String) {
+	func readProjectFileLine(_ fileLine: String) {
 		
 		let scanner = Scanner(string: fileLine)
 		scanner.charactersToBeSkipped = CharacterSet()
@@ -244,4 +300,38 @@ class DoomProject {
 		return
 	}
 	
+	
+	
+	// =======================
+	// MARK: - Recent Projects
+	// =======================
+
+	/// Loads values in Defaults to `recentsProjects`
+	func loadRecents() {
+		
+		var urls: [URL] = []
+		let recents = UserDefaults.standard.object(forKey: "recentProjects") as! [String]?
+		
+		if let recents = recents {
+			for string in recents {
+				let url = URL(string: string)
+				urls.append(url!)
+			}
+		}
+		recentProjects = urls
+	}
+	
+	/// Stores `recentProjects` in UserDefaults
+	func saveRecents() {
+		
+		var paths: [String] = []
+		
+		if let recents = recentProjects {
+			for url in recents {
+				let path = url.absoluteString
+				paths.append(path)
+			}
+		}
+		UserDefaults.standard.set(paths, forKey: "recentProjects")
+	}
 }

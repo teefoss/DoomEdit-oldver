@@ -10,10 +10,13 @@ import Cocoa
 
 class LaunchWindowController: NSWindowController {
 
+	var recentProjects: [URL]?
+	
 	@IBOutlet weak var nameTextField: NSTextField!
-	
-	
-	
+	@IBOutlet weak var tableView: NSTableView!
+	@IBOutlet weak var clearListButton: NSButton!
+	@IBOutlet weak var openRecentButton: NSButton!
+
 	override var windowNibName: NSNib.Name? {
 		return NSNib.Name("LaunchWindowController")
 	}
@@ -21,8 +24,14 @@ class LaunchWindowController: NSWindowController {
     override func windowDidLoad() {
         super.windowDidLoad()
 		
+		tableView.delegate = self
+		tableView.dataSource = self
+		
 		doomProject.projectType = .doom1
-    }
+		doomProject.loadRecents()
+
+		updateButtons()
+	}
 	
 	@IBAction func projectTypeSet(_ sender: NSButton) {
 
@@ -72,6 +81,58 @@ class LaunchWindowController: NSWindowController {
 		} else {
 			return
 		}
+
+	}
+	
+	@IBAction func openRecent(_ sender: Any) {
+		
+		if let recents = doomProject.recentProjects {
+			doomProject.openProject(from: recents[tableView.selectedRow])
+			window?.close()
+		}
+	}
+	
+	
+	@IBAction func clearRecents(_ sender: Any) {
+		
+		let val = runDialogPanel(question: "Clear Recent Projects List", text: "Are you sure?")
+		if val {
+			doomProject.recentProjects = []
+			doomProject.saveRecents()
+			tableView.reloadData()
+			updateButtons()
+		}
+	}
+	
+	func updateButtons() {
+		
+		openRecentButton.isEnabled = tableView.selectedRowIndexes.count != 0
+		clearListButton.isEnabled = tableView.numberOfRows != 0
+	}
+}
+
+
+
+extension LaunchWindowController: NSTableViewDelegate, NSTableViewDataSource {
+
+	func numberOfRows(in tableView: NSTableView) -> Int {
+
+		doomProject.loadRecents()
+		return doomProject.recentProjects?.count ?? 0
+	}
+	
+	func tableViewSelectionDidChange(_ notification: Notification) {
+		
+		updateButtons()
+	}
+	
+	func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
+		
+		if let cell = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "RecentCell"), owner: nil) as? NSTableCellView {
+			cell.textField?.stringValue = doomProject.recentProjects?[row].lastPathComponent ?? ""
+			return cell
+		}
+		return nil
 
 	}
 	

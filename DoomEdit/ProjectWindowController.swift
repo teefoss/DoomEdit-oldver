@@ -40,7 +40,9 @@ class ProjectWindowController: NSWindowController {
 		
 		loadLevelButton()
 		tableView.reloadData()
-		updateStatus()		
+		updateStatus()
+		
+		print(doomProject.projectFileURL)
     }
 	
 	
@@ -86,12 +88,15 @@ class ProjectWindowController: NSWindowController {
 	
 	@IBAction func openMap(_ sender: Any) {
 		
+		if editWorld.loaded {
+			editWorld.closeWorld()
+		}
+		
 		let map = doomProject.maps[tableView.selectedRow]
 		doomProject.openMap = map
-		editWorld.loadDWDFile(map.dwd)
+		editWorld.loadWorldFile(map.dwd)
 		
 		let appDelegate = NSApplication.shared.delegate as! AppDelegate
-		
 		let mapWC = MapWindowController()
 		mapWC.showWindow(self)
 		appDelegate.mapWindowController = mapWC
@@ -113,7 +118,44 @@ class ProjectWindowController: NSWindowController {
 	}
 	
 	@IBAction func removeMap(_ sender: Any) {
-		// TODO:
+		
+		var val: Bool
+		let selectedMap = doomProject.maps[tableView.selectedRow]
+		var isOpen = false
+		
+		if editWorld.loaded {
+			if doomProject.openMap?.name == selectedMap.name {
+				isOpen = true
+			}
+		}
+		
+		val = runDialogPanel(question: "Delete Map?", text: "Warning! This cannot be undone. Are you sure?")
+		
+		if val {
+			// Delete file
+			let fm = FileManager.default
+			do {
+				try fm.removeItem(at: doomProject.projectMapsURL.appendingPathComponent(selectedMap.name))
+			} catch {
+				print("Error! Could not delete dwd file.")
+			}
+			// remove from doomProject.maps
+			doomProject.maps.remove(at: tableView.selectedRow)
+			// rewrite project file
+			doomProject.writeProjectFile(at: doomProject.projectFileURL)
+
+			tableView.reloadData()
+			
+			// if map is open, close it
+			if isOpen {
+				doomProject.openMap = nil
+				doomProject.setDirtyMap(false)
+				let appDelegate = NSApplication.shared.delegate as! AppDelegate
+				appDelegate.mapWindowController?.close()
+				appDelegate.mapWindowController = nil
+			}
+		}
+		
 	}
     
 }
@@ -160,6 +202,17 @@ extension ProjectWindowController: NSTableViewDelegate, NSTableViewDataSource {
 			removeMapButton.isEnabled = true
 		}
 	}
+}
+
+
+
+extension ProjectWindowController: NSWindowDelegate {
 	
-	
+	func windowWillClose(_ notification: Notification) {
+		let launch = LaunchWindowController()
+		launch.showWindow(self)
+		
+		let appDelegate = NSApplication.shared.delegate as! AppDelegate
+		appDelegate.launchWindowController = launch
+	}
 }

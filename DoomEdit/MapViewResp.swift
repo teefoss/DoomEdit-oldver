@@ -24,6 +24,7 @@ fileprivate var lineCount: Int = 0
 fileprivate var lastPoint: Int = 0
 fileprivate var pointCount: Int = 0
 fileprivate var totalMoved = NSPoint.zero
+fileprivate var moved = NSPoint.zero
 
 /**
 MapView Responder Methods
@@ -157,7 +158,7 @@ extension MapView {
 		switch currentMode {
 		case .edit:
 			if event.modifierFlags.contains(.command) {
-				createThing(at: event)
+				placeThing(at: event)
 			} else {
 				selectObject(at: event)
 				if shouldDragSelectionBox {
@@ -544,10 +545,9 @@ extension MapView {
 	
 	
 	
-	// ================
-	// MARK: - Dragging
-	// ================
-	
+	// ====================
+	// MARK: - Drag Objects
+	// ====================
 	
 	func dragObjects_LMDown(with event: NSEvent) {
 		
@@ -574,6 +574,7 @@ extension MapView {
 		fixedRect.size.height = -CGFloat.greatestFiniteMagnitude/2
 		dragRect = fixedRect
 		
+		// if only one endpoint of a line is selected, the other end will contribute to the fixedrect
 		for i in 0..<lines.count {
 			
 			if lines[i].selected == -1 {
@@ -631,20 +632,23 @@ extension MapView {
 		dragRect.origin.x -= cursor.x	// relative to cursor
 		dragRect.origin.y -= cursor.y
 		
+		moved = cursor
+		totalMoved = cursor
+		
 		didDragObject = true
 	}
 	
 	
 	func dragObjects_LMDragged(with event: NSEvent) {
 		
-		var moved: NSPoint = cursor
-		totalMoved = cursor
-		
 		// calculate new rectangle
 		cursor = getWorldGridPoint(from: event.locationInWindow) // handle grid and such
 		
 		// move all selected points
 		if pointCount == 1 {
+			if points[lastPoint].coord.x == cursor.x && points[lastPoint].coord.y == cursor.y {
+				return
+			}
 			points[lastPoint].coord = cursor
 		} else {
 			if cursor.x == moved.x && cursor.y == moved.y {
@@ -653,6 +657,21 @@ extension MapView {
 			
 			moved.x = cursor.x - moved.x
 			moved.y = cursor.y - moved.y
+			
+			/*
+			let ptr = UnsafeMutablePointer<Point>.allocate(capacity: points.count)
+			defer { ptr.deallocate(capacity: points.count) }
+			
+			let buf = UnsafeMutableBufferPointer(start: ptr, count: points.count)
+
+			for (i, _) in buf.enumerated() {
+				if buf[i].selected == 1 {
+					buf[i].coord.x += moved.x
+					buf[i].coord.y += moved.y
+				}
+			}
+			*/
+			
 			
 			for i in 0..<points.count {
 				if points[i].selected == 1 {
@@ -668,8 +687,10 @@ extension MapView {
 				}
 			}
 			
-			
-			// TODO: Set project dirty
+			if moved.x != 0 || moved.y != 0 {
+				print("dirty map")
+				doomProject.setDirtyMap(true)
+			}
 			
 			moved = cursor
 		}
@@ -695,7 +716,6 @@ extension MapView {
 		viewUpdateRect.size.height += CGFloat(LINE_NORMAL_LENGTH*2+1)
 
 		setNeedsDisplay(viewUpdateRect)
-//		display(viewUpdateRect)
 	}
 	
 	func dragObjects_LMUp(with event: NSEvent) {
@@ -708,19 +728,21 @@ extension MapView {
 		totalMoved.x = cursor.x - totalMoved.x;
 		totalMoved.y = cursor.y - totalMoved.y;
 		
+		print(totalMoved)
+		
 		for i in 0..<points.count {
 			if points[i].selected == 1 {
 				let newPoint = points[i]
 				points[i].coord.x -= totalMoved.x
 				points[i].coord.y -= totalMoved.y
 				editWorld.changePoint(i, to: newPoint)
-				// TODO: set project dirty
-				// if (totalmoved.x || totalmoved.y)
-				// [doomproject_i	setDirtyMap:TRUE];
-				
+
+				if (totalMoved.x != 0 || totalMoved.y != 0) {
+					print("map dirty!")
+					doomProject.setDirtyMap(true)
+				}
 			}
 		}
-		
 	}
 	
 	
@@ -856,15 +878,18 @@ extension MapView {
 		print(selectedSides)
 	}
 	
-	func createThing(at event: NSEvent) {
+	
+	
+	// Mark: -
+	
+	func placeThing(at event: NSEvent) {
 		
-		let loc = event.locationInWindow
-		let l = worldCoord(for: loc)
+		let loc = worldCoord(for: event.locationInWindow)
 		
-		var newThing = Thing(selected: 0, origin: l, angle: 0, type: things[things.count-1].type, options: 0)
+		var newThing = Thing(selected: 0, origin: loc, angle: things[things.count-1].angle, type: things[things.count-1].type, options: things[things.count-1].options)
 		things.append(newThing)
-		
 		editWorld.changeThing(things.count-1, to: &newThing)
+		doomProject.setDirtyMap(true)
 	}
 	
 	

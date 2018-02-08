@@ -24,8 +24,8 @@ extension EditWorld {
 			return
 		}
 		
-		doomProject.saveProject()
 		saveDWD()
+		doomProject.saveProject()
 		
 		dirty = false
 	}
@@ -35,9 +35,9 @@ extension EditWorld {
 		let dwd = makeDWD()
 		
 		do {
-			try dwd.write(to: doomProject.currentMapURL, atomically: false, encoding: .ascii)
+			try dwd.write(to: doomProject.currentMapURL!, atomically: false, encoding: .ascii)
 		} catch {
-			print("Error. Could not save map as dwd at path \(doomProject.currentMapURL.path)!")
+			print("Error. Could not save map as dwd at path \(doomProject.currentMapURL?.path ?? "")!")
 		}
 	}
 

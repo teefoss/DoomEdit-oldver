@@ -101,8 +101,8 @@ func runDialogPanel(question: String, text: String) -> Bool {
 	alert.messageText = question
 	alert.informativeText = text
 	alert.alertStyle = .warning
-	alert.addButton(withTitle: "OK")
-	alert.addButton(withTitle: "Cancel")
+	alert.addButton(withTitle: "Yes")
+	alert.addButton(withTitle: "No")
 	return alert.runModal() == .alertFirstButtonReturn
 }
 

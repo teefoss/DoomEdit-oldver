@@ -54,29 +54,12 @@ class WadFile {
 	var thingImages: [Thing] = []
 	var sprites: [Sprite] = []
 	
-	/*
-	init() {
-		/*
-		let home = FileManager.default.homeDirectoryForCurrentUser
-		let path = "Documents/Games/WADs/DOOM.WAD"
-		*/
-
-		
-//		let url = home.appendingPathComponent(path)
-//		do {
-//			data = try Data(contentsOf: url, options: .alwaysMapped)
-//		} catch {
-//			fatalError("Could not parse Wad file. To test, put DOOM.WAD in ~/Documents/Games/WADs")
-//		}
-	}
-	*/
-	
 	func setWadLoation(_ url: URL) {
 		
 		do {
 			data = try Data(contentsOf: url, options: .alwaysMapped)
 		} catch {
-			fatalError("Could not parse Wad file. To test, put DOOM.WAD in ~/Documents/Games/WADs")
+			fatalError("Could not parse Wad file.")
 		}
 	}
 	

@@ -38,6 +38,7 @@ class MapView: NSView, NSPopoverDelegate {
 	
 	
 	// for line drawing
+	var lineCross: [[Bool]] = Array(repeating: Array(repeating: false, count: 9), count: 9)
 	var inDrawMode: Bool = false
 	var shapeLayer: CAShapeLayer!
 	var shapeLayerIndex: Int!
@@ -97,6 +98,7 @@ class MapView: NSView, NSPopoverDelegate {
 		super.init(frame: frameRect)
 				
 		editWorld.delegate = self
+		initLineCross()
 		
 		/* image testing
 		let patchwin = PatchWindow()
@@ -105,6 +107,24 @@ class MapView: NSView, NSPopoverDelegate {
 		*/
 	}
 
+	func initLineCross() {
+		for x1 in 0..<3 {
+			for y1 in 0..<3 {
+				for x2 in 0..<3 {
+					for y2 in 0..<3 {
+						if (((x1<=1 && x2>=1) || (x1>=1 && x2<=1))
+							&& ((y1<=1 && y2>=1) || (y1>=1 && y2<=1)))
+						{
+							lineCross[y1*3+x1][y2*3+x2] = true
+						} else {
+							lineCross[y1*3+x1][y2*3+x2] = false
+						}
+					}
+				}
+			}
+		}
+	}
+	
 	func initPopover(_ popover: inout NSPopover, with viewController: NSViewController) {
 		popover = NSPopover.init()
 		popover.contentViewController = viewController
