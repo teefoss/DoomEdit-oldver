@@ -85,10 +85,7 @@ func flatToImage(rawData: [CUnsignedChar], pal: [CUnsignedChar]) -> NSImage? {
 	var image: NSImageRep
 	
 	dest = flatToRGB(rawData, palette: pal)
-	
-	// Convert array to raw data
-	// let imgData = Data(buffer: UnsafeBufferPointer(start: dest, count: dest.count))
-	
+		
 	var allocatedBytes = UnsafeMutableRawPointer.allocate(bytes: dest.count, alignedTo: 1)
 	
 	var pointer: UnsafeMutablePointer? = allocatedBytes.bindMemory(to: UInt8.self, capacity: dest.count)

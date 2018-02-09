@@ -56,6 +56,20 @@ class DoomProject {
 		}
 	}
 	
+	func closeProject() {
+		loaded = false
+		projectType = nil
+		name = ""
+		projectURL = nil
+		directory = nil
+		projectMapsURL = nil
+		projectFileURL = nil
+		maps = []
+		openMap = nil
+		mapDirty = false
+		projectDirty = false
+	}
+	
 	func quit() {
 		
 		editWorld.closeWorld()
@@ -138,7 +152,10 @@ class DoomProject {
 		default:
 			break
 		}
-		wad.loadAssets()
+		
+		DispatchQueue.global(qos: .background).async {
+			wad.loadAssets()
+		}
 		
 		mapDirty = false
 		projectDirty = false
@@ -334,4 +351,37 @@ class DoomProject {
 		}
 		UserDefaults.standard.set(paths, forKey: "recentProjects")
 	}
+	
+	
+	
+	// =================================
+	// MARK: - Progress Indicator Window
+	// =================================
+
+	/*
+	func showProgressWindow() {
+		
+		let win = ProgressWindowController()
+		win.showWindow(self)
+		self.progressWindow = win
+	}
+	
+	/// Updates the progress window's label, current progress indicator position, and max position.
+	func updateProgressWindow(labelText: String, current: Int, max: Int) {
+
+		guard let w = self.progressWindow else { return } // window must be open!
+
+		w.label.stringValue = labelText
+		w.progressBar.maxValue = Double(max)
+		w.progressBar.increment(by: Double(current))
+		w.progressBar.display()
+	}
+	
+	func closeProgressWindow() {
+		
+		guard let progressWindow = self.progressWindow else { return }
+		progressWindow.close()
+		self.progressWindow = nil
+	}
+	*/
 }

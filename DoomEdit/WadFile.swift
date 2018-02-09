@@ -64,15 +64,15 @@ class WadFile {
 	}
 	
 	func loadAssets() {
-		
-		readHeader()
-		readDirectory()
-		loadFlats()
-		loadPNAMES()
-		loadPatches()
-		loadTextures()
-		createAllTextureImages()
-		loadSprites()
+
+		self.readHeader()
+		self.readDirectory()
+		self.loadFlats()
+		self.loadPNAMES()
+		self.loadPatches()
+		self.loadTextures()
+		self.createAllTextureImages()
+		self.loadSprites()		
 	}
 	
 	
@@ -294,7 +294,6 @@ class WadFile {
 		let palLBM: [CUnsignedChar] = palLBMlump.elements()
 		
 		repeat {
-			
 			let flatStart = lumpNamed("F\(wadIndex+1)_START") + 1
 			let flatEnd = lumpNamed("F\(wadIndex+1)_END")
 			
@@ -308,6 +307,7 @@ class WadFile {
 			}
 			
 			for i in flatStart..<flatEnd {
+				//doomProject.updateProgressWindow(labelText: "Loading Flats…", current: i-flatStart, max: flatEnd-flatStart)
 				var fl = Flat()
 				let flat = loadLump(i)
 				let flatArray: [CUnsignedChar] = flat.elements()
@@ -342,6 +342,8 @@ class WadFile {
 			}
 			
 			for i in patchStart..<patchEnd {
+				
+				//doomProject.updateProgressWindow(labelText: "Loading Patches…", current: i-patchStart, max: patchEnd-patchStart)
 				
 				let patch = loadLump(i)
 				let patchData: [CUnsignedChar] = patch.elements()

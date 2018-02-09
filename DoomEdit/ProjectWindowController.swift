@@ -209,6 +209,9 @@ extension ProjectWindowController: NSTableViewDelegate, NSTableViewDataSource {
 extension ProjectWindowController: NSWindowDelegate {
 	
 	func windowWillClose(_ notification: Notification) {
+		
+		doomProject.closeProject()
+		
 		let launch = LaunchWindowController()
 		launch.showWindow(self)
 		

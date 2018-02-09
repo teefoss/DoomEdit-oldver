@@ -26,7 +26,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 		let launch = LaunchWindowController()
 		launch.showWindow(self)
 		self.launchWindowController = launch
-		
 	}
 
 	func applicationWillTerminate(_ aNotification: Notification) {

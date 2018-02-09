@@ -38,8 +38,6 @@
 		306C8B241FF9A17D00C2C47C /* TextureCollectionViewItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 306C8B221FF9A17D00C2C47C /* TextureCollectionViewItem.swift */; };
 		306C8B251FF9A17D00C2C47C /* TextureCollectionViewItem.xib in Resources */ = {isa = PBXBuildFile; fileRef = 306C8B231FF9A17D00C2C47C /* TextureCollectionViewItem.xib */; };
 		306C8B271FFB22D800C2C47C /* TextureImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 306C8B261FFB22D800C2C47C /* TextureImageView.swift */; };
-		3070EE232018E9FB00ED5163 /* ProgressViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3070EE212018E9FB00ED5163 /* ProgressViewController.swift */; };
-		3070EE242018E9FB00ED5163 /* ProgressViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3070EE222018E9FB00ED5163 /* ProgressViewController.xib */; };
 		3085C4541FD61A79001049A8 /* e5m1.dwd in Resources */ = {isa = PBXBuildFile; fileRef = 3085C4531FD61A79001049A8 /* e5m1.dwd */; };
 		3085C4561FD61BBA001049A8 /* e4m6.dwd in Resources */ = {isa = PBXBuildFile; fileRef = 3085C4551FD61BBA001049A8 /* e4m6.dwd */; };
 		30A00B9D1FD6EB4700EBCA27 /* NSWindowControllerExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30A00B9C1FD6EB4700EBCA27 /* NSWindowControllerExtension.swift */; };
@@ -111,8 +109,6 @@
 		306C8B221FF9A17D00C2C47C /* TextureCollectionViewItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextureCollectionViewItem.swift; sourceTree = "<group>"; };
 		306C8B231FF9A17D00C2C47C /* TextureCollectionViewItem.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TextureCollectionViewItem.xib; sourceTree = "<group>"; };
 		306C8B261FFB22D800C2C47C /* TextureImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextureImageView.swift; sourceTree = "<group>"; };
-		3070EE212018E9FB00ED5163 /* ProgressViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressViewController.swift; sourceTree = "<group>"; };
-		3070EE222018E9FB00ED5163 /* ProgressViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ProgressViewController.xib; sourceTree = "<group>"; };
 		3085C4531FD61A79001049A8 /* e5m1.dwd */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = e5m1.dwd; sourceTree = "<group>"; };
 		3085C4551FD61BBA001049A8 /* e4m6.dwd */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = e4m6.dwd; sourceTree = "<group>"; };
 		30A00B9C1FD6EB4700EBCA27 /* NSWindowControllerExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSWindowControllerExtension.swift; sourceTree = "<group>"; };
@@ -231,7 +227,6 @@
 				3060F2C32021168000996FDB /* LoadDWDWindowController.xib */,
 				301CC5B620119EB400E208FF /* PatchWindow.xib */,
 				3042DC55201FD8C600D4434F /* PreferencesWindowController.xib */,
-				3070EE222018E9FB00ED5163 /* ProgressViewController.xib */,
 				3060F2B3201FEE7800996FDB /* ProjectWindowController.xib */,
 				306C8B231FF9A17D00C2C47C /* TextureCollectionViewItem.xib */,
 				306C8B1F1FF9610D00C2C47C /* TexturePanel.xib */,
@@ -283,7 +278,6 @@
 				30FBF6561FC52F8A0035671D /* MapViewResp.swift */,
 				301CC5B520119EB400E208FF /* PatchWindow.swift */,
 				3042DC54201FD8C600D4434F /* PreferencesWindowController.swift */,
-				3070EE212018E9FB00ED5163 /* ProgressViewController.swift */,
 				3060F2B2201FEE7800996FDB /* ProjectWindowController.swift */,
 				30533AA71FE45E620039DCFB /* SectorPanel.swift */,
 				301CC5B9201245B300E208FF /* Texture.swift */,
@@ -399,7 +393,6 @@
 				30FBF63C1FC52D500035671D /* MainMenu.xib in Resources */,
 				30399CC71FD06EEE00503DB4 /* dwd-format.txt in Resources */,
 				30A00BB01FD6F1AF00EBCA27 /* linespecials.doom1 in Resources */,
-				3070EE242018E9FB00ED5163 /* ProgressViewController.xib in Resources */,
 				30A00BAB1FD6F1AF00EBCA27 /* linespecials.dsp in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -421,7 +414,6 @@
 				30FBF65C1FC52F8A0035671D /* MapViewResp.swift in Sources */,
 				30FBF65A1FC52F8A0035671D /* MapViewDraw.swift in Sources */,
 				30399CCD1FD3050800503DB4 /* Thing.swift in Sources */,
-				3070EE232018E9FB00ED5163 /* ProgressViewController.swift in Sources */,
 				3060F2C42021168000996FDB /* LoadDWDWindowController.swift in Sources */,
 				3060F2C720213E9E00996FDB /* StringExtension.swift in Sources */,
 				3060F2B4201FEE7800996FDB /* ProjectWindowController.swift in Sources */,
