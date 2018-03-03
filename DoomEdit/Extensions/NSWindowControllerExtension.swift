@@ -22,4 +22,14 @@ extension NSWindowController {
 			window.setFrame(rect, display: true)
 		}
 	}
+	
+	func positionAtScreenTopRight() {
+
+		if let window = window, let screen = window.screen {
+			var p = NSPoint()
+			p.x = screen.visibleFrame.origin.x + screen.visibleFrame.size.width - window.frame.size.width
+			p.y = screen.visibleFrame.origin.y + screen.visibleFrame.size.height - window.frame.size.height
+			window.setFrameOrigin(p)
+		}
+	}
 }

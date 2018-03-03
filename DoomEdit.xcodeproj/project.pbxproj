@@ -21,6 +21,7 @@
 		303D699C201D7C57009A8CA5 /* map15.dwd in Resources */ = {isa = PBXBuildFile; fileRef = 303D699B201D7C57009A8CA5 /* map15.dwd */; };
 		3042DC56201FD8C600D4434F /* PreferencesWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3042DC54201FD8C600D4434F /* PreferencesWindowController.swift */; };
 		3042DC57201FD8C600D4434F /* PreferencesWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3042DC55201FD8C600D4434F /* PreferencesWindowController.xib */; };
+		3044B7092048E6AE006492DB /* doombsp in Resources */ = {isa = PBXBuildFile; fileRef = 3044B7082048E6AE006492DB /* doombsp */; };
 		3049E5CD2016880900D0FD5C /* EWSave.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3049E5CC2016880900D0FD5C /* EWSave.swift */; };
 		30533AA41FE17CC70039DCFB /* BlockWorld.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30533AA31FE17CC70039DCFB /* BlockWorld.swift */; };
 		30533AA91FE45E620039DCFB /* SectorPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30533AA71FE45E620039DCFB /* SectorPanel.swift */; };
@@ -92,6 +93,7 @@
 		303D699B201D7C57009A8CA5 /* map15.dwd */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = map15.dwd; sourceTree = "<group>"; };
 		3042DC54201FD8C600D4434F /* PreferencesWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferencesWindowController.swift; sourceTree = "<group>"; };
 		3042DC55201FD8C600D4434F /* PreferencesWindowController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PreferencesWindowController.xib; sourceTree = "<group>"; };
+		3044B7082048E6AE006492DB /* doombsp */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = doombsp; sourceTree = "<group>"; };
 		3049E5CC2016880900D0FD5C /* EWSave.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EWSave.swift; sourceTree = "<group>"; };
 		30533AA31FE17CC70039DCFB /* BlockWorld.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockWorld.swift; sourceTree = "<group>"; };
 		30533AA71FE45E620039DCFB /* SectorPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectorPanel.swift; sourceTree = "<group>"; };
@@ -165,6 +167,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		3044B7072048E5EA006492DB /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				3044B7082048E6AE006492DB /* doombsp */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
 		30A00B9E1FD6EB5800EBCA27 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
@@ -254,6 +264,7 @@
 		30FBF6351FC52D500035671D /* DoomEdit */ = {
 			isa = PBXGroup;
 			children = (
+				3044B7072048E5EA006492DB /* Resources */,
 				30FBF6361FC52D500035671D /* AppDelegate.swift */,
 				30533AA31FE17CC70039DCFB /* BlockWorld.swift */,
 				30399CC81FD1E8A600503DB4 /* Global.swift */,
@@ -386,6 +397,7 @@
 				30533AAA1FE45E620039DCFB /* SectorPanel.xib in Resources */,
 				30C41A52200A701E000E3F9B /* FlatPanel.xib in Resources */,
 				301CC5B820119EB400E208FF /* PatchWindow.xib in Resources */,
+				3044B7092048E6AE006492DB /* doombsp in Resources */,
 				303D699A201D2CF0009A8CA5 /* allthings.txt in Resources */,
 				30FBF6391FC52D500035671D /* Assets.xcassets in Resources */,
 				306C8B211FF9610D00C2C47C /* TexturePanel.xib in Resources */,

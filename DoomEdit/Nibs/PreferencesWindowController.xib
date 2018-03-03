@@ -2,39 +2,52 @@
 <document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="13771" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="13771"/>
+        <capability name="box content view" minToolsVersion="7.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="PreferencesWindowController" customModule="DoomEdit" customModuleProvider="target">
             <connections>
+                <outlet property="chocDoomTextField" destination="jqD-4j-Kwi" id="D3Z-ns-4BA"/>
+                <outlet property="deathmatchButton" destination="4Qa-a5-5ub" id="KiD-gf-YMU"/>
                 <outlet property="doom2TextField" destination="sRq-x2-jwP" id="mvu-Su-mWK"/>
                 <outlet property="doomTextField" destination="XK7-d0-fBU" id="C3Z-5p-kPu"/>
+                <outlet property="netGameButton" destination="8x9-h3-g3b" id="0hs-8M-GnL"/>
+                <outlet property="noMonstersButton" destination="8jJ-iN-1Ie" id="fsZ-IR-x1W"/>
+                <outlet property="noMusicButton" destination="ZMD-iW-neg" id="1IN-6I-cBI"/>
+                <outlet property="skill1button" destination="E0i-Ek-GBQ" id="uP6-kO-WJW"/>
+                <outlet property="skill2button" destination="HSJ-5M-BKS" id="sYe-eO-N13"/>
+                <outlet property="skill3button" destination="kc8-et-KxE" id="O2k-af-cSp"/>
+                <outlet property="skill4button" destination="USM-cx-hgc" id="gNp-Ec-zbJ"/>
+                <outlet property="skill5button" destination="MfL-yO-PZX" id="go0-Kq-znJ"/>
                 <outlet property="window" destination="F0z-JX-Cv5" id="gIp-Ho-8D9"/>
+                <outlet property="windowedButton" destination="ex0-CI-En4" id="2zV-Un-uTP"/>
             </connections>
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
-        <window title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" animationBehavior="default" id="F0z-JX-Cv5">
-            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
+        <window title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" animationBehavior="default" tabbingMode="disallowed" id="F0z-JX-Cv5">
+            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES"/>
+            <windowCollectionBehavior key="collectionBehavior" fullScreenNone="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="196" y="240" width="480" height="270"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1280" height="778"/>
+            <rect key="contentRect" x="196" y="240" width="480" height="370"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1058"/>
             <view key="contentView" wantsLayer="YES" id="se5-gp-TjO">
-                <rect key="frame" x="0.0" y="0.0" width="480" height="270"/>
+                <rect key="frame" x="0.0" y="0.0" width="480" height="370"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <tabView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="EFM-7N-3S5">
-                        <rect key="frame" x="13" y="51" width="454" height="205"/>
+                        <rect key="frame" x="13" y="51" width="454" height="305"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <font key="font" metaFont="system"/>
                         <tabViewItems>
                             <tabViewItem label="WADs" identifier="" id="evi-hr-Ss5">
-                                <view key="view" ambiguous="YES" id="jEk-0K-U5c">
-                                    <rect key="frame" x="10" y="33" width="434" height="159"/>
+                                <view key="view" id="jEk-0K-U5c">
+                                    <rect key="frame" x="10" y="33" width="434" height="259"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="XK7-d0-fBU">
-                                            <rect key="frame" x="17" y="113" width="333" height="21"/>
+                                            <rect key="frame" x="17" y="213" width="333" height="21"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="6Z9-9I-R1X">
                                                 <font key="font" metaFont="system"/>
@@ -43,7 +56,7 @@
                                             </textFieldCell>
                                         </textField>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dIU-IX-ukL">
-                                            <rect key="frame" x="15" y="142" width="112" height="14"/>
+                                            <rect key="frame" x="15" y="242" width="112" height="14"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Doom WAD location:" id="mIP-lu-FY8">
                                                 <font key="font" metaFont="smallSystem"/>
@@ -52,7 +65,7 @@
                                             </textFieldCell>
                                         </textField>
                                         <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="sRq-x2-jwP">
-                                            <rect key="frame" x="17" y="60" width="333" height="22"/>
+                                            <rect key="frame" x="17" y="160" width="333" height="22"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="i3s-pj-2lY">
                                                 <font key="font" metaFont="system"/>
@@ -61,7 +74,7 @@
                                             </textFieldCell>
                                         </textField>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="4sz-lX-SeB">
-                                            <rect key="frame" x="15" y="90" width="122" height="14"/>
+                                            <rect key="frame" x="15" y="190" width="122" height="14"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Doom 2 WAD location:" id="cst-JP-h0X">
                                                 <font key="font" metaFont="smallSystem"/>
@@ -70,7 +83,7 @@
                                             </textFieldCell>
                                         </textField>
                                         <button verticalHuggingPriority="750" fixedFrame="YES" tag="1" translatesAutoresizingMaskIntoConstraints="NO" id="hLj-or-pBd">
-                                            <rect key="frame" x="352" y="106" width="71" height="32"/>
+                                            <rect key="frame" x="352" y="206" width="71" height="32"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <buttonCell key="cell" type="push" title="Set…" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="144-hs-bkm">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -81,7 +94,7 @@
                                             </connections>
                                         </button>
                                         <button verticalHuggingPriority="750" fixedFrame="YES" tag="2" translatesAutoresizingMaskIntoConstraints="NO" id="XTz-QM-VX5">
-                                            <rect key="frame" x="352" y="54" width="71" height="32"/>
+                                            <rect key="frame" x="352" y="154" width="71" height="32"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <buttonCell key="cell" type="push" title="Set…" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="JSh-em-8bE">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -94,10 +107,164 @@
                                     </subviews>
                                 </view>
                             </tabViewItem>
-                            <tabViewItem label="View" identifier="" id="o8V-Rp-nLX">
-                                <view key="view" id="b9Z-Jp-qfg">
-                                    <rect key="frame" x="10" y="33" width="434" height="159"/>
+                            <tabViewItem label="Testing" identifier="" id="o8V-Rp-nLX">
+                                <view key="view" ambiguous="YES" id="b9Z-Jp-qfg">
+                                    <rect key="frame" x="10" y="33" width="434" height="259"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    <subviews>
+                                        <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="jqD-4j-Kwi">
+                                            <rect key="frame" x="17" y="213" width="333" height="21"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="Or8-17-kF1">
+                                                <font key="font" metaFont="system"/>
+                                                <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                        </textField>
+                                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="jn7-y7-QkJ">
+                                            <rect key="frame" x="15" y="242" width="140" height="14"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Chocolate Doom location:" id="3c6-Vb-zxz">
+                                                <font key="font" metaFont="smallSystem"/>
+                                                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                        </textField>
+                                        <button verticalHuggingPriority="750" fixedFrame="YES" tag="1" translatesAutoresizingMaskIntoConstraints="NO" id="5J7-As-BOT">
+                                            <rect key="frame" x="352" y="206" width="71" height="32"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <buttonCell key="cell" type="push" title="Set…" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="ZtO-fv-L80">
+                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                <font key="font" metaFont="system"/>
+                                            </buttonCell>
+                                            <connections>
+                                                <action selector="setChocDoomPath:" target="-2" id="7Ol-mB-KXz"/>
+                                            </connections>
+                                        </button>
+                                        <box fixedFrame="YES" title="Skill" translatesAutoresizingMaskIntoConstraints="NO" id="OAd-09-j6T">
+                                            <rect key="frame" x="14" y="30" width="184" height="175"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <view key="contentView" id="odt-sf-xWP">
+                                                <rect key="frame" x="2" y="2" width="180" height="158"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <subviews>
+                                                    <button verticalHuggingPriority="750" fixedFrame="YES" tag="1" translatesAutoresizingMaskIntoConstraints="NO" id="E0i-Ek-GBQ">
+                                                        <rect key="frame" x="19" y="121" width="142" height="18"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                        <buttonCell key="cell" type="radio" title="I'm too young to die" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="4zW-5z-EwQ">
+                                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="skillPressed:" target="-2" id="QR6-TJ-Jcf"/>
+                                                        </connections>
+                                                    </button>
+                                                    <button verticalHuggingPriority="750" fixedFrame="YES" tag="2" translatesAutoresizingMaskIntoConstraints="NO" id="HSJ-5M-BKS">
+                                                        <rect key="frame" x="19" y="99" width="135" height="18"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                        <buttonCell key="cell" type="radio" title="Hey, not too rough" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="L5j-TA-ZJ6">
+                                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="skillPressed:" target="-2" id="mjb-4A-6Va"/>
+                                                        </connections>
+                                                    </button>
+                                                    <button verticalHuggingPriority="750" fixedFrame="YES" tag="3" translatesAutoresizingMaskIntoConstraints="NO" id="kc8-et-KxE">
+                                                        <rect key="frame" x="19" y="77" width="113" height="18"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                        <buttonCell key="cell" type="radio" title="Hurt me plenty" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="UOY-lo-KPi">
+                                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="skillPressed:" target="-2" id="EBx-6c-06J"/>
+                                                        </connections>
+                                                    </button>
+                                                    <button verticalHuggingPriority="750" fixedFrame="YES" tag="4" translatesAutoresizingMaskIntoConstraints="NO" id="USM-cx-hgc">
+                                                        <rect key="frame" x="19" y="55" width="109" height="18"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                        <buttonCell key="cell" type="radio" title="Ultra-Violence" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="LoQ-WR-RLc">
+                                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="skillPressed:" target="-2" id="zhc-Pq-zwa"/>
+                                                        </connections>
+                                                    </button>
+                                                    <button verticalHuggingPriority="750" fixedFrame="YES" tag="5" translatesAutoresizingMaskIntoConstraints="NO" id="MfL-yO-PZX">
+                                                        <rect key="frame" x="19" y="33" width="90" height="18"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                        <buttonCell key="cell" type="radio" title="Nightmare!" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="XAe-oe-V32">
+                                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="skillPressed:" target="-2" id="MMW-xJ-k4m"/>
+                                                        </connections>
+                                                    </button>
+                                                </subviews>
+                                            </view>
+                                        </box>
+                                        <box fixedFrame="YES" title="Options" translatesAutoresizingMaskIntoConstraints="NO" id="5EQ-al-Z6p">
+                                            <rect key="frame" x="200" y="30" width="166" height="175"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <view key="contentView" id="N2g-b8-sYM">
+                                                <rect key="frame" x="2" y="2" width="162" height="158"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <subviews>
+                                                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="8x9-h3-g3b">
+                                                        <rect key="frame" x="18" y="122" width="83" height="18"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                        <buttonCell key="cell" type="check" title="Net Game" bezelStyle="regularSquare" imagePosition="left" inset="2" id="8XS-Z1-QD2">
+                                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                    </button>
+                                                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="4Qa-a5-5ub">
+                                                        <rect key="frame" x="18" y="102" width="96" height="18"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                        <buttonCell key="cell" type="check" title="Deathmatch" bezelStyle="regularSquare" imagePosition="left" inset="2" id="dui-kB-7bE">
+                                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                    </button>
+                                                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="8jJ-iN-1Ie">
+                                                        <rect key="frame" x="18" y="82" width="100" height="18"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                        <buttonCell key="cell" type="check" title="No Monsters" bezelStyle="regularSquare" imagePosition="left" inset="2" id="IAZ-eU-ezf">
+                                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                    </button>
+                                                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ex0-CI-En4">
+                                                        <rect key="frame" x="18" y="62" width="86" height="18"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                        <buttonCell key="cell" type="check" title="Windowed" bezelStyle="regularSquare" imagePosition="left" inset="2" id="dk8-sb-mOo">
+                                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                    </button>
+                                                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ZMD-iW-neg">
+                                                        <rect key="frame" x="18" y="42" width="79" height="18"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                        <buttonCell key="cell" type="check" title="No Music" bezelStyle="regularSquare" imagePosition="left" inset="2" id="6HC-oh-1aO">
+                                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                    </button>
+                                                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="84J-ye-ozG">
+                                                        <rect key="frame" x="18" y="22" width="128" height="18"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                        <buttonCell key="cell" type="check" title="No Sound Effects" bezelStyle="regularSquare" imagePosition="left" inset="2" id="oZV-Jc-Th7">
+                                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                    </button>
+                                                </subviews>
+                                            </view>
+                                        </box>
+                                    </subviews>
                                 </view>
                             </tabViewItem>
                         </tabViewItems>
@@ -135,7 +302,7 @@ Gw
             <connections>
                 <outlet property="delegate" destination="-2" id="0bl-1N-AYu"/>
             </connections>
-            <point key="canvasLocation" x="139" y="162"/>
+            <point key="canvasLocation" x="139" y="212"/>
         </window>
     </objects>
 </document>

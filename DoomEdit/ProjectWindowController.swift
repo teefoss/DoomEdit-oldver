@@ -6,6 +6,9 @@
 //  Copyright © 2018 Thomas Foster. All rights reserved.
 //
 
+// TODO: Alter map names
+// TODO: Alter map level
+
 import Cocoa
 
 class ProjectWindowController: NSWindowController {

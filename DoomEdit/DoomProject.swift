@@ -20,12 +20,12 @@ var doomProject = DoomProject()
 class DoomProject {
 	
 	var loaded: Bool = false
-	var projectType: ProjectType!
+	var projectType: ProjectType!	// Doom or Doom 2
 	var name: String = ""
-	var directory: URL!
-	var projectURL: URL!
-	var projectMapsURL: URL!
-	var projectFileURL: URL!
+	var directory: URL!			// the directory the project folder is in
+	var projectURL: URL!		// the project folder
+	var projectMapsURL: URL!	// the folder containing the project dwd and wad files
+	var projectFileURL: URL!	// the url to the project file
 	var currentMapURL: URL? {
 		if let map = openMap {
 			return projectMapsURL.appendingPathComponent(map.name)
@@ -33,6 +33,8 @@ class DoomProject {
 			return nil
 		}
 	}
+	var wadURL: URL!
+	
 	var recentProjects: [URL]? = []
 	var maps: [Map] = []
 	var openMap: Map?
@@ -68,6 +70,7 @@ class DoomProject {
 		openMap = nil
 		mapDirty = false
 		projectDirty = false
+		wadURL = nil
 	}
 	
 	func quit() {
@@ -143,12 +146,12 @@ class DoomProject {
 		switch projectType {
 		case .doom1:
 			let path = UserDefaults.standard.value(forKey: "DoomWADPath") as! String
-			let url = URL(fileURLWithPath: path)
-			wad.setWadLoation(url)
+			wadURL = URL(fileURLWithPath: path)
+			wad.setWadLoation(wadURL)
 		case .doom2:
 			let path = UserDefaults.standard.value(forKey: "Doom2WADPath") as! String
 			let url = URL(fileURLWithPath: path)
-			wad.setWadLoation(url)
+			wad.setWadLoation(wadURL)
 		default:
 			break
 		}
@@ -180,12 +183,13 @@ class DoomProject {
 			recentProjects?.append(projectFileURL)
 			saveRecents()
 		}
-		
+
+		// Open the project window
 		let appDelegate = NSApplication.shared.delegate as! AppDelegate
-		let proj = ProjectWindowController()		
+		let proj = ProjectWindowController()
+		proj.positionAtScreenTopRight()
 		proj.showWindow(self)
 		appDelegate.projectWindowController = proj
-		
 	}
 	
 	/// Opens a project file and sets project info

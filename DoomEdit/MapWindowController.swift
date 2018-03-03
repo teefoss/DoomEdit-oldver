@@ -31,7 +31,16 @@ class MapWindowController: NSWindowController, MapViewDelegate {
 		return .MapWindowController
 	}
 	
-    override func windowDidLoad() {
+	override init(window: NSWindow?) {
+		super.init(window: window)
+	}
+	
+	required init?(coder: NSCoder) {
+		super.init(coder: coder)
+		shouldCascadeWindows = false
+	}
+	
+	override func windowDidLoad() {
         super.windowDidLoad()
 		
 		window?.title = "\(doomProject.openMap?.name ?? "") (\(doomProject.openMap?.level ?? "")) : Edit Mode"
@@ -115,11 +124,13 @@ extension MapWindowController: NSWindowDelegate {
 			if val {
 				editWorld.saveWorld()
 				doomProject.openMap = nil
+				editWorld.loaded = false
 			}
 		}
 		
 		let appDelegate = NSApplication.shared.delegate as! AppDelegate
 		appDelegate.mapWindowController = nil
+		appDelegate.runMapMenuItem.isEnabled = false
 	}
 }
 

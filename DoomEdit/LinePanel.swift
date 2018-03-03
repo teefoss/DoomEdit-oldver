@@ -195,6 +195,7 @@ class LinePanel: NSViewController, TexturePanelDelegate, NSTabViewDelegate {
 		lines[lineIndex].tag = tagTextField.integerValue
 	}
 	
+	/// For setting up the specials menu
 	func addSpecial(_ special: LineSpecial, to menu: NSMenu) {
 		let item = NSMenuItem()
 		item.title = special.name
