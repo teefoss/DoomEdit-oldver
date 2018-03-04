@@ -118,6 +118,7 @@ extension MapWindowController: NSWindowDelegate {
 		mapView.setOrigin(for: preResizeOrigin)
 	}
 	
+	// FIXME: Put everything in editworld save/close and just call from here
 	func windowWillClose(_ notification: Notification) {
 		if doomProject.mapDirty {
 			let val = runDialogPanel(question: "Hey!", text: "Your map has been modified! Save it?")

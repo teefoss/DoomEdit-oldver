@@ -19,6 +19,12 @@ var points: [Point] = []
 var lines: [Line] = []
 var things: [Thing] = []
 
+struct CopyLine {
+	var line = Line()
+	var p1 = NSPoint()
+	var p2 = NSPoint()
+}
+
 class EditWorld {
 	
 	var loaded: Bool = false
@@ -27,6 +33,10 @@ class EditWorld {
 	var boundsDirty: Bool = false
 	var dirtyRect: NSRect = NSRect.zero
 	var dirtyPoints: Bool = false
+	var copyLines: [CopyLine] = []
+	var copyThings: [Thing] = []
+	var copyLoaded: Bool = false
+	var copyCoord = NSPoint()
 	
 	var delegate: EditWorldDelegate?
 	
@@ -91,6 +101,7 @@ class EditWorld {
 	
 	func addPointToDirtyRect(_ point: NSPoint) {
 		enclosePoint(rect: &dirtyRect, point: point)
+		
 	}
 
 	/// The rect around the two points is added to the dirty rect.
@@ -103,15 +114,17 @@ class EditWorld {
 		if dirtyRect.size.width == 0 {
 			return
 		}
+		dirtyRect.origin.x += 0.5
+		dirtyRect.origin.x += 0.5
 		delegate?.redisplay(dirtyRect)
 		dirtyRect = NSRect.zero
 	}
 	
 	
 	
-	// ===============================================
-	// MARK: - Data Allocation / Alteration / Deletion
-	// ===============================================
+	// ====================================
+	// MARK: - Data Allocation / Alteration
+	// ====================================
 
 	/// Adds a new point to the `points` storage array. Return the index of the new point.
 	private func allocatePoint(_ coord: NSPoint) -> Int {
@@ -290,33 +303,6 @@ class EditWorld {
 		
 	}
 	
-	func delete() {
-		
-		var line: Line
-		var thing: Thing
-		
-		// delete any lines that have both end points selected
-		for i in 0..<lines.count {
-			if lines[i].selected < 1 {
-				continue }
-			if points[lines[i].pt1].selected != 1 || points[lines[i].pt2].selected != 1 {
-				continue }
-			line = lines[i]
-			line.selected = -1
-			changeLine(i, to: &line)
-		}
-		
-		// delete any selected things
-		for i in 0..<things.count {
-			if things[i].selected == 1 {
-				thing = things[i]
-				thing.selected = -1		// remove the thing
-				changeThing(i, to: &thing)
-			}
-		}
-		
-		updateWindows()
-	}
 
 	
 	
@@ -635,13 +621,197 @@ class EditWorld {
 		doomProject.setDirtyMap(false)
 	}
 	
+
 	
+	// ====================
+	// MARK: - Copy / Paste
+	// ====================
+
+	func storeCopies() {
+
+		var cl = CopyLine()
+		var r: NSRect
+		
+		r = NSApp.mainWindow!.contentView!.visibleRect
+		copyCoord = r.origin
+		copyThings = []
+		copyLines = []
+		
+		for t in things {
+			if t.selected == 1 {
+				copyThings.append(t)
+			}
+		}
+		for l in lines {
+			if l.selected == 1 {
+				cl.line = l
+				cl.p1 = points[cl.line.pt1].coord
+				cl.p2 = points[cl.line.pt2].coord
+				copyLines.append(cl)
+			}
+		}
+		copyLoaded = true
+	}
 	
+	/// Deselect everything after copying
+	func copyDeselect() {
+		
+		for i in 0..<things.count {
+			if things[i].selected == 1 {
+				deselectThing(i)
+			}
+		}
+		for i in 0..<lines.count {
+			if lines[i].selected == 1 {
+				deselectLine(i)
+			}
+		}
+		for i in 0..<points.count {
+			if points[i].selected == 1 {
+				deselectPoint(i)
+			}
+		}
+	}
 	
+	func findMin(num0: CGFloat, num1: CGFloat) -> CGFloat {
+		if num1 < num0 {
+			return num1
+		}
+		return num0
+	}
+
+	func findMax(num0: CGFloat, num1: CGFloat) -> CGFloat {
+		if num1 > num0 {
+			return num1
+		}
+		return num0
+	}
+
+	/// Find center point of copied stuff
+	func findCopyCenter() -> NSPoint {
+		
+		var p = NSPoint()
+		var xmin: CGFloat = 0.0
+		var ymin: CGFloat = 0.0
+		var xmax: CGFloat = 0.0
+		var ymax: CGFloat = 0.0
+		
+		for t in copyThings {
+			xmin = findMin(num0: xmin, num1: t.origin.x)
+			ymin = findMin(num0: ymin, num1: t.origin.y)
+			xmax = findMax(num0: xmax, num1: t.origin.x)
+			ymax = findMax(num0: ymax, num1: t.origin.y)
+		}
+		
+		for l in copyLines {
+			xmin = findMin(num0: xmin, num1: l.p1.x)
+			ymin = findMin(num0: ymin, num1: l.p1.y)
+			xmax = findMax(num0: xmax, num1: l.p1.x)
+			ymax = findMax(num0: ymax, num1: l.p1.y)
+			
+			xmin = findMin(num0: xmin, num1: l.p2.x)
+			ymin = findMin(num0: ymin, num1: l.p2.y)
+			xmax = findMax(num0: xmax, num1: l.p2.x)
+			ymax = findMax(num0: ymax, num1: l.p2.y)
+		}
+		
+		p.x = (xmax + xmin) / 2
+		p.y = (ymax + ymin) / 2
+		return p
+	}
 	
+	func cut() {
+		storeCopies()
+		delete()
+		copyDeselect()
+		updateWindows()
+		doomProject.setDirtyMap(true)
+	}
 	
+	func copy() {
+		storeCopies()
+		copyDeselect()
+		updateWindows()
+	}
 	
+	func paste() {
+		
+		var xadd, yadd, max, index: Int
+		var r = NSRect()
+		var p1 = NSPoint()
+		var p2 = NSPoint()
+
+		copyDeselect()
+		if let mainWindow = NSApp.mainWindow {
+			r = mainWindow.contentView!.visibleRect
+			print(r)
+		} else {
+			print("no main window!")
+		}
+
+		if !copyLoaded {
+			copyCoord = findCopyCenter()
+			copyCoord.x -= r.size.width / 2
+			copyCoord.y -= r.size.height / 2
+			copyLoaded = true
+		}
+		
+		xadd = Int(r.origin.x - copyCoord.x + 16) & -8
+		yadd = Int(r.origin.y - copyCoord.y + 16) & -8
+
+		for t in copyThings {
+			var th = t
+			th.origin.x += CGFloat(xadd)
+			th.origin.y += CGFloat(yadd)
+			index = newThing(th)
+			selectThing(index)
+		}
+		
+		for l in copyLines {
+			var line = l
+			p1 = l.p1
+			p2 = l.p2
+			p1.x += CGFloat(xadd)
+			p1.y += CGFloat(yadd)
+			p2.x += CGFloat(xadd)
+			p2.y += CGFloat(yadd)
+			index = newLine(line: &line.line, from: p1, to: p2)
+			selectLine(index)
+			selectPoint(lines[index].pt1)
+			selectPoint(lines[index].pt2)
+		}
+		
+		doomProject.setDirtyMap(true)
+		updateWindows()
+	}
 	
-	
-	
+	func delete() {
+		
+		var line: Line
+		var thing: Thing
+		
+		// delete any lines that have both end points selected
+		for i in 0..<lines.count {
+			if lines[i].selected < 1 {
+				continue }
+			if points[lines[i].pt1].selected != 1 || points[lines[i].pt2].selected != 1 {
+				continue }
+			line = lines[i]
+			line.selected = -1
+			changeLine(i, to: &line)
+		}
+		
+		// delete any selected things
+		for i in 0..<things.count {
+			if things[i].selected == 1 {
+				thing = things[i]
+				thing.selected = -1		// remove the thing
+				changeThing(i, to: &thing)
+			}
+		}
+		
+		doomProject.setDirtyMap(true)
+		updateWindows()
+	}
+
 }

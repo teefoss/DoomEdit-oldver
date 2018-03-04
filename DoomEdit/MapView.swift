@@ -297,6 +297,39 @@ class MapView: NSView, NSPopoverDelegate {
 			setFrameOrigin(newBounds.origin)
 		}		
 	}
+	
+	@IBAction func cut(_ sender: Any) {
+		editWorld.cut()
+	}
+
+	@IBAction func copy(_ sender: Any) {
+		editWorld.copy()
+	}
+	
+	@IBAction func paste(_ sender: Any) {
+		editWorld.paste()
+	}
+	
+	@IBAction func delete(_ sender: Any) {
+		editWorld.delete()
+	}
+	
+	@IBAction func flipLine(_ sender: Any) {
+		editWorld.flipSelectedLines()
+	}
+	
+	@IBAction func fusePoint(_ sender: Any) {
+		editWorld.fusePoints()
+	}
+	
+	@IBAction func separatePoint(_ sender: Any) {
+		editWorld.separatePoints()
+	}
+	
+	
+	
+	
+	
 
 	/*
 	func zoom(from origin: NSPoint, to newScale: Float) {

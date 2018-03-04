@@ -18,6 +18,7 @@ fileprivate let gridColor = NSColor.systemBlue.withAlphaComponent(gridAlpha)
 //fileprivate let tileColor = NSColor.gridColor
 //fileprivate let gridColor = NSColor.gridColor
 
+let DRAWOFFSET: CGFloat = 0.5
 
 /**
 MapView Drawing-related Methods
@@ -36,7 +37,7 @@ extension MapView: EditWorldDelegate {
 		drawThings(in: dirtyRect)
 		drawLines(in: dirtyRect)
 		drawPoints(in: dirtyRect)
-		
+		displayTestingRect(editWorld.dirtyRect)
 	}
 	
 	func displayTestingRect(_ rect: NSRect) {
@@ -45,7 +46,7 @@ extension MapView: EditWorldDelegate {
 		
 		let path = NSBezierPath(rect: r)
 
-		NSColor.red.set()
+		NSColor.red.setStroke()
 		path.lineWidth = 2.0
 		path.stroke()
 
@@ -57,8 +58,8 @@ extension MapView: EditWorldDelegate {
 		var rect = convert(dirtyRect, from: superview)
 		
 		// adjust for draw offset
-		rect.origin.x += 0.5
-		rect.origin.y += 0.5
+		rect.origin.x -= DRAWOFFSET
+		rect.origin.y -= DRAWOFFSET
 		
 		setNeedsDisplay(rect)
 	}
@@ -70,8 +71,6 @@ extension MapView: EditWorldDelegate {
 		let bottom = Int(rect.minY)
 		let right = Int(rect.maxX)
 		let top = Int(rect.maxY)
-		
-		let offSet = CGFloat(0.5)
 		
 		if let context = NSGraphicsContext.current?.cgContext {
 			Color.background.setFill()
@@ -92,11 +91,11 @@ extension MapView: EditWorldDelegate {
 		//draw horizontal lines
 		for i in bottom...top {
 			if convVert(i) % 64 == 0 {
-				let current_y = CGFloat(i) - offSet
+				let current_y = CGFloat(i) - DRAWOFFSET
 				tileColor.set()
 				NSBezierPath.strokeLine(from: CGPoint(x: 0.0, y: current_y), to: CGPoint(x: CGFloat(right), y: current_y))
 			} else if convVert(i) % gridSize == 0 {
-				let current_y = CGFloat(i) - offSet
+				let current_y = CGFloat(i) - DRAWOFFSET
 				gridColor.set()
 				NSBezierPath.strokeLine(from: CGPoint(x: 0.0, y: current_y), to: CGPoint(x: CGFloat(right), y: current_y))
 			}
@@ -106,11 +105,11 @@ extension MapView: EditWorldDelegate {
 		
 		for i in left...right {
 			if convHor(i) % 64 == 0 {
-				let current_x = CGFloat(i) - offSet
+				let current_x = CGFloat(i) - DRAWOFFSET
 				tileColor.set()
 				NSBezierPath.strokeLine(from: CGPoint(x: current_x, y: 0), to: CGPoint(x: current_x, y: CGFloat(top)))
 			} else if convHor(i) % gridSize == 0 {
-				let current_x = CGFloat(i) - offSet
+				let current_x = CGFloat(i) - DRAWOFFSET
 				gridColor.set()
 				NSBezierPath.strokeLine(from: CGPoint(x: current_x, y: 0), to: CGPoint(x: current_x, y: CGFloat(top)))
 			}

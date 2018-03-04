@@ -32,9 +32,16 @@ MapView Responder Methods
 
 extension MapView {
 	
-	override var acceptsFirstResponder: Bool { return true }
-	override func becomeFirstResponder() -> Bool { return true }
-	override func resignFirstResponder() -> Bool { return true }
+	override var acceptsFirstResponder: Bool {
+		return true
+	}
+	override func becomeFirstResponder() -> Bool {
+		return true
+	}
+	override func resignFirstResponder() -> Bool {
+		return true
+	}
+	
 	
 	
 	
@@ -57,30 +64,6 @@ extension MapView {
 			printCoordInfo()
 		case KEY_SPACE:
 			toggleDrawMode()
-		case KEY_F:
-			if event.modifierFlags.contains(.command) {
-				editWorld.fusePoints()
-			} else if event.modifierFlags.contains(.shift) {
-				editWorld.flipSelectedLines()
-			} else {
-				// Floor quick view
-			}
-		case KEY_S:
-			if event.modifierFlags.contains(.command) {
-				editWorld.saveDWD()
-			} else if event.modifierFlags.contains(.shift) {
-				// for testing:
-				blockWorld.connectSectors()
-				print(sectors.count)
-				for line in lines {
-					print(line.side[0]?.sector)
-				}
-			} else {
-				print("separate points")
-				editWorld.separatePoints()
-			}
-		case KEY_DELETE:
-			editWorld.delete()
 		default: break
 		}
 	}
@@ -548,7 +531,7 @@ extension MapView {
 	// ====================
 	// MARK: - Drag Objects
 	// ====================
-	
+		
 	func dragObjects_LMDown(with event: NSEvent) {
 		
 		cursor = NSPoint.zero
