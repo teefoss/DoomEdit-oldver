@@ -72,6 +72,13 @@ extension MapView {
 			showAllThingImages = false
 			setMode(.thing)
 			return
+		case Keycode.space:
+			if currentMode == .draw {
+				setMode(.edit)
+			} else {
+				setMode(.draw)
+			}
+			return
 		default:
 			break
 		}
@@ -164,7 +171,8 @@ extension MapView {
 		case .edit, .line:
 			selectObject(at: event, shouldDrag: true)
 		case .draw:
-			drawLine_LMDown(with: event)
+			dragLine(event)
+			//drawLine_LMDown(with: event)
 		case .thing:
 			return
 		}
@@ -177,7 +185,8 @@ extension MapView {
 		case .edit, .line:
 			print("To do")
 		case .draw:
-			drawLine_LMDragged(with: event)
+			print("To do")
+			//drawLine_LMDragged(with: event)
 		case .thing:
 			return
 		}
@@ -191,15 +200,22 @@ extension MapView {
 		case .edit, .line:
 			print("To do")
 		case .draw:
-			if didDragLine {
-				drawLine_LMUp()
-			}
+//			if didDragLine {
+//				drawLine_LMUp()
+//			}
+			print("Todo")
 		case .thing:
 			return
 		}
 	}
 	
 	override func rightMouseDown(with event: NSEvent) {
+		
+		if currentMode == .draw {
+			placeThing(at: event)
+			editWorld.updateWindows()
+			return
+		}
 		
 		selectObject(at: event, shouldDrag: false)
 		if didClickThing {
@@ -780,8 +796,73 @@ extension MapView {
 	// MARK: - Line Drawing
 	// =====================
 	
+	func dragLine(_ event: NSEvent) {
+		// TODO: Draw the 'tick' mark while adding a line
+		
+		var fixedPoint, dragPoint: NSPoint
+		var shapeLayer = CAShapeLayer()
+		var shapeLayerIndex: Int?
+
+		editWorld.deselectAll()
+
+		// animated drawing is done in view coord system
+		fixedPoint = getViewGridPoint(from: event.locationInWindow)
+		dragPoint = fixedPoint
+		shapeLayer.lineWidth = 1.0
+		shapeLayer.fillColor = NSColor.clear.cgColor
+		shapeLayer.strokeColor = NSColor.black.cgColor
+		layer?.addSublayer(shapeLayer)
+		shapeLayerIndex = layer?.sublayers?.index(of: shapeLayer)
+		
+		//
+		// Mouse-tracking loop
+		//
+		var nextEvent: NSEvent?
+		repeat {
+			
+			nextEvent = window?.nextEvent(matching: NSEvent.EventTypeMask.leftMouseDragged.union(.leftMouseUp))
+			dragPoint = getViewGridPoint(from: (nextEvent?.locationInWindow)!)
+			
+			let path = CGMutablePath()
+			path.move(to: fixedPoint)
+			path.addLine(to: dragPoint)
+			shapeLayer.path = path
+			
+		} while nextEvent?.type != .leftMouseUp
+		
+		var line = Line()
+		line.side[0] = lines.last?.side[0]
+		
+		if let i = shapeLayerIndex {
+			layer?.sublayers?.remove(at: i)
+		}
+		
+		// convert startPoint to world coord
+		let pt1 = convert(fixedPoint, to: superview)
+		
+		// convert endPoint to world coord
+		let pt2 = convert(dragPoint, to: superview)
+		// if line didn't end where it started
+		if pt1.x == pt2.x && pt1.y == pt2.y {
+			return
+		}
+		editWorld.deselectAll()
+		editWorld.newLine(line: &line, from: pt1, to: pt2)
+//		editWorld.selectLine(lines.count-1)
+		frame = editWorld.getBounds()
+		var updateRect = NSRect()
+		makeRect(&updateRect, with: pt1, and: pt2)
+		setNeedsDisplay(bounds)
+		
+
+		doomProject.mapDirty = true
+
+		
+	}
+	
+	/*
 	func drawLine_LMDown(with event: NSEvent) {
-		// TODO: Move all this out into a function
+
 		// TODO: Draw the 'tick' mark while adding a line
 		
 		// animated drawing is done in view coord system
@@ -831,6 +912,7 @@ extension MapView {
 		didDragLine = false
 		doomProject.mapDirty = true
 	}
+	*/
 	
 	
 	
@@ -971,7 +1053,8 @@ extension MapView {
 	
 	func placeThing(at event: NSEvent) {
 		
-		let loc = worldCoord(for: event.locationInWindow)
+		//let loc = worldCoord(for: event.locationInWindow)
+		let loc = getWorldGridPoint(from: event.locationInWindow)
 		
 		var newThing = Thing(selected: 0, origin: loc, angle: things[things.count-1].angle, type: things[things.count-1].type, options: things[things.count-1].options)
 		things.append(newThing)

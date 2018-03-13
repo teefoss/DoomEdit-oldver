@@ -34,12 +34,6 @@ class MapView: NSView, NSPopoverDelegate {
 	
 	// for line drawing
 	var lineCross: [[Bool]] = Array(repeating: Array(repeating: false, count: 9), count: 9)
-	var inDrawMode: Bool = false
-	var shapeLayer: CAShapeLayer!
-	var shapeLayerIndex: Int!
-	var startPoint: NSPoint!
-	var endPoint: NSPoint!
-	var didDragLine: Bool = false
 	
 	var didClickThing = false
 	var selectedThing = Thing()
@@ -52,19 +46,11 @@ class MapView: NSView, NSPopoverDelegate {
 	var selectedDef = SectorDef()
 	var selectedSides: [Int] = []
 	
-
 	
-	func toggleDrawMode() {
-		inDrawMode = !inDrawMode
-		if inDrawMode {
-			setMode(.draw)
-			// FIXME: This stopped working?
-			NSCursor.crosshair.set()
-		} else {
-			setMode(.edit)
-			NSCursor.arrow.set()
-		}
-	}
+	
+	// ==================
+	// MARK: - Mode Stuff
+	// ==================
 	
 	var showAllLineLabels: Bool = false
 	var showAllThingImages: Bool = false
@@ -79,7 +65,7 @@ class MapView: NSView, NSPopoverDelegate {
 				}
 				showAllLineLabels = false
 			case .draw:
-				window?.title = "\(fullFileName) : Draw Mode"
+				window?.title = "\(fullFileName) : Create Mode"
 			case .line:
 				window?.title = "\(fullFileName) : Line View"
 				addLengthLabels()
@@ -95,6 +81,7 @@ class MapView: NSView, NSPopoverDelegate {
 		if currentMode != mode {
 			currentMode = mode
 		}
+		setModeCursor()
 	}
 
 	enum Mode {
@@ -102,6 +89,19 @@ class MapView: NSView, NSPopoverDelegate {
 		case draw
 		case line
 		case thing
+	}
+
+	
+	func setModeCursor() {
+		if currentMode == .draw {
+			DispatchQueue.main.async {
+				NSCursor.crosshair.set()
+			}
+		} else {
+			DispatchQueue.main.async {
+				NSCursor.arrow.set()
+			}
+		}
 	}
 	
 
@@ -211,7 +211,7 @@ class MapView: NSView, NSPopoverDelegate {
 		rect.size.height = dirtyrect.size.height + adjust*2
 		
 		NSIntegralRect(rect)
-		displayTestingRect(rect)
+		//displayTestingRect(rect)
 		
 		self.display(rect)
 	}
@@ -361,15 +361,22 @@ class MapView: NSView, NSPopoverDelegate {
 	}
 	
 	override func cancelOperation(_ sender: Any?) {
-		currentMode = .edit
+		setMode(.edit)
 	}
 	
 	@IBAction func setEditMode(_ sender: Any) {
-		currentMode = .edit
+		setMode(.edit)
 	}
 	
 	@IBAction func setDrawMode(_ sender: Any) {
-		currentMode = .draw
+
+		if currentMode == .draw {
+			setMode(.edit)
+		} else {
+			setMode(.draw)
+		}
+		setModeCursor()
+
 	}
 	
 	@IBAction func setLineMode(_ sender: Any) {
