@@ -18,16 +18,23 @@ struct PrefKeys {
 	static let skill = "Skill"
 	static let windowed = "Windowed"
 	static let noMusic = "NoMusic"
+	static let theme = "Theme"	// Int - 1: Light, 2: Dark
 }
 
 class PreferencesWindowController: NSWindowController {
 	
 	let defaults = UserDefaults.standard
+	
+	var theme = 1
 	var skill = 0
 	var skillButtons: [NSButton] = []
 	
+	@IBOutlet weak var lightThemeButton: NSButton!
+	@IBOutlet weak var darkThemeButton: NSButton!
+	
 	@IBOutlet weak var doomTextField: NSTextField!
 	@IBOutlet weak var doom2TextField: NSTextField!
+
 	@IBOutlet weak var chocDoomTextField: NSTextField!
 	@IBOutlet weak var netGameButton: NSButton!
 	@IBOutlet weak var deathmatchButton: NSButton!
@@ -42,6 +49,14 @@ class PreferencesWindowController: NSWindowController {
 	
 	override func windowDidLoad() {
 		super.windowDidLoad()
+		
+		if let theme = defaults.value(forKey: PrefKeys.theme) as? Int {
+			if theme == 1 {
+				lightThemeButton.state = .on
+			} else if theme == 2 {
+				darkThemeButton.state = .on
+			}
+		}
 		
 		skillButtons.append(skill1button)
 		skillButtons.append(skill2button)
@@ -85,13 +100,16 @@ class PreferencesWindowController: NSWindowController {
 		if let nomus = defaults.value(forKey: PrefKeys.noMusic) as? Bool {
 			nomus ? (noMusicButton.state = .on) : (noMusicButton.state = .off)
 		}
-		
-		
 	}
 	
 	override var windowNibName: NSNib.Name? {
 		return NSNib.Name("PreferencesWindowController")
 	}
+	
+	@IBAction func setTheme(_ sender: NSButton) {
+		theme = sender.tag
+	}
+	
 	
 	@IBAction func setWADPath(_ sender: NSButton) {
 		
@@ -145,7 +163,6 @@ class PreferencesWindowController: NSWindowController {
 	}
 	
 	@IBAction func skillPressed(_ sender: NSButton) {
-		
 		skill = sender.tag
 	}
 	
@@ -153,6 +170,8 @@ class PreferencesWindowController: NSWindowController {
 	// OK button clicked
 	@IBAction func savePressed(_ sender: Any) {
 		
+		defaults.set(theme, forKey: PrefKeys.theme)
+		DoomEdit.setTheme()
 		defaults.set(doomTextField.stringValue, forKey: PrefKeys.doomWADPath)
 		defaults.set(doom2TextField.stringValue, forKey: PrefKeys.doom2WADPath)
 		defaults.set(chocDoomTextField.stringValue, forKey: PrefKeys.chocolateDoomPath)

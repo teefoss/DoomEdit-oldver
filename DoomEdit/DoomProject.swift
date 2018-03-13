@@ -150,7 +150,7 @@ class DoomProject {
 			wad.setWadLoation(wadURL)
 		case .doom2:
 			let path = UserDefaults.standard.value(forKey: "Doom2WADPath") as! String
-			let url = URL(fileURLWithPath: path)
+			let wadURL = URL(fileURLWithPath: path)
 			wad.setWadLoation(wadURL)
 		default:
 			break

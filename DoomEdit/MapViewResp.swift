@@ -48,25 +48,45 @@ extension MapView {
 	// ===================
 	// MARK: - Key Presses
 	// ===================
-	
+
 	override func keyDown(with event: NSEvent) {
+
+		if event.isARepeat {
+			return
+		}
 		
 		switch event.keyCode {
-		case KEY_MINUS:
+		case Keycode.minus:
 			zoomOut(from: event)
-		case KEY_EQUALS:
+			return
+		case Keycode.equals:
 			zoomIn(to: event)
-		case KEY_LEFTBRACKET:
-			increaseGrid()
-		case KEY_RIGHTBRACKET:
-			decreaseGrid()
-		case KEY_I:
-			printCoordInfo()
-		case KEY_SPACE:
-			toggleDrawMode()
-		default: break
+			return
+		case Keycode.l:
+			showAllLineLabels = false
+			setMode(.line)
+			return
+		case Keycode.t:
+			showAllThingImages = false
+			setMode(.thing)
+			return
+		default:
+			break
+		}
+		super.keyDown(with: event)
+	}
+
+	override func keyUp(with event: NSEvent) {
+		switch event.keyCode {
+		case Keycode.l:
+			setMode(.edit)
+		case Keycode.t:
+			setMode(.edit)
+		default:
+			break
 		}
 	}
+	
 	
 	/// Grid lines get farther apart
 	func increaseGrid() {
@@ -139,17 +159,20 @@ extension MapView {
 	override func mouseDown(with event: NSEvent) {
 				
 		switch currentMode {
-		case .edit:
+		case .edit, .line:
 			if event.modifierFlags.contains(.command) {
 				placeThing(at: event)
 			} else {
 				selectObject(at: event)
 				if shouldDragSelectionBox {
-					dragBox_LMDown(with: event)
+					//dragBox_LMDown(with: event)
+					dragSelectionBox(event)
 				}
 			}
 		case .draw:
 			drawLine_LMDown(with: event)
+		case .thing:
+			return
 		}
 		editWorld.updateWindows()
 	}
@@ -157,14 +180,16 @@ extension MapView {
 	override func mouseDragged(with event: NSEvent) {
 		
 		switch currentMode {
-		case .edit:
+		case .edit, .line:
 			if didDragSelectionBox {
-				dragBox_LMDragged(with: event)
+				//dragBox_LMDragged(with: event)
 			} else if didDragObject {
 				dragObjects_LMDragged(with: event)
 			}
 		case .draw:
 			drawLine_LMDragged(with: event)
+		case .thing:
+			return
 		}
 	}
 	
@@ -173,9 +198,9 @@ extension MapView {
 		needsDisplay = true
 		
 		switch currentMode {
-		case .edit:
+		case .edit, .line:
 			if didDragSelectionBox {
-				dragBox_LMUp()
+				//dragBox_LMUp()
 			} else if didDragObject {
 				dragObjects_LMUp(with: event)
 				didDragObject = false
@@ -184,6 +209,8 @@ extension MapView {
 			if didDragLine {
 				drawLine_LMUp()
 			}
+		case .thing:
+			return
 		}
 	}
 	
@@ -198,11 +225,11 @@ extension MapView {
 			displayThingPopover(at: thingView)
 			didClickThing = false
 		} else if didClickLine {
-			let lineRect = NSRect(x: selectedLine.midpoint.x-16, y: selectedLine.midpoint.y-16, width: 32, height: 32)
+			let lineRect = NSRect(x: lines[selectedLineIndex].midpoint.x-16, y: lines[selectedLineIndex].midpoint.y-16, width: 32, height: 32)
 			let newLineRect = convert(lineRect, from: superview)
 			let lineView = NSView(frame: newLineRect)
 			self.addSubview(lineView)
-			editWorld.selectLine(selectedLineIndex)
+			//editWorld.selectLine(selectedLineIndex)
 			//editWorld.updateWindows()
 			displayLinePopover(at: lineView)
 			didClickLine = false
@@ -339,7 +366,6 @@ extension MapView {
 					if !event.modifierFlags.contains(.shift) {
 						dragObjects_LMDown(with: event)
 						didClickLine = true
-						selectedLine = lines[i]
 						selectedLineIndex = i
 						return
 					} else {
@@ -354,7 +380,6 @@ extension MapView {
 						editWorld.selectLine(i)
 						dragObjects_LMDown(with: event)
 						didClickLine = true
-						selectedLine = lines[i]
 						selectedLineIndex = i
 						return
 						// shift is held
@@ -362,7 +387,6 @@ extension MapView {
 						editWorld.selectLine(i)
 						dragObjects_LMDown(with: event)
 						didClickLine = true
-						selectedLine = lines[i]
 						selectedLineIndex = i
 						return
 					}
@@ -375,6 +399,13 @@ extension MapView {
 		//
 		// didn't hit a line, check for a thing
 		//
+		if currentMode == .line {
+			if !event.modifierFlags.contains(.shift) {
+				editWorld.deselectAll()
+			}
+			shouldDragSelectionBox = true
+			return
+		}
 		
 		left = clickPoint.x - CGFloat(THING_DRAW_SIZE/2)
 		right = clickPoint.x + CGFloat(THING_DRAW_SIZE/2)
@@ -450,42 +481,41 @@ extension MapView {
 	
 	//https://stackoverflow.com/questions/20357960/drawing-selection-box-rubberbanding-marching-ants-in-cocoa-objectivec
 	
-	func dragBox_LMDown(with event: NSEvent) {
-		startPoint = convert(event.locationInWindow, from: nil)
-		shapeLayer = CAShapeLayer()
+	func dragSelectionBox(_ event: NSEvent) {
+		
+		var theEvent: NSEvent?
+		let startPoint = convert(event.locationInWindow, from: nil)
+		var dragPoint = NSPoint()
+		var selectionBox = NSRect()
+
+		var shapeLayer = CAShapeLayer()
 		shapeLayer.lineWidth = SELECTION_BOX_WIDTH
 		shapeLayer.fillColor = NSColor.clear.cgColor
 		shapeLayer.strokeColor = NSColor.gray.cgColor
-		self.layer?.addSublayer(shapeLayer)
-		didDragSelectionBox = true
-		shouldDragSelectionBox = false
-	}
+		layer?.addSublayer(shapeLayer)
+
+		repeat {
 	
-	func dragBox_LMDragged(with event: NSEvent) {
-		let dragPoint = convert(event.locationInWindow, from: nil)
-		let path = CGMutablePath()
-		path.move(to: NSPoint(x: startPoint.x, y: startPoint.y))
-		path.addLine(to: NSPoint(x: dragPoint.x, y: startPoint.y))
-		path.addLine(to: NSPoint(x: dragPoint.x, y: dragPoint.y))
-		path.addLine(to: NSPoint(x: startPoint.x, y: dragPoint.y))
-		path.closeSubpath()
-		let pt1 = convert(startPoint, to: superview)
-		let pt2 = convert(dragPoint, to: superview)
-		makeRect(&selectionBox, with: pt1, and: pt2)
-		shapeLayer.path = path
-	}
-	
-	func dragBox_LMUp() {
-		selectObjectsInBox()
+			theEvent = window?.nextEvent(matching: NSEvent.EventTypeMask.leftMouseUp.union(.leftMouseDragged))
+
+			dragPoint = convert((theEvent?.locationInWindow)!, from: nil)
+			
+			let path = CGMutablePath()
+			path.move(to: NSPoint(x: startPoint.x, y: startPoint.y))
+			path.addLine(to: NSPoint(x: dragPoint.x, y: startPoint.y))
+			path.addLine(to: NSPoint(x: dragPoint.x, y: dragPoint.y))
+			path.addLine(to: NSPoint(x: startPoint.x, y: dragPoint.y))
+			path.closeSubpath()
+			let pt1 = convert(startPoint, to: superview)
+			let pt2 = convert(dragPoint, to: superview)
+			makeRect(&selectionBox, with: pt1, and: pt2)
+			shapeLayer.path = path
+			
+			print("loop")
+
+		} while theEvent?.type != .leftMouseUp
+		
 		shapeLayer.removeFromSuperlayer()
-		shapeLayer = nil
-		didDragSelectionBox = false
-		selectionBox = NSRect.zero
-	}
-	
-	
-	
-	func selectObjectsInBox() {
 		
 		var box1 = Box()	// the selection box
 		var box2 = Box()	// a box around a line
@@ -518,6 +548,9 @@ extension MapView {
 		}
 		
 		// get things in the selection box
+		if currentMode == .line {
+			return
+		}
 		for i in 0..<things.count {
 			let org = things[i].origin
 			if NSPointInRect(org, selectionBox) {

@@ -12,7 +12,6 @@ import Foundation
 Handle saving a map to a .DWD file.
 */
 
-fileprivate let outputFile = "fucked2.dwd"
 fileprivate let home = FileManager.default.homeDirectoryForCurrentUser
 
 extension EditWorld {
@@ -30,7 +29,7 @@ extension EditWorld {
 		dirty = false
 	}
 	
-	func saveDWD() {
+	private func saveDWD() {
 		
 		let dwd = makeDWD()
 		
@@ -44,11 +43,22 @@ extension EditWorld {
 	private func makeDWD() -> String {
 		
 		var dwd: String = ""
+		var count = 0
+		
+		for line in lines {
+			if line.selected != -1 {
+				count += 1
+			}
+		}
 		
 		dwd.append("WorldServer version 4\n\n")
-		dwd.append("lines:\(lines.count)\n")
+		dwd.append("lines:\(count)\n")
 		
 		for i in 0..<lines.count {
+			
+			if lines[i].selected == -1 {
+				continue
+			}
 			
 			let x1 = Int(points[lines[i].pt1].coord.x)
 			let y1 = Int(points[lines[i].pt1].coord.y)
@@ -69,10 +79,18 @@ extension EditWorld {
 			
 		}
 
-//		dwd.append(" \n")
-		dwd.append("\nthings:\(things.count)\n")
+		count = 0
+		for thing in things {
+			if thing.selected != -1 {
+				count += 1
+			}
+		}
+		dwd.append("\nthings:\(count)\n")
 		
 		for i in 0..<things.count {
+			if things[i].selected == -1 {
+				continue
+			}
 			dwd.append("(\(Int(things[i].origin.x)),\(Int(things[i].origin.y)), \(things[i].angle)) :\(things[i].type), \(things[i].options)\n")
 		}
 		

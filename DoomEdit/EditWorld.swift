@@ -502,7 +502,6 @@ class EditWorld {
 		updateWindows()
 	}
 	
-	// FIXME: This does not work with points that have been separated
 	func fusePoints() {
 
 		var p1, p2: NSPoint

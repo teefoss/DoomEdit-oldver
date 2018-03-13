@@ -32,32 +32,53 @@ let KEY_1:				UInt16 = 18
 let KEY_F:				UInt16 = 3
 let KEY_S:				UInt16 = 1
 let KEY_DELETE:			UInt16 = 51
-
-// TODO: Enum instead
-enum Key: UInt16 {
-	case minus = 27
-}
+let KEY_L:				UInt16 = 37
 
 // Colors
-let CLLT_BKG = NSColor.white
-let CLDK_BKG = NSColor.black
-let CLLT_LINE_ONESIDED = NSColor.black
-let CLDK_LINE_ONESIDED = NSColor.yellow
-
+var COLOR_BKG = NSColor.white
+var COLOR_LINE_ONESIDED = NSColor.black
+let COLOR_LINE_TWOSIDED = NSColor.gray
+var COLOR_MONSTER = NSColor.black
+var COLOR_THINGINFO = NSColor.white
 // Other
 let SIDE_BIT = 0x8000
+
+var THEME: Theme = .light
 
 enum Theme {
 	case light
 	case dark
 }
 
-fileprivate let theme: Theme = .light
+func setTheme() {
+	
+	if let t = UserDefaults.standard.value(forKey: PrefKeys.theme) as? Int {
+		switch t {
+		case 1:
+			THEME = .light
+		case 2:
+			THEME = .dark
+		default:
+			break
+		}
+	}
+	switch THEME {
+	case .light:
+		COLOR_BKG = NSColor.white
+		COLOR_LINE_ONESIDED = NSColor.black
+		COLOR_MONSTER = NSColor.black
+		COLOR_THINGINFO = NSColor.white
+	case .dark:
+		COLOR_BKG = NSColor.black
+		COLOR_LINE_ONESIDED = NSColor.yellow
+		COLOR_MONSTER = NSColor.white
+		COLOR_THINGINFO = NSColor.black
+	}
+}
 
 // Color
+
 struct Color {
-	static let background = CLLT_BKG
-	static let lineOneSided = CLLT_LINE_ONESIDED
 	static let lineTwoSided = NSColor.gray
 	static let lineSpecial = NSColor.green
 }

@@ -9,16 +9,16 @@
 import Cocoa
 
 protocol TexturePanelDelegate {
-	func updateTextureLabels()
+	func updateTextureLabelFromPanel(name: String, position: Int)
 	func updateOffsets()
-	func updateImages()
+	func updateImageFromPanel(name: String, position: Int)
 }
 
 class LinePanel: NSViewController, TexturePanelDelegate, NSTabViewDelegate {
 
 	// The selected line
-	var line = Line()
 	var lineIndex: Int = 0
+	var selectedLineIndices: [Int] = []
 	
 	@IBOutlet weak var tabView: NSTabView!
 	@IBOutlet weak var titleLabel: NSTextField!
@@ -50,10 +50,18 @@ class LinePanel: NSViewController, TexturePanelDelegate, NSTabViewDelegate {
 	@IBOutlet weak var backMiddleLabel: NSTextField!
 	@IBOutlet weak var specialsPopUpButton: NSPopUpButton!
 	@IBOutlet weak var specialLabel: NSTextField!
-	
+	@IBOutlet weak var suggestButton: NSButton!
+	@IBOutlet weak var setAllTexturesButton: NSButton!
 	
 	var flagButtons: [NSButton] = []
 	
+	var frontUppers: [String] = []
+	var frontMiddles: [String] = []
+	var frontLowers: [String] = []
+	var backUppers: [String] = []
+	var backMiddles: [String] = []
+	var backLowers: [String] = []
+
 	
 
 	// =======================
@@ -91,87 +99,101 @@ class LinePanel: NSViewController, TexturePanelDelegate, NSTabViewDelegate {
 		flagButtons.append(notOnMapButton)
 		flagButtons.append(onMapButton)
 
-		let manualMenu = NSMenu()
-		let buttonMenu = NSMenu()
-		let switchMenu = NSMenu()
-		let triggerMenu = NSMenu()
-		let retriggerMenu = NSMenu()
-		let effectMenu = NSMenu()
-		let impactMenu = NSMenu()
-
-		let noneMenuItem = NSMenuItem(title: "None", action: #selector(clearSpecial(sender:)), keyEquivalent: "")
-		let manualMenuItem = NSMenuItem(title: "Manual", action: nil, keyEquivalent: "")
-		let buttonMenuItem = NSMenuItem(title: "Button", action: nil, keyEquivalent: "")
-		let switchMenuItem = NSMenuItem(title: "Switch", action: nil, keyEquivalent: "")
-		let triggerMenuItem = NSMenuItem(title: "Trigger", action: nil, keyEquivalent: "")
-		let retriggerMenuItem = NSMenuItem(title: "Retrigger", action: nil, keyEquivalent: "")
-		let effectMenuItem = NSMenuItem(title: "Effect", action: nil, keyEquivalent: "")
-		let impactMenuItem = NSMenuItem(title: "Impact", action: nil, keyEquivalent: "")
-
-
-		manualMenu.setSubmenu(manualMenu, for: manualMenuItem)
-		buttonMenu.setSubmenu(buttonMenu, for: buttonMenuItem)
-		switchMenu.setSubmenu(switchMenu, for: switchMenuItem)
-		triggerMenu.setSubmenu(triggerMenu, for: triggerMenuItem)
-		retriggerMenu.setSubmenu(retriggerMenu, for: retriggerMenuItem)
-		effectMenu.setSubmenu(effectMenu, for: effectMenuItem)
-		impactMenu.setSubmenu(impactMenu, for: impactMenuItem)
-		
-		for special in doomData.doom1LineSpecials {
-			
-			switch special.type {
-			case "Manual":
-				addSpecial(special, to: manualMenu)
-			case "Button":
-				addSpecial(special, to: buttonMenu)
-			case "Switch":
-				addSpecial(special, to: switchMenu)
-			case "Trigger":
-				addSpecial(special, to: triggerMenu)
-			case "Retrigger":
-				addSpecial(special, to: retriggerMenu)
-			case "Effect":
-				addSpecial(special, to: effectMenu)
-			case "Impact":
-				addSpecial(special, to: impactMenu)
-			default:
-				print("error loading special menu with special \(special.index):\(special.type)\(special.name)")
-				continue
-			}
-		}
-				
-		specialsPopUpButton.menu?.removeAllItems()
-		specialsPopUpButton.menu?.addItem(noneMenuItem)
-		specialsPopUpButton.menu?.addItem(NSMenuItem.separator())
-		specialsPopUpButton.menu?.addItem(manualMenuItem)
-		specialsPopUpButton.menu?.addItem(buttonMenuItem)
-		specialsPopUpButton.menu?.addItem(switchMenuItem)
-		specialsPopUpButton.menu?.addItem(triggerMenuItem)
-		specialsPopUpButton.menu?.addItem(retriggerMenuItem)
-		specialsPopUpButton.menu?.addItem(impactMenuItem)
-		specialsPopUpButton.menu?.addItem(effectMenuItem)
-		
+		setupSpecialMenu()
     }
 	
 	
 	override func viewWillAppear() {
 		super.viewWillAppear()
+
+		initSelectedLines()  // Store indices of currently selected lines
+
+		print("num selected lines: \(selectedLineIndices.count)")
+		// Add an nsmenuitem if there are multiple specials
+		if selectedLineIndices.count == 1 {
+			updateSpecialLabel(for: lines[lineIndex].special)
+			updateSpecialButton(for: lines[lineIndex].special)
+		} else {
+			let first = lines[selectedLineIndices[0]].special
+			var next = -1
+			loop: for i in 1..<selectedLineIndices.count {
+				next = lines[selectedLineIndices[i]].special
+				if next != first {
+					break loop
+				}
+			}
+			if next != first {
+				let mult = NSMenuItem(title: "Multiple", action: nil, keyEquivalent: "")
+				specialsPopUpButton.menu?.addItem(NSMenuItem.separator())
+				specialsPopUpButton.menu?.addItem(mult)
+				specialsPopUpButton.select(mult)
+				specialLabel.stringValue = "--"
+			} else {
+				updateSpecialLabel(for: first)
+				updateSpecialButton(for: first)
+			}
+		}
 		
-		titleLabel.stringValue = "Line \(lineIndex) Properties"
+		setAllowedButtonState()
+		setTitle()
+		tabView.selectTabViewItem(at: 0)  // Open with front side tab selected
 		
 		// Set the options buttons
-		for i in 0..<flagButtons.count {
-			line.flags & (1 << i) == (1 << i) ? (flagButtons[i].state = .on) : (flagButtons[i].state = .off)
+		if selectedLineIndices.count == 1 {
+			for i in 0..<flagButtons.count {
+				lines[lineIndex].flags & (1 << i) == (1 << i) ? (flagButtons[i].state = .on) : (flagButtons[i].state = .off)
+			}
+		} else {
+			setButtonState(&blocksAllButton, option: BLOCKS_ALL)
+			setButtonState(&blocksMonstersButton, option: BLOCKS_MONSTERS)
+			setButtonState(&blocksSoundButton, option: BLOCKS_SOUND)
+			setButtonState(&twoSidedButton, option: TWO_SIDED)
+			setButtonState(&upperUnpeggedButton, option: UPPER_UNPEGGED)
+			setButtonState(&lowerUnpeggedButton, option: LOWER_UNPEGGED)
+			setButtonState(&onMapButton, option: SHOW_ON_MAP)
+			setButtonState(&notOnMapButton, option: NOT_ON_MAP)
+			setButtonState(&secretButton, option: SECRET)
 		}
 		
 		if flagButtons[2].state == .off {
-			
+			tabView.tabViewItems[1].label = "-"
+		} else {
+			tabView.tabViewItems[1].label = "Back"
 		}
 		
 		// Set the tag number
-		line.tag == 0 ? (tagTextField.stringValue = "") : (tagTextField.integerValue = line.tag)
-		
+		if selectedLineIndices.count == 1 {
+			lines[lineIndex].tag == 0 ? (tagTextField.stringValue = "") : (tagTextField.integerValue = lines[lineIndex].tag)
+		} else {
+			let first = lines[selectedLineIndices[0]].tag
+			var next = 0
+			loop: for i in 1..<selectedLineIndices.count {
+				next = lines[selectedLineIndices[i]].tag
+				if next != first {
+					break loop
+				}
+			}
+			if next != first {
+				tagTextField.stringValue = ""
+			} else {
+				tagTextField.integerValue = first
+			}
+		}
 		// Display the line information
+		
+		frontUppers = []; frontMiddles = []; frontLowers = []
+		backUppers = []; backMiddles = []; backLowers = []
+		for index in selectedLineIndices {
+			frontUppers.append(lines[index].side[0]?.upperTexture ?? "-")
+			frontMiddles.append(lines[index].side[0]?.middleTexture ?? "-")
+			frontLowers.append(lines[index].side[0]?.lowerTexture ?? "-")
+			if let side = lines[index].side[1] {
+				backUppers.append(side.upperTexture ?? "-")
+				backMiddles.append(side.middleTexture ?? "-")
+				backLowers.append(side.lowerTexture ?? "-")
+			}
+		}
+		
 		updateTextureLabels()
 		updateOffsets()
 		updateImages()
@@ -183,29 +205,35 @@ class LinePanel: NSViewController, TexturePanelDelegate, NSTabViewDelegate {
 		backUpperImageView.lineIndex = lineIndex
 		backMiddleImageView.lineIndex = lineIndex
 		backLowerImageView.lineIndex = lineIndex
-		
-		// TODO: set up the rest
-		updateSpecialLabel(for: line.special)
-		updateSpecialButton(for: line.special)
+
+		frontUpperImageView.selectedLineIndices = selectedLineIndices
+		frontMiddleImageView.selectedLineIndices = selectedLineIndices
+		frontLowerImageView.selectedLineIndices = selectedLineIndices
+		backUpperImageView.selectedLineIndices = selectedLineIndices
+		backMiddleImageView.selectedLineIndices = selectedLineIndices
+		backLowerImageView.selectedLineIndices = selectedLineIndices
+
 	}
+	
+	func hasMultiple<T: Equatable>(array: [T]) -> Bool {
+
+		let first = array.first
+		for element in array {
+			if element != first {
+				return true
+			}
+		}
+		return false
+	}
+	
 	
 	override func viewWillDisappear() {
 		super.viewWillDisappear()
-		
-		lines[lineIndex].tag = tagTextField.integerValue
-	}
-	
-	/// For setting up the specials menu
-	func addSpecial(_ special: LineSpecial, to menu: NSMenu) {
-		let item = NSMenuItem()
-		item.title = special.name
-		item.tag = special.index
-		item.target = self
-		item.action = #selector(setSpecial(sender:))
-		menu.addItem(item)
-	}
 
-
+		setTag()
+		setOffsets()
+		selectedLineIndices = []
+	}
 	
 	
 	
@@ -215,13 +243,17 @@ class LinePanel: NSViewController, TexturePanelDelegate, NSTabViewDelegate {
 	
 	/// Set the current line's special from the menu selection
 	@objc func setSpecial(sender: NSMenuItem) {
-		lines[lineIndex].special = sender.tag
+		for index in selectedLineIndices {
+			lines[index].special = sender.tag
+		}
 		updateSpecialLabel(for: sender.tag)
 		updateSpecialButton(for: sender.tag)
 	}
 	
 	@objc func clearSpecial(sender: NSMenuItem) {
-		lines[lineIndex].special = 0
+		for index in selectedLineIndices {
+			lines[index].special = 0
+		}
 		updateSpecialLabel(for: 0)
 		updateSpecialLabel(for: 0)
 	}
@@ -249,99 +281,238 @@ class LinePanel: NSViewController, TexturePanelDelegate, NSTabViewDelegate {
 			}
 		}
 	}
+	
+	func setTag() {
+		if !tagTextField.stringValue.isEmpty {
+			for index in selectedLineIndices {
+				lines[index].tag = tagTextField.integerValue
+			}
+		}
+	}
+	
+	func updateTextureLabelFromPanel(name: String, position: Int) {
+		
+		
+		switch position {
+		case 1:
+			frontLowerLabel.textColor = NSColor.black
+			frontLowerLabel.stringValue = name
+		case 2:
+			frontMiddleLabel.textColor = NSColor.black
+			frontMiddleLabel.stringValue = name
+		case 3:
+			frontUpperLabel.textColor = NSColor.black
+			frontUpperLabel.stringValue = name
+		case -1:
+			backLowerLabel.textColor = NSColor.black
+			backLowerLabel.stringValue = name
+		case -2:
+			backLowerLabel.textColor = NSColor.black
+			backMiddleLabel.stringValue = name
+		case -3:
+			backLowerLabel.textColor = NSColor.black
+			backUpperLabel.stringValue = name
+		default: return
+		}
+	}
 
 	func updateTextureLabels() {
 
-		frontUpperLabel.stringValue = lines[lineIndex].side[0]?.upperTexture ?? "—"
-		frontMiddleLabel.stringValue = lines[lineIndex].side[0]?.middleTexture ?? "—"
-		frontLowerLabel.stringValue = lines[lineIndex].side[0]?.lowerTexture ?? "—"
-		backUpperLabel.stringValue = lines[lineIndex].side[1]?.upperTexture ?? "-"
-		backMiddleLabel.stringValue = lines[lineIndex].side[1]?.middleTexture ?? "-"
-		backLowerLabel.stringValue = lines[lineIndex].side[1]?.lowerTexture ?? "-"
+		if hasMultiple(array: frontUppers) {
+			frontUpperLabel.textColor = NSColor.red
+			frontUpperLabel.stringValue = "Multiple"
+		} else {
+			frontUpperLabel.textColor = NSColor.black
+			frontUpperLabel.stringValue = lines[selectedLineIndices[0]].side[0]?.upperTexture ?? "-"
+		}
+		
+		if hasMultiple(array: frontMiddles) {
+			frontMiddleLabel.textColor = NSColor.red
+			frontMiddleLabel.stringValue = "Multiple"
+		} else {
+			frontMiddleLabel.textColor = NSColor.black
+			frontMiddleLabel.stringValue = lines[selectedLineIndices[0]].side[0]?.middleTexture ?? "-"
+		}
+
+		if hasMultiple(array: frontLowers) {
+			frontLowerLabel.textColor = NSColor.red
+			frontLowerLabel.stringValue = "Multiple"
+		} else {
+			frontLowerLabel.textColor = NSColor.black
+			frontLowerLabel.stringValue = lines[selectedLineIndices[0]].side[0]?.lowerTexture ?? "-"
+		}
+
+		if hasMultiple(array: backUppers) {
+			backUpperLabel.textColor = NSColor.red
+			backUpperLabel.stringValue = "Multiple"
+		} else {
+			backUpperLabel.textColor = NSColor.black
+			backUpperLabel.stringValue = lines[selectedLineIndices[0]].side[1]?.upperTexture ?? "-"
+		}
+		
+		if hasMultiple(array: backMiddles) {
+			backMiddleLabel.textColor = NSColor.red
+			backMiddleLabel.stringValue = "Multiple"
+		} else {
+			backMiddleLabel.textColor = NSColor.black
+			backMiddleLabel.stringValue = lines[selectedLineIndices[0]].side[1]?.middleTexture ?? "-"
+		}
+		
+		if hasMultiple(array: backLowers) {
+			backLowerLabel.textColor = NSColor.red
+			backLowerLabel.stringValue = "Multiple"
+		} else {
+			backLowerLabel.textColor = NSColor.black
+			backLowerLabel.stringValue = lines[selectedLineIndices[0]].side[1]?.lowerTexture ?? "-"
+		}
 	}
 	
 	func updateOffsets() {
 		
-		frontXOffsetTextField.integerValue = line.side[0]!.x_offset
-		frontYOffsetTextField.integerValue = line.side[0]!.y_offset
-		backXOffset.integerValue = line.side[1]?.x_offset ?? 0
-		backYOffset.integerValue = line.side[1]?.y_offset ?? 0
+		if selectedLineIndices.count == 1 {
+			frontXOffsetTextField.integerValue = lines[selectedLineIndices[0]].side[0]!.x_offset
+			frontYOffsetTextField.integerValue = lines[selectedLineIndices[0]].side[0]!.y_offset
+			backXOffset.integerValue = lines[selectedLineIndices[0]].side[1]?.x_offset ?? 0
+			backYOffset.integerValue = lines[selectedLineIndices[0]].side[1]?.y_offset ?? 0
+		} else {
+			var frontXOffsets: [Int] = []
+			var frontYOffsets: [Int] = []
+			var backXOffsets: [Int] = []
+			var backYOffsets: [Int] = []
+			
+			for index in selectedLineIndices {
+				frontXOffsets.append(lines[index].side[0]!.x_offset)
+				frontYOffsets.append(lines[index].side[0]!.y_offset)
+				if let side = lines[index].side[1] {
+					backXOffsets.append(side.x_offset)
+					backYOffsets.append(side.y_offset)
+				}
+			}
+
+			if hasMultiple(array: frontXOffsets) {
+				frontXOffsetTextField.stringValue = ""
+			} else {
+				frontXOffsetTextField.integerValue = frontXOffsets[0]
+			}
+			if hasMultiple(array: frontYOffsets) {
+				frontYOffsetTextField.stringValue = ""
+			} else {
+				frontYOffsetTextField.integerValue = frontYOffsets[0]
+			}
+			if hasMultiple(array: backXOffsets) && (backXOffsets.count > 1) {
+				backXOffset.stringValue = ""
+			} else {
+				if !backXOffsets.isEmpty {
+					backXOffset.integerValue = backXOffsets[0]
+				} else {
+					backXOffset.integerValue = 0
+				}
+			}
+			if hasMultiple(array: backYOffsets) && (backYOffsets.count > 1) {
+				backYOffset.stringValue = ""
+			} else {
+				if !backYOffsets.isEmpty{
+					backYOffset.integerValue = backYOffsets[0]
+				} else {
+					backYOffset.integerValue = 0
+				}
+			}
+		}
+	}
+	
+	func setOffsets() {
+		
+		if !frontXOffsetTextField.stringValue.isEmpty {
+			for index in selectedLineIndices {
+				lines[index].side[0]!.x_offset = frontXOffsetTextField.integerValue
+			}
+		}
+		if !frontYOffsetTextField.stringValue.isEmpty {
+			for index in selectedLineIndices {
+				lines[index].side[0]!.y_offset = frontYOffsetTextField.integerValue
+			}
+		}
+		if !backXOffset.stringValue.isEmpty {
+			for index in selectedLineIndices {
+				if lines[index].side[1] != nil {
+					lines[index].side[1]!.x_offset = backXOffset.integerValue
+				}
+			}
+		}
+		if !backYOffset.stringValue.isEmpty {
+			for index in selectedLineIndices {
+				if lines[index].side[1] != nil {
+					lines[index].side[1]!.y_offset = backYOffset.integerValue
+				}
+			}
+		}
+	}
+	
+	func setImage(_ imageView: inout TextureImageView!, names: [String]) {
+		
+		// might be no back sides selected
+		if names == [] {
+			imageView.image = nil
+			imageView.textureIndex = -1
+			return
+		}
+		
+		if selectedLineIndices.count == 1 {
+			imageView.image = imageForTexture(named: names[0])
+			imageView.textureIndex = indexForTexture(named: names[0])
+		} else {
+			if hasMultiple(array: names) {
+				imageView.image = nil
+				imageView.textureIndex = -1
+			} else {
+				let t = names[0]
+				if t != "-" {
+					imageView.image = imageForTexture(named: t)
+					imageView.textureIndex = indexForTexture(named: t)
+				} else {
+					imageView.image = nil
+					imageView.textureIndex = -1
+				}
+			}
+		}
+	}
+	
+	func updateImageFromPanel(name: String, position: Int) {
+		
+		if name != "-" {
+			switch position {
+			case 1: frontLowerImageView.image = imageForTexture(named: name)
+			case 2: frontMiddleImageView.image = imageForTexture(named: name)
+			case 3: frontUpperImageView.image = imageForTexture(named: name)
+			case -1: backLowerImageView.image = imageForTexture(named: name)
+			case -2: backMiddleImageView.image = imageForTexture(named: name)
+			case -3: backUpperImageView.image = imageForTexture(named: name)
+			default: return
+			}
+		} else {
+			switch position {
+			case 1: frontLowerImageView.image = nil
+			case 2: frontMiddleImageView.image = nil
+			case 3: frontUpperImageView.image = nil
+			case -1: backLowerImageView.image = nil
+			case -2: backMiddleImageView.image = nil
+			case -3: backUpperImageView.image = nil
+			default: return
+			}
+		}
 	}
 	
 	func updateImages() {
 
-		var frontUpper, frontMiddle, frontLower: String
-		var backUpper, backMiddle, backLower: String
-
-		frontUpper = (lines[lineIndex].side[0]?.upperTexture)!
-		frontMiddle = (lines[lineIndex].side[0]?.middleTexture)!
-		frontLower = (lines[lineIndex].side[0]?.lowerTexture)!
-		
-		if let backSide = lines[lineIndex].side[1] {
-			backUpper = backSide.upperTexture!
-			backMiddle = backSide.middleTexture!
-			backLower = backSide.lowerTexture!
-		} else {
-			backUpper = "-"
-			backMiddle = "-"
-			backLower = "-"
-		}
-
-		// TODO: Clean this up
-		
-		// Set the images and send the texture's index to the imageview
-		
-		if frontUpper != "-" {
-			frontUpperImageView.image = imageForTexture(named: frontUpper)
-			frontUpperImageView.textureIndex = indexForTexture(named: frontUpper)
-		} else {
-			frontUpperImageView.image = nil
-			frontUpperImageView.textureIndex = -1
-		}
-		
-		if frontMiddle != "-" {
-			frontMiddleImageView.image = imageForTexture(named: frontMiddle)
-			frontMiddleImageView.textureIndex = indexForTexture(named: frontMiddle)
-		} else {
-			frontMiddleImageView.image = nil
-			frontMiddleImageView.textureIndex = -1
-		}
-		
-		if frontLower != "-" {
-			frontLowerImageView.image = imageForTexture(named: frontLower)
-			frontLowerImageView.textureIndex = indexForTexture(named: frontLower)
-		} else {
-			frontLowerImageView.image = nil
-			frontLowerImageView.textureIndex = -1
-		}
-		
-		if backUpper != "-" {
-			backUpperImageView.image = imageForTexture(named: backUpper)
-			backUpperImageView.textureIndex = indexForTexture(named: backUpper)
-		} else {
-			backUpperImageView.image = nil
-			backUpperImageView.textureIndex = -1
-		}
-		
-		if backMiddle != "-" {
-			backMiddleImageView.image = imageForTexture(named: backMiddle)
-			backMiddleImageView.textureIndex = indexForTexture(named: backMiddle)
-		} else {
-			backMiddleImageView.image = nil
-			backMiddleImageView.textureIndex = -1
-		}
-		
-		if backLower != "-" {
-			backLowerImageView.image = imageForTexture(named: backLower)
-			backLowerImageView.textureIndex = indexForTexture(named: backLower)
-		} else {
-			backLowerImageView.image = nil
-			backLowerImageView.textureIndex = -1
-		}
-
-		
+		setImage(&frontUpperImageView, names: frontUppers)
+		setImage(&frontMiddleImageView, names: frontMiddles)
+		setImage(&frontLowerImageView, names: frontLowers)
+		setImage(&backUpperImageView, names: backUppers)
+		setImage(&backMiddleImageView, names: backMiddles)
+		setImage(&backLowerImageView, names: backLowers)
 	}
 	
+	/// Get the texture image
 	func imageForTexture(named name: String) -> NSImage? {
 		
 		for texture in wad.textures {
@@ -352,6 +523,7 @@ class LinePanel: NSViewController, TexturePanelDelegate, NSTabViewDelegate {
 		return nil
 	}
 	
+	/// Get the texture index
 	func indexForTexture(named name: String) -> Int {
 		
 		for i in 0..<wad.textures.count {
@@ -364,10 +536,25 @@ class LinePanel: NSViewController, TexturePanelDelegate, NSTabViewDelegate {
 	
 	@IBAction func changeOption(_ sender: NSButton) {
 
+		sender.allowsMixedState = false
+		
 		if sender.state == .on {
-			lines[lineIndex].flags += sender.tag
-		} else {
-			lines[lineIndex].flags -= sender.tag
+			for index in selectedLineIndices {
+				lines[index].flags += sender.tag
+			}
+		} else if sender.state == .off {
+			for index in selectedLineIndices {
+				lines[index].flags -= sender.tag
+			}
+		}
+		
+		// Remove the back side tab label is not two-sided
+		if sender.tag == 4 {
+			if sender.state == .on {
+				tabView.tabViewItems[1].label = "Back"
+			} else if sender.state == .off {
+				tabView.tabViewItems[1].label = "-"
+			}
 		}
 	}
 	
@@ -383,7 +570,7 @@ class LinePanel: NSViewController, TexturePanelDelegate, NSTabViewDelegate {
 		tagTextField.integerValue = maxTag + 1
 	}
 	
-	
+	/// Disable the back side tab is not two-sided
 	func tabView(_ tabView: NSTabView, shouldSelect tabViewItem: NSTabViewItem?) -> Bool {
 		if tabViewItem == tabView.tabViewItem(at: 0) {
 			return true

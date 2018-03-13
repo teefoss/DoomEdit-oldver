@@ -39,6 +39,8 @@
 		306C8B241FF9A17D00C2C47C /* TextureCollectionViewItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 306C8B221FF9A17D00C2C47C /* TextureCollectionViewItem.swift */; };
 		306C8B251FF9A17D00C2C47C /* TextureCollectionViewItem.xib in Resources */ = {isa = PBXBuildFile; fileRef = 306C8B231FF9A17D00C2C47C /* TextureCollectionViewItem.xib */; };
 		306C8B271FFB22D800C2C47C /* TextureImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 306C8B261FFB22D800C2C47C /* TextureImageView.swift */; };
+		30714E9420519820000D06BF /* LinePanelUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30714E9320519820000D06BF /* LinePanelUI.swift */; };
+		30714E9620532B01000D06BF /* Keycodes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30714E9520532B01000D06BF /* Keycodes.swift */; };
 		3085C4541FD61A79001049A8 /* e5m1.dwd in Resources */ = {isa = PBXBuildFile; fileRef = 3085C4531FD61A79001049A8 /* e5m1.dwd */; };
 		3085C4561FD61BBA001049A8 /* e4m6.dwd in Resources */ = {isa = PBXBuildFile; fileRef = 3085C4551FD61BBA001049A8 /* e4m6.dwd */; };
 		30A00B9D1FD6EB4700EBCA27 /* NSWindowControllerExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30A00B9C1FD6EB4700EBCA27 /* NSWindowControllerExtension.swift */; };
@@ -111,6 +113,8 @@
 		306C8B221FF9A17D00C2C47C /* TextureCollectionViewItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextureCollectionViewItem.swift; sourceTree = "<group>"; };
 		306C8B231FF9A17D00C2C47C /* TextureCollectionViewItem.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TextureCollectionViewItem.xib; sourceTree = "<group>"; };
 		306C8B261FFB22D800C2C47C /* TextureImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextureImageView.swift; sourceTree = "<group>"; };
+		30714E9320519820000D06BF /* LinePanelUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinePanelUI.swift; sourceTree = "<group>"; };
+		30714E9520532B01000D06BF /* Keycodes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Keycodes.swift; sourceTree = "<group>"; };
 		3085C4531FD61A79001049A8 /* e5m1.dwd */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = e5m1.dwd; sourceTree = "<group>"; };
 		3085C4551FD61BBA001049A8 /* e4m6.dwd */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = e4m6.dwd; sourceTree = "<group>"; };
 		30A00B9C1FD6EB4700EBCA27 /* NSWindowControllerExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSWindowControllerExtension.swift; sourceTree = "<group>"; };
@@ -282,6 +286,7 @@
 				3060F2B8201FFF4000996FDB /* LaunchWindowController.swift */,
 				30399CCA1FD3049E00503DB4 /* Line.swift */,
 				30B16B231FDE376A0066DEC3 /* LinePanel.swift */,
+				30714E9320519820000D06BF /* LinePanelUI.swift */,
 				3060F2C22021168000996FDB /* LoadDWDWindowController.swift */,
 				30FBF6441FC52DB70035671D /* MapWindowController.swift */,
 				30FBF6531FC52F8A0035671D /* MapView.swift */,
@@ -308,6 +313,7 @@
 				30FBF6381FC52D500035671D /* Assets.xcassets */,
 				30FBF63D1FC52D500035671D /* Info.plist */,
 				30FBF63E1FC52D500035671D /* DoomEdit.entitlements */,
+				30714E9520532B01000D06BF /* Keycodes.swift */,
 			);
 			path = DoomEdit;
 			sourceTree = "<group>";
@@ -442,6 +448,7 @@
 				3060F2BA201FFF4000996FDB /* LaunchWindowController.swift in Sources */,
 				30FBF64D1FC52F6A0035671D /* EditWorld.swift in Sources */,
 				30FBF6371FC52D500035671D /* AppDelegate.swift in Sources */,
+				30714E9420519820000D06BF /* LinePanelUI.swift in Sources */,
 				30C41A51200A701E000E3F9B /* FlatPanel.swift in Sources */,
 				30B16B221FDE15A70066DEC3 /* IntExtension.swift in Sources */,
 				30FBF64E1FC52F6A0035671D /* Geometry.swift in Sources */,
@@ -453,6 +460,7 @@
 				30C41A4C20098CD6000E3F9B /* WadFile.swift in Sources */,
 				30399CCB1FD3049E00503DB4 /* Line.swift in Sources */,
 				3042DC56201FD8C600D4434F /* PreferencesWindowController.swift in Sources */,
+				30714E9620532B01000D06BF /* Keycodes.swift in Sources */,
 				30FBF6591FC52F8A0035671D /* MapView.swift in Sources */,
 				30B16B1C1FDCBF930066DEC3 /* DoomData.swift in Sources */,
 			);

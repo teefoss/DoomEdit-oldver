@@ -51,8 +51,7 @@ class MapView: NSView, NSPopoverDelegate {
 	var selectedThingIndex: Int = 0
 	
 	var didClickLine = false
-	var selectedLine = Line()
-	var selectedLineIndex: Int = 0
+	var selectedLineIndex = -1
 	
 	var didClickSector = false
 	var selectedDef = SectorDef()
@@ -63,29 +62,51 @@ class MapView: NSView, NSPopoverDelegate {
 	func toggleDrawMode() {
 		inDrawMode = !inDrawMode
 		if inDrawMode {
-			currentMode = .draw
+			setMode(.draw)
 			// FIXME: This stopped working?
 			NSCursor.crosshair.set()
 		} else {
-			currentMode = .edit
+			setMode(.edit)
 			NSCursor.arrow.set()
 		}
 	}
+	
+	var showAllLineLabels: Bool = false
+	var showAllThingImages: Bool = false
 	
 	var currentMode: Mode = .edit {
 		didSet{
 			switch currentMode {
 			case .edit:
 				window?.title = "\(fullFileName) : Edit Mode"
+				for view in subviews {
+					view.removeFromSuperview()
+				}
+				showAllLineLabels = false
 			case .draw:
 				window?.title = "\(fullFileName) : Draw Mode"
+			case .line:
+				window?.title = "\(fullFileName) : Line View"
+				addLengthLabels()
+			case .thing:
+				window?.title = "\(fullFileName) : Thing View"
+				addThingImages()
 			}
+			needsDisplay = true
+		}
+	}
+	
+	func setMode(_ mode: Mode) {
+		if currentMode != mode {
+			currentMode = mode
 		}
 	}
 
 	enum Mode {
 		case edit
 		case draw
+		case line
+		case thing
 	}
 	
 
@@ -145,7 +166,6 @@ class MapView: NSView, NSPopoverDelegate {
 	func displayLinePopover(at line: NSView) {
 		var linePopover = NSPopover()
 		initPopover(&linePopover, with: linePanel)
-		linePanel.line = selectedLine
 		linePanel.lineIndex = selectedLineIndex
 		linePopover.show(relativeTo: line.bounds, of: line, preferredEdge: .maxX)
 	}
@@ -309,10 +329,11 @@ class MapView: NSView, NSPopoverDelegate {
 	@IBAction func paste(_ sender: Any) {
 		editWorld.paste()
 	}
-	
+
 	@IBAction func delete(_ sender: Any) {
 		editWorld.delete()
 	}
+	
 	
 	@IBAction func flipLine(_ sender: Any) {
 		editWorld.flipSelectedLines()
@@ -326,9 +347,45 @@ class MapView: NSView, NSPopoverDelegate {
 		editWorld.separatePoints()
 	}
 	
+	@IBAction func increaseGrid(_ sender: Any) {
+		self.increaseGrid()
+	}
+	
+	@IBAction func decreaseGrid(_ sender: Any) {
+		self.decreaseGrid()
+	}
+	
+	@IBAction func zoomIn(_ sender: Any) {
+		let event = NSEvent()
+		zoomIn(to: event)
+	}
+	
+	@IBAction func zoomOut(_ sender: Any) {
+		let event = NSEvent()
+		zoomOut(from: event)
+	}
+	
+	override func cancelOperation(_ sender: Any?) {
+		currentMode = .edit
+	}
+	
+	@IBAction func setEditMode(_ sender: Any) {
+		currentMode = .edit
+	}
+	
+	@IBAction func setDrawMode(_ sender: Any) {
+		currentMode = .draw
+	}
+	
+	@IBAction func setLineMode(_ sender: Any) {
+		showAllLineLabels = true
+		setMode(.line)
+	}
 	
 	
-	
+	@IBAction func saveMap(_ sender: Any) {
+		editWorld.saveWorld()
+	}
 	
 
 	/*

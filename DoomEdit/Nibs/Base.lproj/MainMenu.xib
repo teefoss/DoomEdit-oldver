@@ -98,7 +98,7 @@
                             </menuItem>
                             <menuItem title="Save…" keyEquivalent="s" id="pxx-59-PXV">
                                 <connections>
-                                    <action selector="saveDocument:" target="-1" id="teZ-XB-qJY"/>
+                                    <action selector="saveMap:" target="-1" id="gbo-z6-RTn"/>
                                 </connections>
                             </menuItem>
                             <menuItem title="Save As…" keyEquivalent="S" id="Bw7-FT-i3A">
@@ -167,7 +167,7 @@ CA
 </string>
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
-                                    <action selector="delete:" target="-1" id="DUQ-PM-58c"/>
+                                    <action selector="delete:" target="-1" id="sNb-r5-A0e"/>
                                 </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="uyl-h8-XO2"/>
@@ -198,26 +198,26 @@ CA
                             <menuItem title="Zoom In" keyEquivalent="=" id="fCF-6V-4uq">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
-                                    <action selector="toggleToolbarShown:" target="-1" id="NcJ-KU-gy2"/>
+                                    <action selector="zoomIn:" target="-1" id="i3s-06-nrX"/>
                                 </connections>
                             </menuItem>
                             <menuItem title="Zoom Out" keyEquivalent="-" id="jgf-nr-h3A">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
-                                    <action selector="toggleToolbarShown:" target="-1" id="GCH-WJ-8LI"/>
+                                    <action selector="zoomOut:" target="-1" id="snP-nI-cuE"/>
                                 </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="BYQ-OA-taN"/>
                             <menuItem title="Increase Grid" keyEquivalent="[" id="XJ5-hC-NTO">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
-                                    <action selector="toggleToolbarShown:" target="-1" id="E8s-Yx-qgR"/>
+                                    <action selector="increaseGrid:" target="-1" id="GWh-QR-UYa"/>
                                 </connections>
                             </menuItem>
                             <menuItem title="Descrease Grid" keyEquivalent="]" id="ECh-of-oxn">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
-                                    <action selector="toggleToolbarShown:" target="-1" id="amQ-BZ-hRw"/>
+                                    <action selector="decreaseGrid:" target="-1" id="Tpr-Mn-wc8"/>
                                 </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="hB3-LF-h0Y"/>
@@ -225,6 +225,40 @@ CA
                                 <modifierMask key="keyEquivalentModifierMask" control="YES" command="YES"/>
                                 <connections>
                                     <action selector="toggleFullScreen:" target="-1" id="dU3-MA-1Rq"/>
+                                </connections>
+                            </menuItem>
+                        </items>
+                    </menu>
+                </menuItem>
+                <menuItem title="Mode" id="w9Y-8L-ODs">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <menu key="submenu" title="Mode" id="sV5-3n-2bF">
+                        <items>
+                            <menuItem title="Edit Mode" id="CM1-Kv-XE8">
+                                <string key="keyEquivalent" base64-UTF8="YES">
+Gw
+</string>
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="setEditMode:" target="-1" id="dVm-SM-5dr"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Draw Mode" keyEquivalent=" " id="Nbq-hg-J0L">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="setDrawMode:" target="-1" id="SC6-Ca-u5J"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Line Mode" keyEquivalent="l" id="jEm-1Q-WeU">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="setLineMode:" target="-1" id="fWA-is-dPh"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Thing Mode" keyEquivalent="t" id="lH7-yK-KnU">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="setLineMode:" target="-1" id="Qdu-Ok-JMY"/>
                                 </connections>
                             </menuItem>
                         </items>

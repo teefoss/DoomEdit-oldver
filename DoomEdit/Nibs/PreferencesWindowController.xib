@@ -9,9 +9,11 @@
         <customObject id="-2" userLabel="File's Owner" customClass="PreferencesWindowController" customModule="DoomEdit" customModuleProvider="target">
             <connections>
                 <outlet property="chocDoomTextField" destination="jqD-4j-Kwi" id="D3Z-ns-4BA"/>
+                <outlet property="darkThemeButton" destination="ww7-yA-2Nt" id="2KL-W3-gGf"/>
                 <outlet property="deathmatchButton" destination="4Qa-a5-5ub" id="KiD-gf-YMU"/>
                 <outlet property="doom2TextField" destination="sRq-x2-jwP" id="mvu-Su-mWK"/>
                 <outlet property="doomTextField" destination="XK7-d0-fBU" id="C3Z-5p-kPu"/>
+                <outlet property="lightThemeButton" destination="BQe-gx-dfU" id="PWC-gS-ctN"/>
                 <outlet property="netGameButton" destination="8x9-h3-g3b" id="0hs-8M-GnL"/>
                 <outlet property="noMonstersButton" destination="8jJ-iN-1Ie" id="fsZ-IR-x1W"/>
                 <outlet property="noMusicButton" destination="ZMD-iW-neg" id="1IN-6I-cBI"/>
@@ -41,6 +43,46 @@
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <font key="font" metaFont="system"/>
                         <tabViewItems>
+                            <tabViewItem label="General" identifier="" id="xZZ-N6-psb">
+                                <view key="view" ambiguous="YES" id="196-P7-LPa">
+                                    <rect key="frame" x="10" y="33" width="434" height="259"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    <subviews>
+                                        <box fixedFrame="YES" title="Theme" translatesAutoresizingMaskIntoConstraints="NO" id="BfZ-Jv-2aZ">
+                                            <rect key="frame" x="6" y="159" width="94" height="97"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <view key="contentView" id="vfY-s8-Tvh">
+                                                <rect key="frame" x="2" y="2" width="90" height="80"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <subviews>
+                                                    <button verticalHuggingPriority="750" fixedFrame="YES" tag="1" translatesAutoresizingMaskIntoConstraints="NO" id="BQe-gx-dfU">
+                                                        <rect key="frame" x="19" y="43" width="53" height="18"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                        <buttonCell key="cell" type="radio" title="Light" bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" inset="2" id="EmC-2P-kuX">
+                                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="setTheme:" target="-2" id="nLK-ZE-rkH"/>
+                                                        </connections>
+                                                    </button>
+                                                    <button verticalHuggingPriority="750" fixedFrame="YES" tag="2" translatesAutoresizingMaskIntoConstraints="NO" id="ww7-yA-2Nt">
+                                                        <rect key="frame" x="19" y="21" width="51" height="18"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                        <buttonCell key="cell" type="radio" title="Dark" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="Xah-Rj-DaC">
+                                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="setTheme:" target="-2" id="bu8-Hv-66F"/>
+                                                        </connections>
+                                                    </button>
+                                                </subviews>
+                                            </view>
+                                        </box>
+                                    </subviews>
+                                </view>
+                            </tabViewItem>
                             <tabViewItem label="WADs" identifier="" id="evi-hr-Ss5">
                                 <view key="view" id="jEk-0K-U5c">
                                     <rect key="frame" x="10" y="33" width="434" height="259"/>
@@ -108,7 +150,7 @@
                                 </view>
                             </tabViewItem>
                             <tabViewItem label="Testing" identifier="" id="o8V-Rp-nLX">
-                                <view key="view" ambiguous="YES" id="b9Z-Jp-qfg">
+                                <view key="view" id="b9Z-Jp-qfg">
                                     <rect key="frame" x="10" y="33" width="434" height="259"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>

@@ -37,7 +37,13 @@ struct Line {
 	var tag: Int
 	var selected: Int = 0
 	
-	// TODO: - var length
+	var length: Int {
+		var xlen = abs(points[pt2].coord.x - points[pt1].coord.x)
+		xlen = xlen * xlen
+		var ylen = abs(points[pt2].coord.y - points[pt1].coord.y)
+		ylen = ylen * ylen
+		return Int(sqrt(xlen + ylen))
+	}
 	var midpoint: NSPoint
 
 	/// The point at the end of the 'tick mark' of a line
@@ -46,10 +52,10 @@ struct Line {
 	var color: NSColor {
 		if special != 0 {
 			return Color.lineSpecial
-		} else if flags & TWO_SIDED == TWO_SIDED {
+		} else if flags & TWO_SIDED != 0 {
 			return Color.lineTwoSided
 		}
-		return Color.lineOneSided
+		return COLOR_LINE_ONESIDED
 	}
 	
 	init() {
@@ -61,6 +67,10 @@ struct Line {
 		tag = 0
 		midpoint = NSPoint()
 		normal = NSPoint()
+	}
+
+	func hasOption(_ option: Int) -> Bool {
+		return (flags & option != 0) ? true : false
 	}
 }
 

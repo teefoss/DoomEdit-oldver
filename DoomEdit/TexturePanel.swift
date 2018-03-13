@@ -17,6 +17,7 @@ Displays all the WAD's textures in a collection view.
 class TexturePanel: NSViewController, NSCollectionViewDataSource, NSCollectionViewDelegateFlowLayout {
 	
 	var selectedTextureIndex: Int = -1
+	var selectedLineIndices: [Int] = []
 	var lineIndex: Int = 0
 	var texturePosition: Int = 0
 	
@@ -122,16 +123,45 @@ class TexturePanel: NSViewController, NSCollectionViewDataSource, NSCollectionVi
 		}
 	}
 	
+	func setUpperTexture(name: String, side: Int) {
+		
+		for index in selectedLineIndices {
+			if lines[index].side[side] != nil {
+				lines[index].side[side]?.upperTexture = name
+			}
+		}
+	}
+	
+	func setMiddleTexture(name: String, side: Int) {
+		
+		for index in selectedLineIndices {
+			if lines[index].side[side] != nil {
+				lines[index].side[side]?.middleTexture = name
+			}
+		}
+	}
+	
+	func setLowerTexture(name: String, side: Int) {
+		
+		for index in selectedLineIndices {
+			if lines[index].side[side] != nil {
+				lines[index].side[side]?.lowerTexture = name
+			}
+		}
+	}
+
+
+	/// Sets all selected lines
 	func setTexture() {
 		
 		if collectionView.selectionIndexes.isEmpty {
 			switch texturePosition {
-			case 1: lines[lineIndex].side[0]?.lowerTexture = "-"
-			case 2: lines[lineIndex].side[0]?.middleTexture = "-"
-			case 3: lines[lineIndex].side[0]?.upperTexture = "-"
-			case -1: lines[lineIndex].side[1]?.lowerTexture = "-"
-			case -2: lines[lineIndex].side[1]?.middleTexture = "-"
-			case -3: lines[lineIndex].side[1]?.upperTexture = "-"
+			case 1: setLowerTexture(name: "-", side: 0)
+			case 2: setMiddleTexture(name: "-", side: 0)
+			case 3: setUpperTexture(name: "-", side: 0)
+			case -1: setLowerTexture(name: "-", side: 1)
+			case -2: setMiddleTexture(name: "-", side: 1)
+			case -3: setUpperTexture(name: "-", side: 1)
 			default: print("Error. No texture position!")
 			}
 		} else {
@@ -144,12 +174,12 @@ class TexturePanel: NSViewController, NSCollectionViewDataSource, NSCollectionVi
 			let newTextureName = wad.textures[selectedTextureIndex].name
 			
 			switch texturePosition {
-			case 1: lines[lineIndex].side[0]?.lowerTexture = newTextureName
-			case 2: lines[lineIndex].side[0]?.middleTexture = newTextureName
-			case 3: lines[lineIndex].side[0]?.upperTexture = newTextureName
-			case -1: lines[lineIndex].side[1]?.lowerTexture = newTextureName
-			case -2: lines[lineIndex].side[1]?.middleTexture = newTextureName
-			case -3: lines[lineIndex].side[1]?.upperTexture = newTextureName
+			case 1: setLowerTexture(name: newTextureName, side: 0)
+			case 2: setMiddleTexture(name: newTextureName, side: 0)
+			case 3: setUpperTexture(name: newTextureName, side: 0)
+			case -1: setLowerTexture(name: newTextureName, side: 1)
+			case -2: setMiddleTexture(name: newTextureName, side: 1)
+			case -3: setUpperTexture(name: newTextureName, side: 1)
 			default:
 				print("Error. No texture position!")
 			}
@@ -232,8 +262,8 @@ class TexturePanel: NSViewController, NSCollectionViewDataSource, NSCollectionVi
 		
 		setTexture()
 		window?.performClose(nil)
-		delegate?.updateImages()
-		delegate?.updateTextureLabels()
+		delegate?.updateImageFromPanel(name: wad.textures[selectedTextureIndex].name, position: texturePosition)
+		delegate?.updateTextureLabelFromPanel(name: wad.textures[selectedTextureIndex].name, position: texturePosition)
 	}
 	
 	@IBAction func updateFilter(_ sender: Any) {

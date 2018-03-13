@@ -23,6 +23,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 	
 	func applicationDidFinishLaunching(_ aNotification: Notification) {
 
+		setTheme()
 		runMapMenuItem.isEnabled = editWorld.loaded
 		
 		// Display the launch window

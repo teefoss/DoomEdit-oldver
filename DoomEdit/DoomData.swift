@@ -26,7 +26,7 @@ struct ThingDef {
 	var color: NSColor {
 		switch category {
 		case "Player": return .systemGreen
-		case "Demon": return .black
+		case "Demon": return COLOR_MONSTER
 		case "Power": return .systemBlue
 		case "Ammo": return .systemOrange
 		case "Health": return .systemYellow
