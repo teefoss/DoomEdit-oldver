@@ -44,6 +44,8 @@ extension MapView: EditWorldDelegate {
 		}
 		
 //		displayTestingRect(editWorld.dirtyRect)
+//		displayTestingRect(testingRect)
+
 	}
 	
 	func addLengthLabels() {

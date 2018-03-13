@@ -11,6 +11,7 @@
 import Cocoa
 
 // Dragging Objects
+/*
 fileprivate var cursor = NSPoint.zero
 fileprivate var oldDragRect = NSRect.zero
 fileprivate var fixedRect = NSRect.zero
@@ -25,6 +26,7 @@ fileprivate var lastPoint: Int = 0
 fileprivate var pointCount: Int = 0
 fileprivate var totalMoved = NSPoint.zero
 fileprivate var moved = NSPoint.zero
+*/
 
 /**
 MapView Responder Methods
@@ -48,9 +50,9 @@ extension MapView {
 	// ===================
 	// MARK: - Key Presses
 	// ===================
-
+	
 	override func keyDown(with event: NSEvent) {
-
+		
 		if event.isARepeat {
 			return
 		}
@@ -75,7 +77,7 @@ extension MapView {
 		}
 		super.keyDown(with: event)
 	}
-
+	
 	override func keyUp(with event: NSEvent) {
 		switch event.keyCode {
 		case Keycode.l:
@@ -157,18 +159,10 @@ extension MapView {
 	// =====================
 	
 	override func mouseDown(with event: NSEvent) {
-				
+		
 		switch currentMode {
 		case .edit, .line:
-			if event.modifierFlags.contains(.command) {
-				placeThing(at: event)
-			} else {
-				selectObject(at: event)
-				if shouldDragSelectionBox {
-					//dragBox_LMDown(with: event)
-					dragSelectionBox(event)
-				}
-			}
+			selectObject(at: event, shouldDrag: true)
 		case .draw:
 			drawLine_LMDown(with: event)
 		case .thing:
@@ -181,11 +175,7 @@ extension MapView {
 		
 		switch currentMode {
 		case .edit, .line:
-			if didDragSelectionBox {
-				//dragBox_LMDragged(with: event)
-			} else if didDragObject {
-				dragObjects_LMDragged(with: event)
-			}
+			print("To do")
 		case .draw:
 			drawLine_LMDragged(with: event)
 		case .thing:
@@ -199,12 +189,7 @@ extension MapView {
 		
 		switch currentMode {
 		case .edit, .line:
-			if didDragSelectionBox {
-				//dragBox_LMUp()
-			} else if didDragObject {
-				dragObjects_LMUp(with: event)
-				didDragObject = false
-			}
+			print("To do")
 		case .draw:
 			if didDragLine {
 				drawLine_LMUp()
@@ -216,7 +201,7 @@ extension MapView {
 	
 	override func rightMouseDown(with event: NSEvent) {
 		
-		selectObject(at: event)
+		selectObject(at: event, shouldDrag: false)
 		if didClickThing {
 			let thingRect = NSRect(x: selectedThing.origin.x-16, y: selectedThing.origin.y-16, width: 32, height: 32)
 			let newThingRect = convert(thingRect, from: superview)
@@ -266,7 +251,7 @@ extension MapView {
 	
 	// https://stackoverflow.com/questions/33158513/checking-keydown-event-modifierflags-yields-error
 	/// Selects a point at the mouse location. If no point is present, selects a line or thing.
-	func selectObject(at event: NSEvent) {
+	func selectObject(at event: NSEvent, shouldDrag: Bool) {
 		
 		var pointIndex: Int = -1
 		var thingIndex: Int = -1
@@ -306,23 +291,29 @@ extension MapView {
 			// if the point is already selected
 			if points[pointIndex].selected == 1 {
 				if !event.modifierFlags.contains(.shift) {
-					dragObjects_LMDown(with: event)
+					if shouldDrag {
+						dragObjects(with: event)
+					}
 					return
 				} else {
 					editWorld.deselectPoint(pointIndex)
 					return
 				}
-			// point is not already selected
+				// point is not already selected
 			} else {
 				// shift is not being held
 				if !event.modifierFlags.contains(.shift) {
 					editWorld.deselectAll()
 					editWorld.selectPoint(pointIndex)
-					dragObjects_LMDown(with: event)
+					if shouldDrag {
+						dragObjects(with: event)
+					}
 					return
 				} else {
 					editWorld.selectPoint(pointIndex)
-					dragObjects_LMDown(with: event)
+					if shouldDrag {
+						dragObjects(with: event)
+					}
 					return
 				}
 			}
@@ -364,7 +355,9 @@ extension MapView {
 				// line is already selected
 				if lines[i].selected > 0 {
 					if !event.modifierFlags.contains(.shift) {
-						dragObjects_LMDown(with: event)
+						if shouldDrag {
+							dragObjects(with: event)
+						}
 						didClickLine = true
 						selectedLineIndex = i
 						return
@@ -378,14 +371,18 @@ extension MapView {
 					if !event.modifierFlags.contains(.shift) {
 						editWorld.deselectAll()
 						editWorld.selectLine(i)
-						dragObjects_LMDown(with: event)
+						if shouldDrag {
+							dragObjects(with: event)
+						}
 						didClickLine = true
 						selectedLineIndex = i
 						return
 						// shift is held
 					} else {
 						editWorld.selectLine(i)
-						dragObjects_LMDown(with: event)
+						if shouldDrag {
+							dragObjects(with: event)
+						}
 						didClickLine = true
 						selectedLineIndex = i
 						return
@@ -403,7 +400,9 @@ extension MapView {
 			if !event.modifierFlags.contains(.shift) {
 				editWorld.deselectAll()
 			}
-			shouldDragSelectionBox = true
+			if shouldDrag {
+				dragSelectionBox(event)
+			}
 			return
 		}
 		
@@ -431,7 +430,9 @@ extension MapView {
 			// Thing is already selected
 			if things[thingIndex].selected == 1 {
 				if !event.modifierFlags.contains(.shift) {
-					dragObjects_LMDown(with: event)
+					if shouldDrag {
+						dragObjects(with: event)
+					}
 					didClickThing = true
 					selectedThing = things[thingIndex]
 					selectedThingIndex = thingIndex
@@ -445,7 +446,9 @@ extension MapView {
 				if !event.modifierFlags.contains(.shift) {
 					editWorld.deselectAll()
 					editWorld.selectThing(thingIndex)
-					dragObjects_LMDown(with: event)
+					if shouldDrag {
+						dragObjects(with: event)
+					}
 					didClickThing = true
 					selectedThing = things[thingIndex]
 					selectedThingIndex = thingIndex
@@ -454,7 +457,9 @@ extension MapView {
 					return
 				} else {
 					editWorld.selectThing(thingIndex)
-					dragObjects_LMDown(with: event)
+					if shouldDrag {
+						dragObjects(with: event)
+					}
 					didClickThing = true
 					selectedThing = things[thingIndex]
 					selectedThingIndex = thingIndex
@@ -475,29 +480,36 @@ extension MapView {
 				didClickSector = false
 			}
 		}
-		shouldDragSelectionBox = true
+		if shouldDrag {
+			dragSelectionBox(event)
+		}
 	}
 	
 	
-	//https://stackoverflow.com/questions/20357960/drawing-selection-box-rubberbanding-marching-ants-in-cocoa-objectivec
 	
+	// Selection box:
+	// https://stackoverflow.com/questions/20357960/drawing-selection-box-rubberbanding-marching-ants-in-cocoa-objectivec
+	// Mouse-tracking loop:
+	// https://stackoverflow.com/questions/22389685/nsbutton-mousedown-mouseup-behaving-differently-on-enabled/27216356#27216356
+	
+	/// Drag a selection box, select lines and things
 	func dragSelectionBox(_ event: NSEvent) {
 		
 		var theEvent: NSEvent?
 		let startPoint = convert(event.locationInWindow, from: nil)
 		var dragPoint = NSPoint()
 		var selectionBox = NSRect()
-
+		
 		var shapeLayer = CAShapeLayer()
 		shapeLayer.lineWidth = SELECTION_BOX_WIDTH
 		shapeLayer.fillColor = NSColor.clear.cgColor
 		shapeLayer.strokeColor = NSColor.gray.cgColor
 		layer?.addSublayer(shapeLayer)
-
+		
 		repeat {
-	
+			
 			theEvent = window?.nextEvent(matching: NSEvent.EventTypeMask.leftMouseUp.union(.leftMouseDragged))
-
+			
 			dragPoint = convert((theEvent?.locationInWindow)!, from: nil)
 			
 			let path = CGMutablePath()
@@ -512,7 +524,7 @@ extension MapView {
 			shapeLayer.path = path
 			
 			print("loop")
-
+			
 		} while theEvent?.type != .leftMouseUp
 		
 		shapeLayer.removeFromSuperlayer()
@@ -561,26 +573,29 @@ extension MapView {
 	
 	
 	
-	// ====================
-	// MARK: - Drag Objects
-	// ====================
+	// ========================
+	// dragObjects(with event:)
+	// ========================
+	
+	func dragObjects(with event: NSEvent) {
 		
-	func dragObjects_LMDown(with event: NSEvent) {
+		var cursor, moved, totalMoved: NSPoint
 		
-		cursor = NSPoint.zero
-		oldDragRect = NSRect.zero
-		fixedRect = NSRect.zero
-		dragRect = NSRect.zero
-		currentDragRect = NSRect.zero
-		updateRect = NSRect.zero
-		lineList = []
-		lineCount = 0
-		lastPoint = 0
-		pointCount = 0
-		totalMoved = NSPoint.zero
+		var oldDragRect = NSRect()
+		var fixedRect = NSRect()
+		var dragRect = NSRect()
+		var currentDragRect = NSRect()
+		var updateRect = NSRect()
 		
-		pointList = []
-		thingList = []
+		var lineList: [Int] = []
+		var pointList: [Int] = []
+		var thingList: [Int] = []
+		
+		var lineCount = 0
+		var lastPoint = 0
+		var pointCount = 0
+		
+		
 		cursor = getWorldGridPoint(from: event.locationInWindow)
 		
 		// set up negative rects
@@ -648,93 +663,91 @@ extension MapView {
 		dragRect.origin.x -= cursor.x	// relative to cursor
 		dragRect.origin.y -= cursor.y
 		
+		//
+		// Mouse-tracking loop
+		//
 		moved = cursor
 		totalMoved = cursor
+		var theEvent: NSEvent?
 		
-		didDragObject = true
-	}
-	
-	
-	func dragObjects_LMDragged(with event: NSEvent) {
-		
-		// calculate new rectangle
-		cursor = getWorldGridPoint(from: event.locationInWindow) // handle grid and such
-		
-		// move all selected points
-		if pointCount == 1 {
-			if points[lastPoint].coord.x == cursor.x && points[lastPoint].coord.y == cursor.y {
-				return
-			}
-			points[lastPoint].coord = cursor
-		} else {
-			if cursor.x == moved.x && cursor.y == moved.y {
-				return
+		repeat {
+			
+			theEvent = window?.nextEvent(matching: NSEvent.EventTypeMask.leftMouseDragged.union(.leftMouseUp))
+			if theEvent?.type == .leftMouseUp {
+				break
 			}
 			
-			moved.x = cursor.x - moved.x
-			moved.y = cursor.y - moved.y
+			// calculate new rectangle
+			cursor = getWorldGridPoint(from: (theEvent?.locationInWindow)!) // handle grid and such
 			
-			/*
-			let ptr = UnsafeMutablePointer<Point>.allocate(capacity: points.count)
-			defer { ptr.deallocate(capacity: points.count) }
+			// move all selected points
+			if pointCount == 1 {
+				if points[lastPoint].coord.x == cursor.x && points[lastPoint].coord.y == cursor.y {
+					continue
+				}
+				points[lastPoint].coord = cursor
+			} else {
+				if cursor.x == moved.x && cursor.y == moved.y {
+					continue
+				}
+				
+				moved.x = cursor.x - moved.x
+				moved.y = cursor.y - moved.y
+				
+				for i in 0..<points.count {
+					if points[i].selected == 1 {
+						points[i].coord.x += moved.x
+						points[i].coord.y += moved.y
+					}
+				}
+				
+				for i in 0..<things.count {
+					if things[i].selected == 1 {
+						things[i].origin.x += moved.x
+						things[i].origin.y += moved.y
+					}
+				}
+				
+				if moved.x != 0 || moved.y != 0 {
+					print("dirty map")
+					doomProject.setDirtyMap(true)
+				}
+				
+				moved = cursor
+			}
 			
-			let buf = UnsafeMutableBufferPointer(start: ptr, count: points.count)
+			// update line normals
+			for i in 0..<lineCount {
+				editWorld.updateLineNormal(lineList[i])
+			}
+			
+			// redraw new frame
+			currentDragRect = dragRect
+			currentDragRect.origin.x += cursor.x
+			currentDragRect.origin.y += cursor.y
+			updateRect = currentDragRect
+			updateRect = NSUnionRect(oldDragRect, updateRect)
+			updateRect = NSUnionRect(fixedRect, updateRect)
+			oldDragRect = currentDragRect;
+			var viewUpdateRect = convert(updateRect, from: superview)
+			
+			// extend to include any line normals and point edges
+			viewUpdateRect.origin.x -= CGFloat(LINE_NORMAL_LENGTH+1)
+			viewUpdateRect.origin.y -= CGFloat(LINE_NORMAL_LENGTH+1)
+			viewUpdateRect.size.width += CGFloat(LINE_NORMAL_LENGTH*2+1)
+			viewUpdateRect.size.height += CGFloat(LINE_NORMAL_LENGTH*2+1)
 
-			for (i, _) in buf.enumerated() {
-				if buf[i].selected == 1 {
-					buf[i].coord.x += moved.x
-					buf[i].coord.y += moved.y
-				}
-			}
-			*/
+			var testingRect = viewUpdateRect
+			testingRect.origin.x += 1
+			testingRect.origin.y += 1
+			testingRect.size.width -= 2
+			testingRect.size.height -= 2
+			self.testingRect = testingRect
 			
+			print(viewUpdateRect)
+			setNeedsDisplay(viewUpdateRect)
 			
-			for i in 0..<points.count {
-				if points[i].selected == 1 {
-					points[i].coord.x += moved.x
-					points[i].coord.y += moved.y
-				}
-			}
-			
-			for i in 0..<things.count {
-				if things[i].selected == 1 {
-					things[i].origin.x += moved.x
-					things[i].origin.y += moved.y
-				}
-			}
-			
-			if moved.x != 0 || moved.y != 0 {
-				print("dirty map")
-				doomProject.setDirtyMap(true)
-			}
-			
-			moved = cursor
-		}
-		
-		for i in 0..<lineCount {
-			editWorld.updateLineNormal(lineList[i])
-		}
-		
-		// redraw new frame
-		currentDragRect = dragRect
-		currentDragRect.origin.x += cursor.x
-		currentDragRect.origin.y += cursor.y
-		updateRect = currentDragRect
-		updateRect = NSUnionRect(oldDragRect, updateRect)
-		updateRect = NSUnionRect(fixedRect, updateRect)
-		oldDragRect = currentDragRect;
-		var viewUpdateRect = convert(updateRect, from: superview)
-		
-		// extend to include any line normals and point edges
-		viewUpdateRect.origin.x -= CGFloat(LINE_NORMAL_LENGTH+1)
-		viewUpdateRect.origin.y -= CGFloat(LINE_NORMAL_LENGTH+1)
-		viewUpdateRect.size.width += CGFloat(LINE_NORMAL_LENGTH*2+1)
-		viewUpdateRect.size.height += CGFloat(LINE_NORMAL_LENGTH*2+1)
-
-		setNeedsDisplay(viewUpdateRect)
-	}
-	
-	func dragObjects_LMUp(with event: NSEvent) {
+		} while true
 		
 		// tell the world about the changes
 		// the points have to be set back to their original positions before sending
@@ -744,7 +757,7 @@ extension MapView {
 		totalMoved.x = cursor.x - totalMoved.x;
 		totalMoved.y = cursor.y - totalMoved.y;
 		
-		print(totalMoved)
+		print("totalMoved = \(totalMoved)")
 		
 		for i in 0..<points.count {
 			if points[i].selected == 1 {
@@ -752,7 +765,7 @@ extension MapView {
 				points[i].coord.x -= totalMoved.x
 				points[i].coord.y -= totalMoved.y
 				editWorld.changePoint(i, to: newPoint)
-
+				
 				if (totalMoved.x != 0 || totalMoved.y != 0) {
 					print("map dirty!")
 					doomProject.setDirtyMap(true)
@@ -760,6 +773,7 @@ extension MapView {
 			}
 		}
 	}
+	
 	
 	
 	

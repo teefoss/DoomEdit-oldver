@@ -74,3 +74,18 @@ selectionBox = NSRect.zero
 }
 */
 
+/*
+let ptr = UnsafeMutablePointer<Point>.allocate(capacity: points.count)
+defer { ptr.deallocate(capacity: points.count) }
+
+let buf = UnsafeMutableBufferPointer(start: ptr, count: points.count)
+
+for (i, _) in buf.enumerated() {
+if buf[i].selected == 1 {
+buf[i].coord.x += moved.x
+buf[i].coord.y += moved.y
+}
+}
+*/
+
+

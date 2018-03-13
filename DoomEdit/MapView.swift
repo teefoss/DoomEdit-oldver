@@ -26,16 +26,11 @@ class MapView: NSView, NSPopoverDelegate {
 	var delegate: MapViewDelegate?
 	var trackingArea: NSTrackingArea?
 	
-	var shouldDragSelectionBox: Bool = false
-	var didDragSelectionBox: Bool = false
-	var selectionBox = NSRect()
-	var didDragObject = false
-	
 	var gridSize: Int = 8
 	var scale: CGFloat = 1.0
 	
 	// dragging objects
-	
+	var testingRect = NSRect()
 	
 	// for line drawing
 	var lineCross: [[Bool]] = Array(repeating: Array(repeating: false, count: 9), count: 9)
