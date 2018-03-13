@@ -776,6 +776,63 @@ extension MapView {
 	
 	
 	
+	// =====================
+	// MARK: - Line Drawing
+	// =====================
+	
+	func drawLine_LMDown(with event: NSEvent) {
+		// TODO: Move all this out into a function
+		// TODO: Draw the 'tick' mark while adding a line
+		
+		// animated drawing is done in view coord system
+		editWorld.deselectAll()
+		self.startPoint = getViewGridPoint(from: event.locationInWindow)
+		shapeLayer = CAShapeLayer()
+		shapeLayer.lineWidth = 1.0
+		shapeLayer.fillColor = NSColor.clear.cgColor
+		shapeLayer.strokeColor = NSColor.black.cgColor
+		layer?.addSublayer(shapeLayer)
+		shapeLayerIndex = layer?.sublayers?.index(of: shapeLayer)
+	}
+	
+	func drawLine_LMDragged(with event: NSEvent) {
+		didDragLine = true
+		needsDisplay = false		// don't redraw everything while adding a line (???)
+		endPoint = getViewGridPoint(from: event.locationInWindow)
+		let path = CGMutablePath()
+		path.move(to: self.startPoint)
+		path.addLine(to: endPoint)
+		self.shapeLayer.path = path
+	}
+	
+	func drawLine_LMUp() {
+		
+		var line = Line()
+		line.side[0] = lines.last?.side[0]
+		
+		layer?.sublayers?.remove(at: shapeLayerIndex)
+		
+		// convert startPoint to world coord
+		let pt1 = convert(startPoint, to: superview)
+		
+		if let endPoint = endPoint {
+			// convert endPoint to world coord
+			let pt2 = convert(endPoint, to: superview)
+			// if line didn't end where it started
+			if pt1.x == pt2.x && pt1.y == pt2.y {
+				return
+			} else {
+				editWorld.newLine(line: &line, from: pt1, to: pt2)
+				editWorld.selectLine(lines.count-1)
+				frame = editWorld.getBounds()
+				setNeedsDisplay(bounds)
+			}
+		}
+		didDragLine = false
+		doomProject.mapDirty = true
+	}
+	
+	
 	
 	// ====================
 	// MARK: - Sector Stuff

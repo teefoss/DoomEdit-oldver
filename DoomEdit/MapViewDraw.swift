@@ -32,7 +32,6 @@ extension MapView: EditWorldDelegate {
 	override func draw(_ dirtyRect: NSRect) {
 		super.draw(dirtyRect)
 		
-		// TODO: Draw objects in the right order
 		drawGrid(in: dirtyRect)
 		if currentMode == .thing {
 			drawLines(in: dirtyRect)
@@ -180,78 +179,6 @@ extension MapView: EditWorldDelegate {
 		
 	}
 
-	/*
-	func drawLines(in rect: NSRect) {
-		
-		let offset: CGFloat = 0.5
-		var xc = 0; var yc = 0
-		var clippoint: [Int] = Array(repeating: 0, count: points.count)
-		
-		let left = rect.origin.x-1
-		let bottom = rect.origin.y-1
-		let right = rect.origin.x + rect.size.width+2
-		let top = rect.origin.y + rect.size.height+2
-		
-		for p in 0..<points.count {
-			if points[p].selected == -1 {
-				continue
-			}
-			
-			if points[p].coord.x < left {
-				xc = 0
-			} else if points[p].coord.x > right {
-				xc = 2
-			} else {
-				xc = 1
-			}
-			
-			if points[p].coord.y < bottom {
-				yc = 0
-			} else if points[p].coord.y > top {
-				yc = 2
-			} else {
-				yc = 1
-			}
-			clippoint[p] = yc*3+xc
-		}
-		
-		// only draw lines that might intersect the visible rect
-		
-		for line in lines {
-			if line.selected == -1 {
-				continue
-			}
-			if !lineCross[clippoint[line.pt1]][clippoint[line.pt2]] {
-				continue
-			}
-			
-			if line.selected > 0 {
-				NSColor.red.set()
-			} else {
-				line.color.set()
-			}
-			
-			if points[line.pt1].coord.x != points[line.pt2].coord.x ||
-				points[line.pt1].coord.y != points[line.pt2].coord.y
-			{
-				let pt1 = convert(NSPoint(x: points[line.pt1].coord.x-offset, y: points[line.pt1].coord.y-offset), from: superview)
-				let pt2 = convert(NSPoint(x: points[line.pt2].coord.x-offset, y: points[line.pt2].coord.y-offset), from: superview)
-				let midPt = convert(line.midpoint, from: superview)
-				let normPt = convert(line.normal, from: superview)
-				let midPtx = midPt.x - offset
-				let midPty = midPt.y - offset
-				let newMidPt = NSPoint(x: midPtx, y: midPty)
-				let normPtx = normPt.x - offset
-				let normPty = normPt.y - offset
-				let newNormPt = NSPoint(x: normPtx, y: normPty)
-
-				NSBezierPath.defaultLineWidth = LINE_WIDTH
-				NSBezierPath.strokeLine(from: pt1, to: pt2)			// line
-				NSBezierPath.strokeLine(from: newMidPt, to: newNormPt)	// line normal 'tick'
-			}
-		}
-	}
-	*/
 	///  Draw all world lines
 	private func drawLines(in rect: NSRect) {
 				
@@ -334,7 +261,7 @@ extension MapView: EditWorldDelegate {
 			
 			if currentMode == .thing {
 				NSColor.black.setStroke()
-				var origin = convert(thing.origin, from: superview)
+				let origin = convert(thing.origin, from: superview)
 				let originx = Int(origin.x)-(thing.def.size/2)
 				let originy = Int(origin.y)-(thing.def.size/2)
 				NSBezierPath.stroke(NSRect(x: originx, y: originy, width: thing.def.size, height: thing.def.size))
@@ -342,74 +269,6 @@ extension MapView: EditWorldDelegate {
 		}
 	}
 
-	func strokeEasyMarker(_ thing: Thing, relativeTo rect: NSRect) {
-		
-		if thing.options & SKILL_EASY != 0 {
-			let p1 = NSPoint(x: rect.minX+3+DRAWOFFSET, y: rect.minY+8+DRAWOFFSET)
-			let p2 = NSPoint(x: rect.minX+3+DRAWOFFSET, y: rect.maxY-8-DRAWOFFSET)
-			NSBezierPath.strokeLine(from: p1, to: p2)
-		}
-	}
-
-	func strokeMediumMarker(_ thing: Thing, relativeTo rect: NSRect) {
-
-		if thing.options & SKILL_NORMAL != 0 {
-			let p1 = NSPoint(x: rect.minX+8+DRAWOFFSET, y: rect.maxY-3-DRAWOFFSET)
-			let p2 = NSPoint(x: rect.maxX-8-DRAWOFFSET, y: rect.maxY-3-DRAWOFFSET)
-			NSBezierPath.strokeLine(from: p1, to: p2)
-		}
-	}
-	
-	func strokeHardMarker(_ thing: Thing, relativeTo rect: NSRect) {
-		
-		if thing.options & SKILL_HARD != 0 {
-			let p1 = NSPoint(x: rect.maxX-3-DRAWOFFSET, y: rect.minY+8+DRAWOFFSET)
-			let p2 = NSPoint(x: rect.maxX-3-DRAWOFFSET, y: rect.maxY-8-DRAWOFFSET)
-			NSBezierPath.strokeLine(from: p1, to: p2)
-		}
-	}
-
-	func strokeNetworkMarker(_ thing: Thing, relativeTo rect: NSRect) {
-		
-		if thing.options & NETWORK != 0 {
-			let p1 = NSPoint(x: rect.minX+8+DRAWOFFSET, y: rect.minY+3+DRAWOFFSET)
-			let p2 = NSPoint(x: rect.maxX-8-DRAWOFFSET, y: rect.minY+3+DRAWOFFSET)
-			NSBezierPath.strokeLine(from: p1, to: p2)
-		}
-	}
-	
-	func strokeAmbushMarker(_ thing: Thing, relativeTo rect: NSRect) {
-		
-		if thing.options & AMBUSH != 0 {
-			
-			var path = NSBezierPath()
-			let ul1 = NSPoint(x: rect.minX+3+DRAWOFFSET, y: rect.maxY-6-DRAWOFFSET)
-			let ul2 = NSPoint(x: rect.minX+3+DRAWOFFSET, y: rect.maxY-3-DRAWOFFSET)
-			let ul3 = NSPoint(x: rect.minX+6+DRAWOFFSET, y: rect.maxY-3-DRAWOFFSET)
-			path.move(to: ul1); path.line(to: ul2); path.line(to: ul3)
-			path.stroke()
-			
-			let ur1 = NSPoint(x: rect.maxX-6-DRAWOFFSET, y: rect.maxY-3-DRAWOFFSET)
-			let ur2 = NSPoint(x: rect.maxX-3-DRAWOFFSET, y: rect.maxY-3-DRAWOFFSET)
-			let ur3 = NSPoint(x: rect.maxX-3-DRAWOFFSET, y: rect.maxY-6-DRAWOFFSET)
-			path.move(to: ur1); path.line(to: ur2); path.line(to: ur3)
-			path.stroke()
-
-			let lr1 = NSPoint(x: rect.maxX-6-DRAWOFFSET, y: rect.minY+3+DRAWOFFSET)
-			let lr2 = NSPoint(x: rect.maxX-3-DRAWOFFSET, y: rect.minY+3+DRAWOFFSET)
-			let lr3 = NSPoint(x: rect.maxX-3-DRAWOFFSET, y: rect.minY+6+DRAWOFFSET)
-			path.move(to: lr1); path.line(to: lr2); path.line(to: lr3)
-			path.stroke()
-			
-			let ll1 = NSPoint(x: rect.minX+6+DRAWOFFSET, y: rect.minY+3+DRAWOFFSET)
-			let ll2 = NSPoint(x: rect.minX+3+DRAWOFFSET, y: rect.minY+3+DRAWOFFSET)
-			let ll3 = NSPoint(x: rect.minX+3+DRAWOFFSET, y: rect.minY+6+DRAWOFFSET)
-			path.move(to: ll1); path.line(to: ll2); path.line(to: ll3)
-			path.stroke()
-		}
-	}
-
-	
 	///  Draw all world points
 	private func drawPoints(in rect: NSRect) {
 		
@@ -424,7 +283,6 @@ extension MapView: EditWorldDelegate {
 			origin.x -= 3.0
 			origin.y -= 3.0
 			
-			//let offset: CGFloat = 0//2.5
 			let size = NSSize(width: 4, height: 4)
 			let rect = NSRect(x: origin.x, y: origin.y, width: size.width, height: size.height)
 
@@ -438,6 +296,12 @@ extension MapView: EditWorldDelegate {
 		}
 	}
 	
+	
+	// =================================
+	// MARK: - Thing Property Indicators
+	// =================================
+	
+	/// Arrow indicating thing direction. Only on things where it matters
 	func thingArrow(in thingRect: NSRect, direction: Int) -> NSBezierPath {
 		var path = NSBezierPath()
 		let midx = thingRect.midX
@@ -481,72 +345,84 @@ extension MapView: EditWorldDelegate {
 		return path
 	}
 	
+	/// Set up the path for the arrow to be drawn
 	func makeArrowPath(_ path: inout NSBezierPath, p1: NSPoint, p2: NSPoint, p3: NSPoint, p4: NSPoint) {
-		path.move(to: p1)
-		path.line(to: p2)
-		path.line(to: p3)
-		path.move(to: p4)
-		path.line(to: p2)
+		path.move(to: p1); path.line(to: p2); path.line(to: p3); path.move(to: p4); path.line(to: p2)
 		path.lineJoinStyle = .roundLineJoinStyle
 		path.lineWidth = 2.0
 	}
 	
-	// =====================
-	// MARK: - Line Drawing
-	// =====================
-	
-	func drawLine_LMDown(with event: NSEvent) {
-		// TODO: Move all this out into a function
-		// TODO: Draw the 'tick' mark while adding a line
+	/// Make left side indicator - Present if thing is flagged EASY
+	func strokeEasyMarker(_ thing: Thing, relativeTo rect: NSRect) {
 		
-		// animated drawing is done in view coord system
-		editWorld.deselectAll()
-		self.startPoint = getViewGridPoint(from: event.locationInWindow)
-		shapeLayer = CAShapeLayer()
-		shapeLayer.lineWidth = 1.0
-		shapeLayer.fillColor = NSColor.clear.cgColor
-		shapeLayer.strokeColor = NSColor.black.cgColor
-		layer?.addSublayer(shapeLayer)
-		shapeLayerIndex = layer?.sublayers?.index(of: shapeLayer)
-	}
-	
-	func drawLine_LMDragged(with event: NSEvent) {
-		didDragLine = true
-		needsDisplay = false		// don't redraw everything while adding a line (???)
-		endPoint = getViewGridPoint(from: event.locationInWindow)
-		let path = CGMutablePath()
-		path.move(to: self.startPoint)
-		path.addLine(to: endPoint)
-		self.shapeLayer.path = path
-	}
-	
-	func drawLine_LMUp() {
-		
-		var line = Line()
-		line.side[0] = lines.last?.side[0]
-
-		layer?.sublayers?.remove(at: shapeLayerIndex)
-		
-		// convert startPoint to world coord
-		let pt1 = convert(startPoint, to: superview)
-		
-		if let endPoint = endPoint {
-			// convert endPoint to world coord
-			let pt2 = convert(endPoint, to: superview)
-			// if line didn't end where it started
-			if pt1.x == pt2.x && pt1.y == pt2.y {
-				return
-			} else {
-				editWorld.newLine(line: &line, from: pt1, to: pt2)
-				editWorld.selectLine(lines.count-1)
-				frame = editWorld.getBounds()
-				setNeedsDisplay(bounds)
-			}
+		if thing.options & SKILL_EASY != 0 {
+			let p1 = NSPoint(x: rect.minX+3+DRAWOFFSET, y: rect.minY+8+DRAWOFFSET)
+			let p2 = NSPoint(x: rect.minX+3+DRAWOFFSET, y: rect.maxY-8-DRAWOFFSET)
+			NSBezierPath.strokeLine(from: p1, to: p2)
 		}
-		didDragLine = false
-		doomProject.mapDirty = true
+	}
+
+	/// Make top indicator - Present if thing is flagged MEDIUM
+	func strokeMediumMarker(_ thing: Thing, relativeTo rect: NSRect) {
+		
+		if thing.options & SKILL_NORMAL != 0 {
+			let p1 = NSPoint(x: rect.minX+8+DRAWOFFSET, y: rect.maxY-3-DRAWOFFSET)
+			let p2 = NSPoint(x: rect.maxX-8-DRAWOFFSET, y: rect.maxY-3-DRAWOFFSET)
+			NSBezierPath.strokeLine(from: p1, to: p2)
+		}
 	}
 	
+	/// Make right side indicator - Present if thing is flagged HARD
+	func strokeHardMarker(_ thing: Thing, relativeTo rect: NSRect) {
+		
+		if thing.options & SKILL_HARD != 0 {
+			let p1 = NSPoint(x: rect.maxX-3-DRAWOFFSET, y: rect.minY+8+DRAWOFFSET)
+			let p2 = NSPoint(x: rect.maxX-3-DRAWOFFSET, y: rect.maxY-8-DRAWOFFSET)
+			NSBezierPath.strokeLine(from: p1, to: p2)
+		}
+	}
+	
+	/// Make lower indicator - Present if thing is flagged NETWORK
+	func strokeNetworkMarker(_ thing: Thing, relativeTo rect: NSRect) {
+		
+		if thing.options & NETWORK != 0 {
+			let p1 = NSPoint(x: rect.minX+8+DRAWOFFSET, y: rect.minY+3+DRAWOFFSET)
+			let p2 = NSPoint(x: rect.maxX-8-DRAWOFFSET, y: rect.minY+3+DRAWOFFSET)
+			NSBezierPath.strokeLine(from: p1, to: p2)
+		}
+	}
+	
+	/// Make 4 corners indicators - Present if thing is flagged AMBUSH
+	func strokeAmbushMarker(_ thing: Thing, relativeTo rect: NSRect) {
+		
+		if thing.options & AMBUSH != 0 {
+			
+			var path = NSBezierPath()
+			let ul1 = NSPoint(x: rect.minX+3+DRAWOFFSET, y: rect.maxY-6-DRAWOFFSET)
+			let ul2 = NSPoint(x: rect.minX+3+DRAWOFFSET, y: rect.maxY-3-DRAWOFFSET)
+			let ul3 = NSPoint(x: rect.minX+6+DRAWOFFSET, y: rect.maxY-3-DRAWOFFSET)
+			path.move(to: ul1); path.line(to: ul2); path.line(to: ul3)
+			path.stroke()
+			
+			let ur1 = NSPoint(x: rect.maxX-6-DRAWOFFSET, y: rect.maxY-3-DRAWOFFSET)
+			let ur2 = NSPoint(x: rect.maxX-3-DRAWOFFSET, y: rect.maxY-3-DRAWOFFSET)
+			let ur3 = NSPoint(x: rect.maxX-3-DRAWOFFSET, y: rect.maxY-6-DRAWOFFSET)
+			path.move(to: ur1); path.line(to: ur2); path.line(to: ur3)
+			path.stroke()
+			
+			let lr1 = NSPoint(x: rect.maxX-6-DRAWOFFSET, y: rect.minY+3+DRAWOFFSET)
+			let lr2 = NSPoint(x: rect.maxX-3-DRAWOFFSET, y: rect.minY+3+DRAWOFFSET)
+			let lr3 = NSPoint(x: rect.maxX-3-DRAWOFFSET, y: rect.minY+6+DRAWOFFSET)
+			path.move(to: lr1); path.line(to: lr2); path.line(to: lr3)
+			path.stroke()
+			
+			let ll1 = NSPoint(x: rect.minX+6+DRAWOFFSET, y: rect.minY+3+DRAWOFFSET)
+			let ll2 = NSPoint(x: rect.minX+3+DRAWOFFSET, y: rect.minY+3+DRAWOFFSET)
+			let ll3 = NSPoint(x: rect.minX+3+DRAWOFFSET, y: rect.minY+6+DRAWOFFSET)
+			path.move(to: ll1); path.line(to: ll2); path.line(to: ll3)
+			path.stroke()
+		}
+	}
 }
 
 
