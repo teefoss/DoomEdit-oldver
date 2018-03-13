@@ -24,8 +24,8 @@ class MapView: NSView, NSPopoverDelegate {
 	var patchWindow: PatchWindow?
 	
 	var delegate: MapViewDelegate?
-	var trackingArea: NSTrackingArea?
 	
+	var levelInfo: String
 	var gridSize: Int = 8
 	var scale: CGFloat = 1.0
 	
@@ -59,18 +59,18 @@ class MapView: NSView, NSPopoverDelegate {
 		didSet{
 			switch currentMode {
 			case .edit:
-				window?.title = "\(fullFileName) : Edit Mode"
+				window?.title = levelInfo + ": Edit Mode"
 				for view in subviews {
 					view.removeFromSuperview()
 				}
 				showAllLineLabels = false
 			case .draw:
-				window?.title = "\(fullFileName) : Create Mode"
+				window?.title = levelInfo + ": Create Mode"
 			case .line:
-				window?.title = "\(fullFileName) : Line View"
+				window?.title = levelInfo + ": Line View"
 				addLengthLabels()
 			case .thing:
-				window?.title = "\(fullFileName) : Thing View"
+				window?.title = levelInfo + ": Thing View"
 				addThingImages()
 			}
 			needsDisplay = true
@@ -111,11 +111,13 @@ class MapView: NSView, NSPopoverDelegate {
 	// ============
 	
 	override init(frame frameRect: NSRect) {
+
+		levelInfo = "\(doomProject.openMap?.name ?? "") (\(doomProject.openMap?.level ?? "")) "
 		super.init(frame: frameRect)
 				
 		editWorld.delegate = self
 		initLineCross()
-		
+
 		/* image testing
 		let patchwin = PatchWindow()
 		patchwin.showWindow(self)
