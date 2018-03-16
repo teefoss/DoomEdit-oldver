@@ -538,6 +538,8 @@ extension MapView {
 			
 			if lineInRect(x0: &p1.x, y0: &p1.y, x1: &p2.x, y1: &p2.y, rect: selectionBox) {
 				editWorld.selectLine(i)
+				editWorld.selectPoint(lines[i].pt1)
+				editWorld.selectPoint(lines[i].pt2)
 			}
 		}
 		

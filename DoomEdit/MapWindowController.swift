@@ -63,6 +63,7 @@ class MapWindowController: NSWindowController, MapViewDelegate {
 		var origin = NSPoint()
 		origin.x = mapBounds.origin.x + (mapBounds.size.width / 2) - (newSize.width / 2)
 		origin.y = mapBounds.origin.y + (mapBounds.size.height / 2) - (newSize.width / 2)
+		origin = mapView.convert(origin, to: window!.contentView)
 		mapView.setOrigin(for: origin, withScale: 1.0)
 		
 		window?.makeFirstResponder(mapView)

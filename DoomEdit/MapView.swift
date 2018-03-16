@@ -26,8 +26,8 @@ class MapView: NSView, NSPopoverDelegate {
 	var delegate: MapViewDelegate?
 	
 	var levelInfo: String
-	var gridSize: Int = 8
-	var scale: CGFloat = 1.0
+	var gridSize: Int
+	var scale: CGFloat
 	
 	var overlappingPointIndices: [Int] = []
 	
@@ -112,24 +112,31 @@ class MapView: NSView, NSPopoverDelegate {
 	// MARK: - Init
 	// ============
 	
-	override init(frame frameRect: NSRect) {
+	
+	init() {
 
 		levelInfo = "\(doomProject.openMap?.name ?? "") (\(doomProject.openMap?.level ?? "")) "
-		super.init(frame: frameRect)
+		gridSize = 8
+		scale = 1
+
+		let rect = NSRect(x: 0.0, y: 0.0, width: 100, height: 100)
+		super.init(frame: rect)
+
+		if !editWorld.loaded {
+			runAlertPanel(title: "Error", message: "MapView inited with NULL world")
+			return
+		}
 		
 		editWorld.delegate = self
 		initLineCross()
 
-		//convertAllPoints()
-
-//		NotificationCenter.default.addObserver(self, selector: #selector(redrawVisibleRect), name: NSScrollView.didLiveScrollNotification, object: nil)
-		
-		/* image testing
-		let patchwin = PatchWindow()
-		patchwin.showWindow(self)
-		self.patchWindow = patchwin
-		*/
+//		NotificationCenter.default.addObserver(self,
+//											   selector: #selector(redrawVisibleRect),
+//											   name: NSScrollView.didLiveScrollNotification,
+//											   object: nil)
 	}
+	
+
 	
 	@objc func redrawVisibleRect() {
 		print("called")
@@ -327,11 +334,11 @@ class MapView: NSView, NSPopoverDelegate {
 		if newBounds.size.width != bounds.size.width || newBounds.size.height != bounds.size.height
 		{
 			// TODO: Adjust for scale
-			setFrameSize(NSSize(width: newBounds.size.width, height: newBounds.size.height))
+			setBoundsSize(NSSize(width: newBounds.size.width, height: newBounds.size.height))
 		}
 
 		if newBounds.origin.x != bounds.origin.x || newBounds.origin.y != bounds.origin.y {
-			setFrameOrigin(newBounds.origin)
+			setBoundsOrigin(newBounds.origin)
 		}		
 	}
 	

@@ -165,40 +165,32 @@ extension MapView: EditWorldDelegate {
 			context.flush()
 		}
 		
-		func convVert(_ i: Int) -> Int {
-			return i - Int(bounds.origin.y - frame.origin.y)
-		}
-		
-		func convHor(_ i: Int) -> Int {
-			return i - Int(bounds.origin.x - frame.origin.x)
-		}
-
 		NSBezierPath.defaultLineWidth = LINE_WIDTH
 		
 		//draw horizontal lines
 		for i in bottom...top {
-			if convVert(i) % 64 == 0 {
+			if i % 64 == 0 {
 				let current_y = CGFloat(i) - DRAWOFFSET
 				tileColor.set()
-				NSBezierPath.strokeLine(from: CGPoint(x: 0.0, y: current_y), to: CGPoint(x: CGFloat(right), y: current_y))
-			} else if convVert(i) % gridSize == 0 {
+				NSBezierPath.strokeLine(from: CGPoint(x: CGFloat(left), y: current_y), to: CGPoint(x: CGFloat(right), y: current_y))
+			} else if i % gridSize == 0 {
 				let current_y = CGFloat(i) - DRAWOFFSET
 				gridColor.set()
-				NSBezierPath.strokeLine(from: CGPoint(x: 0.0, y: current_y), to: CGPoint(x: CGFloat(right), y: current_y))
+				NSBezierPath.strokeLine(from: CGPoint(x: CGFloat(left), y: current_y), to: CGPoint(x: CGFloat(right), y: current_y))
 			}
 		}
 		
 		//draw verticle lines
 		
 		for i in left...right {
-			if convHor(i) % 64 == 0 {
+			if i % 64 == 0 {
 				let current_x = CGFloat(i) - DRAWOFFSET
 				tileColor.set()
-				NSBezierPath.strokeLine(from: CGPoint(x: current_x, y: 0), to: CGPoint(x: current_x, y: CGFloat(top)))
-			} else if convHor(i) % gridSize == 0 {
+				NSBezierPath.strokeLine(from: CGPoint(x: current_x, y: CGFloat(bottom)), to: CGPoint(x: current_x, y: CGFloat(top)))
+			} else if i % gridSize == 0 {
 				let current_x = CGFloat(i) - DRAWOFFSET
 				gridColor.set()
-				NSBezierPath.strokeLine(from: CGPoint(x: current_x, y: 0), to: CGPoint(x: current_x, y: CGFloat(top)))
+				NSBezierPath.strokeLine(from: CGPoint(x: current_x, y: CGFloat(bottom)), to: CGPoint(x: current_x, y: CGFloat(top)))
 			}
 		}
 		
@@ -221,15 +213,15 @@ extension MapView: EditWorldDelegate {
 			
 			// drawing will be in view coord, i.e. origin = (0, 0)...
 			// so convert from superview coord system  (same as world coord)
-			var p1 = convert(points[line.pt1].coord, from: superview)
-			var p2 = convert(points[line.pt2].coord, from: superview)
-			var midPt = convert(line.midpoint, from: superview)
-			var normPt = convert(line.normal, from: superview)
+//			var p1 = convert(points[line.pt1].coord, from: superview)
+//			var p2 = convert(points[line.pt2].coord, from: superview)
+//			var midPt = convert(line.midpoint, from: superview)
+//			var normPt = convert(line.normal, from: superview)
 
-//			var p1 = points[line.pt1].coord
-//			var p2 = points[line.pt2].coord
-//			var midPt = line.midpoint
-//			var normPt = line.normal
+			var p1 = points[line.pt1].coord
+			var p2 = points[line.pt2].coord
+			var midPt = line.midpoint
+			var normPt = line.normal
 
 			p1.x -= DRAWOFFSET
 			p1.y -= DRAWOFFSET
@@ -276,7 +268,8 @@ extension MapView: EditWorldDelegate {
 				continue
 			}
 			
-			var origin = convert(thing.origin, from: superview)
+//			var origin = convert(thing.origin, from: superview)
+			var origin = thing.origin
 			let size = NSSize(width: 32, height: 32)
 			origin.x -= 16
 			origin.y -= 16
@@ -342,7 +335,8 @@ extension MapView: EditWorldDelegate {
 
 		for i in 0..<points.count {
 			let point = points[i]
-			origin = convert(point.coord, from: superview)
+//			origin = convert(point.coord, from: superview)
+			origin = point.coord
 			
 			if point.selected == -1 {
 				continue
