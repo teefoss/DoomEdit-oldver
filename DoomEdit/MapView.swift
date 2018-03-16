@@ -307,7 +307,6 @@ class MapView: NSView, NSPopoverDelegate {
 		scroll(origin)
 	}
 	
-	
 	func adjustFrame(for origin: NSPoint, with scale: CGFloat) {
 		
 		var map = NSRect()
@@ -317,10 +316,8 @@ class MapView: NSView, NSPopoverDelegate {
 			// FIXME: ???
 		}
 		
-//		newBounds = (superview?.bounds)!
 		newBounds = visibleRect
 		newBounds = convert(newBounds, from: superview)
-//		newBounds.origin = convert(origin, from: superview)
 		newBounds.origin = origin
 
 		map = editWorld.getBounds()
