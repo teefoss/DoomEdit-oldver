@@ -194,8 +194,7 @@ extension MapView {
 	
 	override func mouseUp(with event: NSEvent) {
 		
-		needsDisplay = true
-		
+		print("this is called!")
 		switch currentMode {
 		case .edit, .line:
 			print("To do")
@@ -207,7 +206,26 @@ extension MapView {
 		case .thing:
 			return
 		}
+		setNeedsDisplay(visibleRect)
+		displayIfNeeded()
 	}
+
+	/// Check if there are any overlapping points
+	func checkPoints() {
+		
+		overlappingPointIndices = []
+		
+		for i in 0..<points.count-1 {
+			for j in i+1..<points.count {
+				if points[i].coord.x == points[j].coord.x && points[i].coord.y == points[j].coord.y {
+					overlappingPointIndices.append(i)
+				}
+			}
+		}
+		setNeedsDisplay(visibleRect)
+		displayIfNeeded()
+	}
+
 	
 	override func rightMouseDown(with event: NSEvent) {
 		
@@ -247,6 +265,7 @@ extension MapView {
 				selectedSides = []
 				didClickSector = false
 				setNeedsDisplay(self.bounds)
+				displayIfNeeded()
 			} else {
 				let clickpoint = worldCoord(for: event.locationInWindow)
 				blockWorld.floodFillSector(from: clickpoint)
@@ -254,6 +273,7 @@ extension MapView {
 				selectedSides = []
 				didClickSector = false
 				setNeedsDisplay(self.bounds)
+				displayIfNeeded()
 			}
 		}
 		editWorld.updateWindows()
@@ -283,10 +303,10 @@ extension MapView {
 		
 		// TODO: adjust this after zooming fixed
 		// set up a box around the click point
-		left = clickPoint.x - POINT_SIZE/scale/CGFloat(2)
-		right = clickPoint.x + POINT_SIZE/scale/CGFloat(2)
-		bottom = clickPoint.y - POINT_SIZE/scale/CGFloat(2)
-		top = clickPoint.y + POINT_SIZE/scale/CGFloat(2)
+		left = clickPoint.x - POINT_SELECT_SIZE/scale/CGFloat(2)
+		right = clickPoint.x + POINT_SELECT_SIZE/scale/CGFloat(2)
+		bottom = clickPoint.y - POINT_SELECT_SIZE/scale/CGFloat(2)
+		top = clickPoint.y + POINT_SELECT_SIZE/scale/CGFloat(2)
 		
 		for i in 0..<points.count {
 			pt = points[i]
@@ -304,35 +324,22 @@ extension MapView {
 		// clicked a point
 		if pointIndex >= 0 && pointIndex < points.count {
 			
-			// if the point is already selected
 			if points[pointIndex].selected == 1 {
-				if !event.modifierFlags.contains(.shift) {
-					if shouldDrag {
-						dragObjects(with: event)
-					}
-					return
-				} else {
+				if event.modifierFlags.contains(.shift) {
 					editWorld.deselectPoint(pointIndex)
 					return
 				}
-				// point is not already selected
 			} else {
-				// shift is not being held
 				if !event.modifierFlags.contains(.shift) {
 					editWorld.deselectAll()
-					editWorld.selectPoint(pointIndex)
-					if shouldDrag {
-						dragObjects(with: event)
-					}
-					return
-				} else {
-					editWorld.selectPoint(pointIndex)
-					if shouldDrag {
-						dragObjects(with: event)
-					}
-					return
 				}
+				editWorld.selectPoint(pointIndex)
 			}
+			editWorld.updateWindows()
+			if shouldDrag {
+				dragObjects(with: event)
+			}
+			return
 		}
 		
 		//
@@ -356,7 +363,6 @@ extension MapView {
 				continue
 			}
 			
-			
 			let layer = CAShapeLayer()
 			layer.lineWidth = 32.0
 			let path = CGMutablePath()
@@ -368,57 +374,40 @@ extension MapView {
 			
 			// Clicked on a line
 			if newPath.contains(clickPoint) {
-				// line is already selected
-				if lines[i].selected > 0 {
-					if !event.modifierFlags.contains(.shift) {
-						if shouldDrag {
-							dragObjects(with: event)
-						}
-						didClickLine = true
-						selectedLineIndex = i
-						return
-					} else {
-						editWorld.deselectLine(i)
-						return
-					}
-					// line is not already selected
-				} else {
-					// shift if not held
-					if !event.modifierFlags.contains(.shift) {
-						editWorld.deselectAll()
-						editWorld.selectLine(i)
-						if shouldDrag {
-							dragObjects(with: event)
-						}
-						didClickLine = true
-						selectedLineIndex = i
-						return
-						// shift is held
-					} else {
-						editWorld.selectLine(i)
-						if shouldDrag {
-							dragObjects(with: event)
-						}
-						didClickLine = true
-						selectedLineIndex = i
-						return
-					}
+				
+				if !event.modifierFlags.contains(.shift) && lines[i].selected != 1 {
+					editWorld.deselectAll()
 				}
+				
+				if event.modifierFlags.contains(.shift) && lines[i].selected == 1 {
+					editWorld.deselectLine(i)
+					return
+				}
+				
+				editWorld.selectLine(i)
+				didClickLine = true
+				selectedLineIndex = i
+				
+				editWorld.selectPoint(lines[i].pt1)
+				editWorld.selectPoint(lines[i].pt2)
+				
+				editWorld.updateWindows()
+				if shouldDrag { dragObjects(with: event) }
+				return
 			}
-			
 		}
 		
 		
 		//
 		// didn't hit a line, check for a thing
 		//
+		
+		// If in line mode, things shouldn't be clickable so just skip to selection box dragging
 		if currentMode == .line {
 			if !event.modifierFlags.contains(.shift) {
 				editWorld.deselectAll()
 			}
-			if shouldDrag {
-				dragSelectionBox(event)
-			}
+			if shouldDrag { dragSelectionBox(event) }
 			return
 		}
 		
@@ -427,10 +416,9 @@ extension MapView {
 		bottom = clickPoint.y - CGFloat(THING_DRAW_SIZE/2)
 		top = clickPoint.y +  CGFloat(THING_DRAW_SIZE/2)
 		
+		// check if origin is inside click radius
 		for i in 0..<things.count {
-			
 			let thing = things[i]
-			
 			if thing.selected == -1 {
 				continue
 			}
@@ -443,50 +431,28 @@ extension MapView {
 		
 		if thingIndex >= 0 && thingIndex < things.count {
 			
-			// Thing is already selected
-			if things[thingIndex].selected == 1 {
-				if !event.modifierFlags.contains(.shift) {
-					if shouldDrag {
-						dragObjects(with: event)
-					}
-					didClickThing = true
-					selectedThing = things[thingIndex]
-					selectedThingIndex = thingIndex
-					return
-				} else {
-					editWorld.deselectThing(thingIndex)
-					return
-				}
-				// Thing is not already selected
-			} else if things[thingIndex].selected == 0 {
-				if !event.modifierFlags.contains(.shift) {
-					editWorld.deselectAll()
-					editWorld.selectThing(thingIndex)
-					if shouldDrag {
-						dragObjects(with: event)
-					}
-					didClickThing = true
-					selectedThing = things[thingIndex]
-					selectedThingIndex = thingIndex
-					print(things[thingIndex].type)
-					
-					return
-				} else {
-					editWorld.selectThing(thingIndex)
-					if shouldDrag {
-						dragObjects(with: event)
-					}
-					didClickThing = true
-					selectedThing = things[thingIndex]
-					selectedThingIndex = thingIndex
-					return
-				}
+			if !event.modifierFlags.contains(.shift) && things[thingIndex].selected != 1 {
+				editWorld.deselectAll()
 			}
+			
+			if event.modifierFlags.contains(.shift) && things[thingIndex].selected == 1 {
+				editWorld.deselectThing(thingIndex)
+				return
+			}
+			
+			editWorld.selectThing(thingIndex)
+			didClickThing = true
+			selectedThing = things[thingIndex]
+			selectedThingIndex = thingIndex
+			
+			if shouldDrag { dragObjects(with: event) }
+			return
 		}
 		
 		//
 		//  Hit nothing, drag a selection box & get the sector def
 		//
+		didClickLine = false; didClickThing = false
 		if !event.modifierFlags.contains(.shift) {
 			editWorld.deselectAll()
 			didClickSector = true
@@ -685,14 +651,13 @@ extension MapView {
 		moved = cursor
 		totalMoved = cursor
 		var theEvent: NSEvent?
-		
+
 		repeat {
 			
 			theEvent = window?.nextEvent(matching: NSEvent.EventTypeMask.leftMouseDragged.union(.leftMouseUp))
 			if theEvent?.type == .leftMouseUp {
 				break
 			}
-			
 			// calculate new rectangle
 			cursor = getWorldGridPoint(from: (theEvent?.locationInWindow)!) // handle grid and such
 			
@@ -710,12 +675,38 @@ extension MapView {
 				moved.x = cursor.x - moved.x
 				moved.y = cursor.y - moved.y
 				
+				/*
+				let ptr = UnsafeMutablePointer<Point>.allocate(capacity: points.count)
+				defer { ptr.deallocate(capacity: points.count) }
+				let points_p = UnsafeMutableBufferPointer(start: ptr, count: points.count)
+				
+				for (i, _) in points_p.enumerated() {
+					if points_p[i].selected == 1 {
+						points_p[i].coord.x += moved.x
+						points_p[i].coord.y += moved.y
+					}
+				}
+
+				let ptr2 = UnsafeMutablePointer<Thing>.allocate(capacity: things.count)
+				defer { ptr2.deallocate(capacity: things.count) }
+				let things_p = UnsafeMutableBufferPointer(start: ptr2, count: things.count)
+				
+				for (i, _) in things_p.enumerated() {
+					if things_p[i].selected == 1 {
+						things_p[i].origin.x += moved.x
+						things_p[i].origin.y += moved.y
+					}
+				}
+				*/
+
+				
 				for i in 0..<points.count {
 					if points[i].selected == 1 {
 						points[i].coord.x += moved.x
 						points[i].coord.y += moved.y
 					}
 				}
+
 				
 				for i in 0..<things.count {
 					if things[i].selected == 1 {
@@ -723,6 +714,19 @@ extension MapView {
 						things[i].origin.y += moved.y
 					}
 				}
+				
+				
+				/*
+				for index in pointList {
+					points[index].coord.x += moved.x
+					points[index].coord.y += moved.y
+				}
+				
+				for index in thingList {
+					things[index].origin.x += moved.x
+					things[index].origin.y += moved.y
+				}
+				*/
 				
 				if moved.x != 0 || moved.y != 0 {
 					print("dirty map")
@@ -748,22 +752,18 @@ extension MapView {
 			var viewUpdateRect = convert(updateRect, from: superview)
 			
 			// extend to include any line normals and point edges
-			viewUpdateRect.origin.x -= CGFloat(LINE_NORMAL_LENGTH+1)
-			viewUpdateRect.origin.y -= CGFloat(LINE_NORMAL_LENGTH+1)
-			viewUpdateRect.size.width += CGFloat(LINE_NORMAL_LENGTH*2+1)
-			viewUpdateRect.size.height += CGFloat(LINE_NORMAL_LENGTH*2+1)
+//			viewUpdateRect.origin.x -= CGFloat(LINE_NORMAL_LENGTH+1)
+//			viewUpdateRect.origin.y -= CGFloat(LINE_NORMAL_LENGTH+1)
+//			viewUpdateRect.size.width += CGFloat(LINE_NORMAL_LENGTH*2+1)
+//			viewUpdateRect.size.height += CGFloat(LINE_NORMAL_LENGTH*2+1)
 
-			var testingRect = viewUpdateRect
-			testingRect.origin.x += 1
-			testingRect.origin.y += 1
-			testingRect.size.width -= 2
-			testingRect.size.height -= 2
-			self.testingRect = testingRect
+			self.testingRect = updateRect
 			
-			print(viewUpdateRect)
-			setNeedsDisplay(viewUpdateRect)
+			displayDirty(dirtyrect: viewUpdateRect)
 			
 		} while true
+		
+		checkPoints() // check for overlapping points after dragging
 		
 		// tell the world about the changes
 		// the points have to be set back to their original positions before sending
@@ -853,6 +853,7 @@ extension MapView {
 		var updateRect = NSRect()
 		makeRect(&updateRect, with: pt1, and: pt2)
 		setNeedsDisplay(bounds)
+		displayIfNeeded()
 		
 
 		doomProject.mapDirty = true

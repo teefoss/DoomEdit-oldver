@@ -23,6 +23,7 @@ class MapWindowController: NSWindowController, MapViewDelegate {
 	var delegate: NSWindowDelegate?
 	var oldScreenOrigin = NSPoint()
 	var preResizeOrigin = NSPoint()
+	let newSize = NSSize(width: 640.0, height: 640.0)
 	
 	@IBOutlet weak var scrollView: NSScrollView!
 	@IBOutlet weak var clipView: NSClipView!
@@ -47,21 +48,23 @@ class MapWindowController: NSWindowController, MapViewDelegate {
 		
 		positionWindowTopLeft(leftOffset: 50, topOffset: 50)
 		delegate = self
+
 		
-		// Load world and set up the map view
-		//editWorld.loadWorldFile()
 		mapView.delegate = self
 		mapView.frame = editWorld.getBounds()
 		
 		// Set up the scroll view
 		scrollView.documentView = mapView
 		scrollView.allowsMagnification = true
+		scrollView.autoresizingMask = [.width, .height]
+		
 		// FIXME: scroll to center of map on load
-		let centerx = scrollView.documentVisibleRect.maxX / 2
-		let centery = scrollView.documentVisibleRect.maxY / 2
-		let center = NSPoint(x: centerx, y: centery)
-		scrollView.scroll(clipView, to: center)
-		zoom(to: center, with: 1.0)
+		let mapBounds = editWorld.getBounds()
+		var origin = NSPoint()
+		origin.x = mapBounds.origin.x + (mapBounds.size.width / 2) - (newSize.width / 2)
+		origin.y = mapBounds.origin.y + (mapBounds.size.height / 2) - (newSize.width / 2)
+		mapView.setOrigin(for: origin, withScale: 1.0)
+		
 		window?.makeFirstResponder(mapView)
     }
 	
@@ -74,6 +77,7 @@ class MapWindowController: NSWindowController, MapViewDelegate {
 		print("mapView.setneedsdisplay called")
 		let newRect = mapView.convert(dirtyrect, from: self.window?.contentView)
 		mapView.setNeedsDisplay(newRect)
+		mapView.displayIfNeeded()
 	}
 }
 
@@ -90,13 +94,10 @@ extension MapWindowController: NSWindowDelegate {
 	/// Note the origin so it can be kept in the same place after resize
 	func windowWillResize(_ sender: NSWindow, to frameSize: NSSize) -> NSSize {
 		
-		if let windowFrame = window?.frame {
-			let wFrameConv = window?.convertToScreen(windowFrame)
-			if let origin = wFrameConv?.origin {
-				self.oldScreenOrigin = origin
-				preResizeOrigin = mapView.currentOrigin()
-			}
-		}
+		oldScreenOrigin = NSPoint.zero
+		window!.convertBaseToScreen(&oldScreenOrigin)
+		preResizeOrigin = mapView.currentOrigin()
+		
 		return frameSize
 	}
 	
@@ -105,18 +106,13 @@ extension MapWindowController: NSWindowDelegate {
 		
 		let scale = mapView.scale
 		var newScreenOrigin = NSPoint.zero
+		window!.convertBaseToScreen(&newScreenOrigin)
 		
-		if let wframe = window?.frame {
-			if let wframeConv = window?.convertToScreen(wframe) {
-				newScreenOrigin = wframeConv.origin
-			}
-		}
-		
-		preResizeOrigin.x += (newScreenOrigin.x - oldScreenOrigin.x) / CGFloat(scale)
-		preResizeOrigin.y += (newScreenOrigin.y - oldScreenOrigin.y) / CGFloat(scale)
-		
+		preResizeOrigin.x += (newScreenOrigin.x - oldScreenOrigin.x)// / CGFloat(scale)
+		preResizeOrigin.y += (newScreenOrigin.y - oldScreenOrigin.y)// / CGFloat(scale)
 		mapView.setOrigin(for: preResizeOrigin)
 	}
+	
 	
 	// FIXME: Put everything in editworld save/close and just call from here
 	func windowWillClose(_ notification: Notification) {

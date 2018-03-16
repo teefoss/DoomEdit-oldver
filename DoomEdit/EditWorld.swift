@@ -19,6 +19,8 @@ var points: [Point] = []
 var lines: [Line] = []
 var things: [Thing] = []
 
+var convertedPoints: [Point] = []
+
 struct CopyLine {
 	var line = Line()
 	var p1 = NSPoint()
@@ -92,6 +94,10 @@ class EditWorld {
 		let dx = p2.x - p1.x
 		let dy = p2.y - p1.y
 		let length = sqrt(dx*dx + dy*dy)/CGFloat(LINE_NORMAL_LENGTH)
+		
+		if length == 0 {
+			return
+		}
 
 		lines[num].midpoint.x = p1.x + dx/2
 		lines[num].midpoint.y = p1.y + dy/2
@@ -334,6 +340,7 @@ class EditWorld {
 		}
 		data.selected = 1
 		changePoint(num, to: data)
+		
 	}
 	
 	func deselectPoint(_ num: Int) {
@@ -387,12 +394,9 @@ class EditWorld {
 		changeLine(num, to: &data)
 //		points[lines[num].pt1].selected = 1
 //		points[lines[num].pt2].selected = 1
-		selectPoint(lines[num].pt1)
-		selectPoint(lines[num].pt2)
+//		selectPoint(lines[num].pt1)
+//		selectPoint(lines[num].pt2)
 		
-		if let ends = data.side[0]?.ends {
-			print(ends)
-		}
 	}
 	
 	func deselectLine(_ num: Int) {
@@ -410,6 +414,8 @@ class EditWorld {
 		}
 		data.selected = 0
 		changeLine(num, to: &data)
+		deselectPoint(lines[num].pt1)
+		deselectPoint(lines[num].pt2)
 	}
 	
 	func deselectAllLines() {

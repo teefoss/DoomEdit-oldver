@@ -29,6 +29,8 @@ class MapView: NSView, NSPopoverDelegate {
 	var gridSize: Int = 8
 	var scale: CGFloat = 1.0
 	
+	var overlappingPointIndices: [Int] = []
+	
 	// dragging objects
 	var testingRect = NSRect()
 	
@@ -114,15 +116,25 @@ class MapView: NSView, NSPopoverDelegate {
 
 		levelInfo = "\(doomProject.openMap?.name ?? "") (\(doomProject.openMap?.level ?? "")) "
 		super.init(frame: frameRect)
-				
+		
 		editWorld.delegate = self
 		initLineCross()
 
+		//convertAllPoints()
+
+//		NotificationCenter.default.addObserver(self, selector: #selector(redrawVisibleRect), name: NSScrollView.didLiveScrollNotification, object: nil)
+		
 		/* image testing
 		let patchwin = PatchWindow()
 		patchwin.showWindow(self)
 		self.patchWindow = patchwin
 		*/
+	}
+	
+	@objc func redrawVisibleRect() {
+		print("called")
+		//setNeedsDisplay(visibleRect)
+		displayIfNeeded()
 	}
 
 	func initLineCross() {
@@ -199,9 +211,11 @@ class MapView: NSView, NSPopoverDelegate {
 	// ================================
 
 	func displayDirty(dirtyrect: NSRect) {
+		
 		var rect = NSRect()
 		var adjust: CGFloat
 		
+		// TODO: Adjust for zoom
 		adjust = CGFloat(POINT_DRAW_SIZE)
 		if adjust <= CGFloat(LINE_NORMAL_LENGTH) {
 			adjust = CGFloat(LINE_NORMAL_LENGTH)+1
@@ -213,9 +227,8 @@ class MapView: NSView, NSPopoverDelegate {
 		rect.size.height = dirtyrect.size.height + adjust*2
 		
 		NSIntegralRect(rect)
-		//displayTestingRect(rect)
 		
-		self.display(rect)
+		display(rect)
 	}
 	
 	///  Convert a point to the world coordinate system
@@ -277,15 +290,21 @@ class MapView: NSView, NSPopoverDelegate {
 	
 	/**  Returns the current origin of the visible rect in world coordinates  */
 	func currentOrigin() -> NSPoint {
-		return worldCoord(for: visibleRect.origin)
+		//return worldCoord(for: visibleRect.origin)
+		var global = NSRect()
+		global = (superview?.bounds)!
+		global.origin = convert(global.origin, from: superview)
+		
+		return global.origin
 	}
 	
 	func setOrigin(for origin: NSPoint) {
-		setOrigin(for: origin, with: scale)
+		setOrigin(for: origin, withScale: self.scale)
 	}
 	
-	func setOrigin(for origin: NSPoint, with scale: CGFloat) {
+	func setOrigin(for origin: NSPoint, withScale scale: CGFloat) {
 		adjustFrame(for: origin, with: scale)
+		scroll(origin)
 	}
 	
 	
@@ -298,16 +317,20 @@ class MapView: NSView, NSPopoverDelegate {
 			// FIXME: ???
 		}
 		
-		newBounds = (superview?.bounds)!
+//		newBounds = (superview?.bounds)!
+		newBounds = visibleRect
 		newBounds = convert(newBounds, from: superview)
-		newBounds.origin = convert(origin, from: superview)
-		
+//		newBounds.origin = convert(origin, from: superview)
+		newBounds.origin = origin
+
 		map = editWorld.getBounds()
 		
 		newBounds = NSUnionRect(map, newBounds)
 		
-		if newBounds.size.width != bounds.size.width || newBounds.size.height != bounds.size.height {
-			setFrameSize(NSSize(width: newBounds.size.width*CGFloat(scale), height: newBounds.size.height*CGFloat(scale)))
+		if newBounds.size.width != bounds.size.width || newBounds.size.height != bounds.size.height
+		{
+			// TODO: Adjust for scale
+			setFrameSize(NSSize(width: newBounds.size.width, height: newBounds.size.height))
 		}
 
 		if newBounds.origin.x != bounds.origin.x || newBounds.origin.y != bounds.origin.y {

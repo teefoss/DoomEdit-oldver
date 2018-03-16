@@ -14,7 +14,7 @@ let fileExt = "dwd"
 let fullFileName = fileName + "." + fileExt
 
 // Visual Sizes
-let POINT_SIZE: CGFloat = 14
+let POINT_SELECT_SIZE: CGFloat = 14 // Area around point for detecting click
 let POINT_DRAW_SIZE = 4
 let THING_DRAW_SIZE = 32
 let LINE_WIDTH: CGFloat = 1.0

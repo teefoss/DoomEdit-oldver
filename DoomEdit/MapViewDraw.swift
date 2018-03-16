@@ -26,13 +26,20 @@ MapView Drawing-related Methods
 
 extension MapView: EditWorldDelegate {
 	
-	//	override var isOpaque: Bool { return true }
-	//	override var wantsDefaultClipping: Bool { return false }
+//	override var isOpaque: Bool { return true }
 	
 	override func draw(_ dirtyRect: NSRect) {
 		super.draw(dirtyRect)
 		
+		/*
+		var rects: UnsafePointer<NSRect>?
+		var count: Int = 0
+		
+		getRectsBeingDrawn(&rects, count: &count)
+		*/
+		
 		drawGrid(in: dirtyRect)
+
 		if currentMode == .thing {
 			drawLines(in: dirtyRect)
 			drawThings(in: dirtyRect)
@@ -40,11 +47,28 @@ extension MapView: EditWorldDelegate {
 			drawThings(in: dirtyRect)
 			drawLines(in: dirtyRect)
 			drawPoints(in: dirtyRect)
+			if overlappingPointIndices.count > 0 {
+				drawOverlappingPointBox(for: overlappingPointIndices)
+			}
 		}
 		
 //		displayTestingRect(editWorld.dirtyRect)
 //		displayTestingRect(testingRect)
 
+	}
+
+	func drawOverlappingPointBox(for pointIndices: [Int]) {
+
+		let boxsize = NSSize(width: 12.0, height: 12.0)
+
+		for index in pointIndices {
+			var coord = convert(points[index].coord, from: superview)
+			coord.x -= boxsize.width/2+DRAWOFFSET
+			coord.y -= boxsize.width/2+DRAWOFFSET
+			NSBezierPath.defaultLineWidth = 2.0
+			NSColor.red.setStroke()
+			NSBezierPath.stroke(NSRect(origin: coord, size: boxsize))
+		}
 	}
 	
 	func addLengthLabels() {
@@ -124,6 +148,7 @@ extension MapView: EditWorldDelegate {
 		rect.origin.y -= DRAWOFFSET
 		
 		setNeedsDisplay(rect)
+		displayIfNeeded()
 	}
 
 	/// Draws the 64x64 fixed tiles and the adjustable grid
@@ -188,23 +213,32 @@ extension MapView: EditWorldDelegate {
 				continue
 			}
 			
-			let offset: CGFloat = 0.5
+			let line = lines[i]
+			
+			// test
+//			let p1 = convertedPoints[line.pt1].coord
+//			let p2 = convertedPoints[line.pt2].coord
 			
 			// drawing will be in view coord, i.e. origin = (0, 0)...
 			// so convert from superview coord system  (same as world coord)
-			let pt1 = convert(NSPoint(x: points[lines[i].pt1].coord.x-offset, y: points[lines[i].pt1].coord.y-offset), from: superview)
-			let pt2 = convert(NSPoint(x: points[lines[i].pt2].coord.x-offset, y: points[lines[i].pt2].coord.y-offset), from: superview)
-			let midPt = convert(lines[i].midpoint, from: superview)
-			let normPt = convert(lines[i].normal, from: superview)
-			
-			let midPtx = midPt.x - offset
-			let midPty = midPt.y - offset
-			let newMidPt = NSPoint(x: midPtx, y: midPty)
-			
-			let normPtx = normPt.x - offset
-			let normPty = normPt.y - offset
-			let newNormPt = NSPoint(x: normPtx, y: normPty)
-			
+			var p1 = convert(points[line.pt1].coord, from: superview)
+			var p2 = convert(points[line.pt2].coord, from: superview)
+			var midPt = convert(line.midpoint, from: superview)
+			var normPt = convert(line.normal, from: superview)
+
+//			var p1 = points[line.pt1].coord
+//			var p2 = points[line.pt2].coord
+//			var midPt = line.midpoint
+//			var normPt = line.normal
+
+			p1.x -= DRAWOFFSET
+			p1.y -= DRAWOFFSET
+			p2.x -= DRAWOFFSET
+			p2.y -= DRAWOFFSET
+			midPt.x -= DRAWOFFSET
+			midPt.y -= DRAWOFFSET
+			normPt.x -= DRAWOFFSET
+			normPt.y  -= DRAWOFFSET
 			
 			if lines[i].selected > 0 {
 				NSColor.red.set()
@@ -212,20 +246,36 @@ extension MapView: EditWorldDelegate {
 				lines[i].color.set()
 			}
 			NSBezierPath.defaultLineWidth = LINE_WIDTH
-			NSBezierPath.strokeLine(from: pt1, to: pt2)			// line
+			NSBezierPath.strokeLine(from: p1, to: p2)			// line
 			if currentMode != .thing {
-				NSBezierPath.strokeLine(from: newMidPt, to: newNormPt)	// line normal 'tick'
+				if lines[i].length != 0 {
+					NSBezierPath.strokeLine(from: midPt, to: normPt) // line normal 'tick'
+				}
 			}
 		}
 	}
 	
+	func convertAllPoints() {
+		
+		convertedPoints = []
+		for i in 0..<points.count {
+			print("=====")
+			print("point coord = \(points[i].coord)")
+			var newPoint = points[i]
+			newPoint.coord = convert(points[i].coord, from: superview)
+			print("converted coord = \(newPoint.coord)")
+			convertedPoints.append(newPoint)
+		}
+	}
+	
 	///  Draw all world things
-	private func drawThings(in rect: NSRect) {
+	private func drawThings(in dirtyRect: NSRect) {
 
-		for thing in things {
+		thingLoop: for thing in things {
 			if thing.selected == -1 {
 				continue
 			}
+			
 			var origin = convert(thing.origin, from: superview)
 			let size = NSSize(width: 32, height: 32)
 			origin.x -= 16
@@ -238,6 +288,7 @@ extension MapView: EditWorldDelegate {
 			}
 			if currentMode == .line {
 				NSColor.black.withAlphaComponent(0.1).set()
+//				NSColor.lightGray.set()
 			}
 			if currentMode != .thing {
 				NSBezierPath.fill(rect)
@@ -269,30 +320,59 @@ extension MapView: EditWorldDelegate {
 		}
 	}
 
+	// NSRectFillList and similar are extensions on Collection of NSRect: e.g. [rectA, rectB].fill().
 	///  Draw all world points
 	private func drawPoints(in rect: NSRect) {
 		
+		var unselected, selected: [NSRect]
+		var left,right,bottom,top: CGFloat
+		var offset: CGFloat
+		var origin = NSPoint()
+		var rect = NSRect()
+		
+		offset = CGFloat(POINT_DRAW_SIZE)
+		
+		left = rect.origin.x - offset
+		right = rect.origin.x + rect.size.width + offset
+		bottom = rect.origin.y - offset
+		top = rect.origin.y + rect.size.height + offset
+		
+		unselected = []; selected = []
+		
+
 		for i in 0..<points.count {
 			let point = points[i]
+			origin = convert(point.coord, from: superview)
 			
 			if point.selected == -1 {
 				continue
 			}
 			
-			var origin = convert(point.coord, from: superview)
-			origin.x -= 3.0
-			origin.y -= 3.0
-			
-			let size = NSSize(width: 4, height: 4)
-			let rect = NSRect(x: origin.x, y: origin.y, width: size.width, height: size.height)
+//			if !visibleRect.contains(origin) {
+//				continue
+//			}
 
+//			if origin.x < left || origin.x > right || origin.y > top || origin.y < bottom {
+//				continue
+//			}
+			
 			if point.selected == 1 {
-				NSColor.red.set()
-				NSBezierPath.fill(rect)
+				rect = NSRect(x: origin.x-offset/2, y: origin.y-offset/2, width: offset, height: offset)
+				selected.append(rect)
 			} else {
-				COLOR_LINE_ONESIDED.set()
-				NSBezierPath.fill(rect)
+				rect = NSRect(x: origin.x-offset/2, y: origin.y-offset/2, width: offset, height: offset)
+				unselected.append(rect)
 			}
+		}
+		
+		if unselected.count != 0 {
+			COLOR_LINE_ONESIDED.set()
+			unselected.fill()
+		}
+		
+		if selected.count != 0 {
+			NSColor.red.set()
+			selected.fill()
 		}
 	}
 	

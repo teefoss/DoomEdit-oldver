@@ -23,6 +23,8 @@
 		3042DC57201FD8C600D4434F /* PreferencesWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3042DC55201FD8C600D4434F /* PreferencesWindowController.xib */; };
 		3044B7092048E6AE006492DB /* doombsp in Resources */ = {isa = PBXBuildFile; fileRef = 3044B7082048E6AE006492DB /* doombsp */; };
 		3049E5CD2016880900D0FD5C /* EWSave.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3049E5CC2016880900D0FD5C /* EWSave.swift */; };
+		304B550F205BF99100863E93 /* MapScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 304B550E205BF99100863E93 /* MapScrollView.swift */; };
+		304B5511205C459C00863E93 /* NSWindowExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 304B5510205C459C00863E93 /* NSWindowExtension.swift */; };
 		30533AA41FE17CC70039DCFB /* BlockWorld.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30533AA31FE17CC70039DCFB /* BlockWorld.swift */; };
 		30533AA91FE45E620039DCFB /* SectorPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30533AA71FE45E620039DCFB /* SectorPanel.swift */; };
 		30533AAA1FE45E620039DCFB /* SectorPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 30533AA81FE45E620039DCFB /* SectorPanel.xib */; };
@@ -97,6 +99,8 @@
 		3042DC55201FD8C600D4434F /* PreferencesWindowController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PreferencesWindowController.xib; sourceTree = "<group>"; };
 		3044B7082048E6AE006492DB /* doombsp */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = doombsp; sourceTree = "<group>"; };
 		3049E5CC2016880900D0FD5C /* EWSave.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EWSave.swift; sourceTree = "<group>"; };
+		304B550E205BF99100863E93 /* MapScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapScrollView.swift; sourceTree = "<group>"; };
+		304B5510205C459C00863E93 /* NSWindowExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSWindowExtension.swift; sourceTree = "<group>"; };
 		30533AA31FE17CC70039DCFB /* BlockWorld.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockWorld.swift; sourceTree = "<group>"; };
 		30533AA71FE45E620039DCFB /* SectorPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectorPanel.swift; sourceTree = "<group>"; };
 		30533AA81FE45E620039DCFB /* SectorPanel.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SectorPanel.xib; sourceTree = "<group>"; };
@@ -187,6 +191,7 @@
 				30B16B211FDE15A70066DEC3 /* IntExtension.swift */,
 				30C41A4D2009B339000E3F9B /* DataExtension.swift */,
 				3060F2C620213E9E00996FDB /* StringExtension.swift */,
+				304B5510205C459C00863E93 /* NSWindowExtension.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -314,6 +319,7 @@
 				30FBF63D1FC52D500035671D /* Info.plist */,
 				30FBF63E1FC52D500035671D /* DoomEdit.entitlements */,
 				30714E9520532B01000D06BF /* Keycodes.swift */,
+				304B550E205BF99100863E93 /* MapScrollView.swift */,
 			);
 			path = DoomEdit;
 			sourceTree = "<group>";
@@ -455,6 +461,7 @@
 				300E0DFE1FDADDC00066134A /* NSPointExtension.swift in Sources */,
 				306C8B271FFB22D800C2C47C /* TextureImageView.swift in Sources */,
 				301CC5BA201245B300E208FF /* Texture.swift in Sources */,
+				304B5511205C459C00863E93 /* NSWindowExtension.swift in Sources */,
 				306C8B201FF9610D00C2C47C /* TexturePanel.swift in Sources */,
 				30A00B9D1FD6EB4700EBCA27 /* NSWindowControllerExtension.swift in Sources */,
 				30C41A4C20098CD6000E3F9B /* WadFile.swift in Sources */,
@@ -462,6 +469,7 @@
 				3042DC56201FD8C600D4434F /* PreferencesWindowController.swift in Sources */,
 				30714E9620532B01000D06BF /* Keycodes.swift in Sources */,
 				30FBF6591FC52F8A0035671D /* MapView.swift in Sources */,
+				304B550F205BF99100863E93 /* MapScrollView.swift in Sources */,
 				30B16B1C1FDCBF930066DEC3 /* DoomData.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
