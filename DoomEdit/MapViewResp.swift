@@ -121,7 +121,7 @@ extension MapView {
 		if scale < 4 {
 			scale *= 2
 			print("scale = \(scale*100)%")
-			let mouseLoc = worldCoord(for: event.locationInWindow)
+			let mouseLoc = getPoint(from: event)
 			delegate?.zoom(to: mouseLoc, with: scale)
 			frame = editWorld.getBounds()
 		} else {
@@ -134,7 +134,7 @@ extension MapView {
 		if scale > 0.125 {
 			scale /= 2
 			print("scale = \(scale*100)%")
-			let mouseLoc = worldCoord(for: event.locationInWindow)
+			let mouseLoc = getPoint(from: event)
 			delegate?.zoom(to: mouseLoc, with: scale)
 			frame = editWorld.getBounds()
 		} else {
@@ -264,7 +264,7 @@ extension MapView {
 				let newPointRect = convert(pointRect, from: nil)
 				let pointView = NSView(frame: newPointRect)
 				self.addSubview(pointView)
-				let clickpoint = worldCoord(for: event.locationInWindow)
+				let clickpoint = getPoint(from: event)
 				blockWorld.floodFillSector(from: clickpoint)
 				setCurrentSector()
 				displaySectorPanel(at: pointView)
@@ -273,7 +273,7 @@ extension MapView {
 				setNeedsDisplay(self.bounds)
 				displayIfNeeded()
 			} else {
-				let clickpoint = worldCoord(for: event.locationInWindow)
+				let clickpoint = getPoint(from: event)
 				blockWorld.floodFillSector(from: clickpoint)
 				setCurrentSector()
 				selectedSides = []
@@ -301,7 +301,7 @@ extension MapView {
 		var left, right, top, bottom: CGFloat  // For a box around the click point
 		var clickPoint: NSPoint
 		
-		clickPoint = worldCoord(for: event.locationInWindow)
+		clickPoint = getPoint(from: event)
 		
 		//
 		// see if the click hit a point
@@ -462,7 +462,7 @@ extension MapView {
 		if !event.modifierFlags.contains(.shift) {
 			editWorld.deselectAll()
 			didClickSector = true
-			if let def = getSector(from: event.locationInWindow) {
+			if let def = getSector(from: event) {
 				selectedDef = def
 			} else {
 				didClickSector = false
@@ -586,7 +586,7 @@ extension MapView {
 		var pointCount = 0
 		
 		
-		cursor = getWorldGridPoint(from: event.locationInWindow)
+		cursor = getGridPoint(from: event)
 		
 		// set up negative rects
 		fixedRect.origin.x = CGFloat.greatestFiniteMagnitude/4
@@ -667,7 +667,7 @@ extension MapView {
 				break
 			}
 			// calculate new rectangle
-			cursor = getWorldGridPoint(from: (theEvent?.locationInWindow)!) // handle grid and such
+			cursor = getGridPoint(from: theEvent!) // handle grid and such
 			
 			// move all selected points
 			if pointCount == 1 {
@@ -798,76 +798,7 @@ extension MapView {
 		}
 	}
 	
-	
-	
-	// =====================
-	// MARK: - Line Drawing
-	// =====================
-	
-	func dragLine(_ event: NSEvent) {
-		// TODO: Draw the 'tick' mark while adding a line
-		
-		var fixedPoint, dragPoint: NSPoint
-		var shapeLayer = CAShapeLayer()
-		var shapeLayerIndex: Int?
 
-		editWorld.deselectAll()
-
-		// animated drawing is done in view coord system
-		fixedPoint = getViewGridPoint(from: event.locationInWindow)
-		dragPoint = fixedPoint
-		shapeLayer.lineWidth = 1.0
-		shapeLayer.fillColor = NSColor.clear.cgColor
-		shapeLayer.strokeColor = NSColor.black.cgColor
-		layer?.addSublayer(shapeLayer)
-		shapeLayerIndex = layer?.sublayers?.index(of: shapeLayer)
-		
-		//
-		// Mouse-tracking loop
-		//
-		var nextEvent: NSEvent?
-		repeat {
-			
-			nextEvent = window?.nextEvent(matching: NSEvent.EventTypeMask.leftMouseDragged.union(.leftMouseUp))
-			dragPoint = getViewGridPoint(from: (nextEvent?.locationInWindow)!)
-			
-			let path = CGMutablePath()
-			path.move(to: fixedPoint)
-			path.addLine(to: dragPoint)
-			shapeLayer.path = path
-			
-		} while nextEvent?.type != .leftMouseUp
-		
-		var line = Line()
-		line.side[0] = lines.last?.side[0]
-		
-		if let i = shapeLayerIndex {
-			layer?.sublayers?.remove(at: i)
-		}
-		
-		// convert startPoint to world coord
-		let pt1 = convert(fixedPoint, to: superview)
-		
-		// convert endPoint to world coord
-		let pt2 = convert(dragPoint, to: superview)
-		// if line didn't end where it started
-		if pt1.x == pt2.x && pt1.y == pt2.y {
-			return
-		}
-		editWorld.deselectAll()
-		editWorld.newLine(line: &line, from: pt1, to: pt2)
-//		editWorld.selectLine(lines.count-1)
-		frame = editWorld.getBounds()
-		var updateRect = NSRect()
-		makeRect(&updateRect, with: pt1, and: pt2)
-		setNeedsDisplay(bounds)
-		displayIfNeeded()
-		
-
-		doomProject.mapDirty = true
-
-		
-	}
 	
 	// ====================
 	// MARK: - Sector Stuff
@@ -972,14 +903,12 @@ extension MapView {
 		return 1		// back side
 	}
 	
-	func getSector(from point: NSPoint) -> SectorDef? {
+	func getSector(from event: NSEvent) -> SectorDef? {
 		
-		var pt: NSPoint
-		var line: Int
 		var side: Int = 0
 		
-		pt = worldCoord(for: point)
-		line = lineByPoint(point: pt, side: &side)
+		let pt = getPoint(from: event)
+		let line = lineByPoint(point: pt, side: &side)
 		
 		if let def = lines[line].side[side]?.ends {
 			return def
@@ -1002,12 +931,77 @@ extension MapView {
 	
 	
 	
-	// Mark: -
+	// ====================
+	// MARK: - Create Stuff
+	// ====================
 	
+	func dragLine(_ event: NSEvent) {
+		// TODO: Draw the 'tick' mark while adding a line
+		
+		var fixedPoint, dragPoint: NSPoint
+		var shapeLayer = CAShapeLayer()
+		var shapeLayerIndex: Int?
+		
+		editWorld.deselectAll()
+		
+		// animated drawing is done in view coord system
+		fixedPoint = getGridPoint(from: event)
+		dragPoint = fixedPoint
+		shapeLayer.lineWidth = 1.0
+		shapeLayer.fillColor = NSColor.clear.cgColor
+		shapeLayer.strokeColor = NSColor.black.cgColor
+		layer?.addSublayer(shapeLayer)
+		shapeLayerIndex = layer?.sublayers?.index(of: shapeLayer)
+		
+		//
+		// Mouse-tracking loop
+		//
+		var nextEvent: NSEvent?
+		repeat {
+			
+			nextEvent = window?.nextEvent(matching: NSEvent.EventTypeMask.leftMouseDragged.union(.leftMouseUp))
+			dragPoint = getGridPoint(from: nextEvent!)
+			
+			let path = CGMutablePath()
+			path.move(to: fixedPoint)
+			path.addLine(to: dragPoint)
+			shapeLayer.path = path
+			
+		} while nextEvent?.type != .leftMouseUp
+		
+		var line = Line()
+		line.side[0] = lines.last?.side[0]
+		
+		if let i = shapeLayerIndex {
+			layer?.sublayers?.remove(at: i)
+		}
+		
+		// convert startPoint to world coord
+		let pt1 = convert(fixedPoint, to: superview)
+		
+		// convert endPoint to world coord
+		let pt2 = convert(dragPoint, to: superview)
+		// if line didn't end where it started
+		if pt1.x == pt2.x && pt1.y == pt2.y {
+			return
+		}
+		editWorld.deselectAll()
+		editWorld.newLine(line: &line, from: pt1, to: pt2)
+		//		editWorld.selectLine(lines.count-1)
+		frame = editWorld.getBounds()
+		var updateRect = NSRect()
+		makeRect(&updateRect, with: pt1, and: pt2)
+		setNeedsDisplay(bounds)
+		displayIfNeeded()
+		
+		
+		doomProject.mapDirty = true
+		
+		
+	}
 	func placeThing(at event: NSEvent) {
 		
-		//let loc = worldCoord(for: event.locationInWindow)
-		let loc = getWorldGridPoint(from: event.locationInWindow)
+		let loc = getGridPoint(from: event)
 		
 		var newThing = Thing(selected: 0, origin: loc, angle: things[things.count-1].angle, type: things[things.count-1].type, options: things[things.count-1].options)
 		things.append(newThing)

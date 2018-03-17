@@ -61,7 +61,7 @@ extension MapView: EditWorldDelegate {
 		let boxsize = NSSize(width: 12.0, height: 12.0)
 
 		for index in pointIndices {
-			var coord = convert(points[index].coord, from: superview)
+			var coord = points[index].coord
 			coord.x -= boxsize.width/2
 			coord.y -= boxsize.width/2
 			NSBezierPath.defaultLineWidth = 2.0

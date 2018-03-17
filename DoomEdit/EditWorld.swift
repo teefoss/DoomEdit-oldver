@@ -118,8 +118,6 @@ class EditWorld {
 		if dirtyRect.size.width == 0 {
 			return
 		}
-//		dirtyRect.origin.x += 0.5
-//		dirtyRect.origin.x += 0.5
 		delegate?.redisplay(dirtyRect)
 		dirtyRect = NSRect.zero
 	}

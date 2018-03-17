@@ -245,66 +245,31 @@ class MapView: NSView, NSPopoverDelegate {
 		display(rect)
 	}
 	
-	///  Convert a point to the world coordinate system
-	///- parameter point: A point in the view coordinate system
-	func worldCoord(for point: NSPoint) -> NSPoint {
+	/// Get the mouse click location in view coordinates
+	func getPoint(from event: NSEvent) -> NSPoint {
 		
-		let pt = convert(point, from: nil)
-		
-		let xOffset = bounds.origin.x - frame.origin.x
-		let yOffset = bounds.origin.y - frame.origin.y
-		
-		let x = pt.x - xOffset + 1
-		let y = pt.y - yOffset + 1
-		
-		return NSPoint(x: x, y: y)
-	}
-
-	///  Convert a point to the view coordinate system
-	///- parameter point: A point in the world coordinate system
-	func viewCoord(for point: NSPoint) -> NSPoint {
-		
-		let pt = convert(point, to: nil)
-		
-		let xOffset = frame.origin.x - bounds.origin.x
-		let yOffset = frame.origin.y - bounds.origin.y
-		
-		let x = pt.x - xOffset - 1
-		let y = pt.y - yOffset - 1
-		
-		return NSPoint(x: x, y: y)
-	}
-	
-	///  Get the grid point closest to the mouse click in world coordinates
-	func getWorldGridPoint(from point: NSPoint) -> NSPoint {
-		
-		var point = worldCoord(for: point)
-
-		point.x = CGFloat(Int(point.x / CGFloat(gridSize) + 0.5 * (point.x < 0 ? -1 : 1)))
-		point.y = CGFloat(Int(point.y / CGFloat(gridSize) + 0.5 * (point.y < 0 ? -1 : 1)))
-		point.x *= CGFloat(gridSize)
-		point.y *= CGFloat(gridSize)
+		var point = event.locationInWindow
+		point = convert(point, from: nil)
 		
 		return point
 	}
-	
-	///  Get the grid point closest to the mouse click in view coordinates
-	func getViewGridPoint(from point: NSPoint) -> NSPoint {
+
+	/// Get the nearest grid point to the mouse click, in view coordinates.
+	func getGridPoint(from event: NSEvent) -> NSPoint {
 		
-		var point = convert(point, from: nil)
+		var point = getPoint(from: event)
 		
 		point.x = CGFloat(Int(point.x / CGFloat(gridSize) + 0.5 * (point.x < 0 ? -1 : 1)))
 		point.y = CGFloat(Int(point.y / CGFloat(gridSize) + 0.5 * (point.y < 0 ? -1 : 1)))
 		point.x *= CGFloat(gridSize)
 		point.y *= CGFloat(gridSize)
-		
-		return point
 
+		return point
 	}
 	
-	/**  Returns the current origin of the visible rect in world coordinates  */
+	///  Returns the current origin of the visible rect in world coordinates
 	func currentOrigin() -> NSPoint {
-		//return worldCoord(for: visibleRect.origin)
+
 		var global = NSRect()
 		global = (superview?.bounds)!
 		global.origin = convert(global.origin, from: superview)
