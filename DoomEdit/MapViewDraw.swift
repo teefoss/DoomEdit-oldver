@@ -200,7 +200,7 @@ extension MapView: EditWorldDelegate {
 				addLine(to: tilePath, x, top, x, bottom) }
 		}
 		
-		tilePath.stroke()		
+		tilePath.stroke()
 	}
 	
 	func addLine(to path: NSBezierPath, _ x1: Int, _ y1: Int, _ x2: Int, _ y2: Int) {
@@ -212,7 +212,6 @@ extension MapView: EditWorldDelegate {
 	///  Draw all world lines
 	func drawLines(in rect: NSRect) {
 		
-		let offset: CGFloat = 0.5
 		var xc = 0; var yc = 0
 		var clippoint: [Int] = Array(repeating: 0, count: points.count)
 		
@@ -223,24 +222,22 @@ extension MapView: EditWorldDelegate {
 		
 		for p in 0..<points.count {
 			if points[p].selected == -1 {
-				continue
-			}
+				continue }
 			
 			if points[p].coord.x < left {
-				xc = 0
-			} else if points[p].coord.x > right {
-				xc = 2
-			} else {
-				xc = 1
-			}
+				xc = 0 }
+			else if points[p].coord.x > right {
+				xc = 2 }
+			else {
+				xc = 1 }
 			
 			if points[p].coord.y < bottom {
-				yc = 0
-			} else if points[p].coord.y > top {
-				yc = 2
-			} else {
-				yc = 1
-			}
+				yc = 0 }
+			else if points[p].coord.y > top {
+				yc = 2 }
+			else {
+				yc = 1 }
+			
 			clippoint[p] = yc*3+xc
 		}
 		
@@ -263,7 +260,6 @@ extension MapView: EditWorldDelegate {
 			if points[line.pt1].coord.x != points[line.pt2].coord.x ||
 				points[line.pt1].coord.y != points[line.pt2].coord.y
 			{
-				
 				NSBezierPath.defaultLineWidth = LINE_WIDTH
 				NSBezierPath.strokeLine(from: points[line.pt1].coord, to: points[line.pt2].coord)			// line
 				NSBezierPath.strokeLine(from: line.midpoint, to: line.normal)	// line normal 'tick'
@@ -299,46 +295,52 @@ extension MapView: EditWorldDelegate {
 			
 			// TODO: Only draw selected difficulties
 			
+			// Set Color
 			if thing.selected == 1 {
 				NSColor.red.set()
 			} else {
 				thing.def.color.set()
 			}
+			
 			if currentMode == .line {
 				NSColor.black.withAlphaComponent(0.1).set()
 			}
-			if currentMode != .thing {
+//			if currentMode != .thing {
+//			}
+			if currentMode != .line || currentMode != .thing {
 				r.origin.x = thing.origin.x - offset/2
 				r.origin.y = thing.origin.y - offset/2
 				r.size.width = offset
 				r.size.height = offset
 				NSBezierPath.fill(r)
-			}
-//			if currentMode != .line || currentMode != .thing {
-//				COLOR_THINGINFO.setStroke()
-//				NSBezierPath.defaultLineWidth = 2.0
-//				strokeEasyMarker(thing, relativeTo: rect)
-//				strokeMediumMarker(thing, relativeTo: rect)
-//				strokeHardMarker(thing, relativeTo: rect)
-//				strokeNetworkMarker(thing, relativeTo: rect)
-//				strokeAmbushMarker(thing, relativeTo: rect)
-//			}
-			
-			// FIXME: Make this just a rotation
-//			if thing.def.hasDirection && (currentMode != .line || currentMode != .thing) {
-//				let path = thingArrow(in: rect, direction: thing.angle)
-//				COLOR_THINGINFO.set()
-//				path.stroke()
-//			}
-			
-			if currentMode == .thing {
+
+				drawAllThingMarks(thing, relativeTo: r)
+				if thing.def.hasDirection {
+					let path = thingArrow(in: r, direction: thing.angle)
+					COLOR_THINGINFO.set()
+					path.stroke()
+
+				}
+			} else if currentMode == .thing {
 				NSColor.black.setStroke()
-				let origin = convert(thing.origin, from: superview)
+				let origin = thing.origin
 				let originx = Int(origin.x)-(thing.def.size/2)
 				let originy = Int(origin.y)-(thing.def.size/2)
 				NSBezierPath.stroke(NSRect(x: originx, y: originy, width: thing.def.size, height: thing.def.size))
 			}
 		}
+	}
+	
+	func drawAllThingMarks(_ thing: Thing, relativeTo rect: NSRect) {
+
+		COLOR_THINGINFO.setStroke()
+		NSBezierPath.defaultLineWidth = 2.0
+
+		strokeEasyMarker(thing, relativeTo: rect)
+		strokeMediumMarker(thing, relativeTo: rect)
+		strokeHardMarker(thing, relativeTo: rect)
+		strokeNetworkMarker(thing, relativeTo: rect)
+		strokeAmbushMarker(thing, relativeTo: rect)
 	}
 
 	// NSRectFillList and similar are extensions on Collection of NSRect: e.g. [rectA, rectB].fill().
@@ -415,24 +417,15 @@ extension MapView: EditWorldDelegate {
 		let diagArrowEnd_315 = NSPoint(x: midx+8, y: midy-8)
 
 		switch direction {
-		case 0:
-			makeArrowPath(&path, p1: degrees_180, p2: degrees_0, p3: degrees_45, p4: degrees_315)
-		case 45:
-			makeArrowPath(&path, p1: diagArrowEnd_225, p2: diagArrowEnd_45, p3: degrees_90, p4: degrees_0)
-		case 90:
-			makeArrowPath(&path, p1: degrees_270, p2: degrees_90, p3: degrees_135, p4: degrees_45)
-		case 135:
-			makeArrowPath(&path, p1: diagArrowEnd_315, p2: diagArrowEnd_135, p3: degrees_180, p4: degrees_90)
-		case 180:
-			makeArrowPath(&path, p1: degrees_0, p2: degrees_180, p3: degrees_225, p4: degrees_135)
-		case 225:
-			makeArrowPath(&path, p1: diagArrowEnd_45, p2: diagArrowEnd_225, p3: degrees_270, p4: degrees_180)
-		case 270:
-			makeArrowPath(&path, p1: degrees_90, p2: degrees_270, p3: degrees_315, p4: degrees_225)
-		case 315:
-			makeArrowPath(&path, p1: diagArrowEnd_135, p2: diagArrowEnd_315, p3: degrees_0, p4: degrees_270)
-		default:
-			break
+		case 0: makeArrowPath(&path, p1: degrees_180, p2: degrees_0, p3: degrees_45, p4: degrees_315)
+		case 45: makeArrowPath(&path, p1: diagArrowEnd_225, p2: diagArrowEnd_45, p3: degrees_90, p4: degrees_0)
+		case 90: makeArrowPath(&path, p1: degrees_270, p2: degrees_90, p3: degrees_135, p4: degrees_45)
+		case 135: makeArrowPath(&path, p1: diagArrowEnd_315, p2: diagArrowEnd_135, p3: degrees_180, p4: degrees_90)
+		case 180: makeArrowPath(&path, p1: degrees_0, p2: degrees_180, p3: degrees_225, p4: degrees_135)
+		case 225: makeArrowPath(&path, p1: diagArrowEnd_45, p2: diagArrowEnd_225, p3: degrees_270, p4: degrees_180)
+		case 270: makeArrowPath(&path, p1: degrees_90, p2: degrees_270, p3: degrees_315, p4: degrees_225)
+		case 315: makeArrowPath(&path, p1: diagArrowEnd_135, p2: diagArrowEnd_315, p3: degrees_0, p4: degrees_270)
+		default: break
 		}
 		
 		return path
@@ -445,7 +438,6 @@ extension MapView: EditWorldDelegate {
 		path.lineWidth = 2.0
 	}
 	
-	/*
 	/// Make left side indicator - Present if thing is flagged EASY
 	func strokeEasyMarker(_ thing: Thing, relativeTo rect: NSRect) {
 		
@@ -517,7 +509,6 @@ extension MapView: EditWorldDelegate {
 			path.stroke()
 		}
 	}
-	*/
 }
 
 
