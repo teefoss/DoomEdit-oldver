@@ -43,6 +43,7 @@ class MapWindowController: NSWindowController, MapViewDelegate {
 	
 	override func windowDidLoad() {
         super.windowDidLoad()
+
 		
 		window?.title = "\(doomProject.openMap?.name ?? "") (\(doomProject.openMap?.level ?? "")) : Edit Mode"
 		

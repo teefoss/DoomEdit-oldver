@@ -128,6 +128,15 @@ fileprivate func ComputeOutCode(_ x: CGFloat, _ y: CGFloat, _ rect: NSRect) -> O
     return code
 }
 
+func lineInRect(_ line: Line, _ rect: NSRect) -> Bool {
+	var x0 = points[line.pt1].coord.x
+	var y0 = points[line.pt1].coord.y
+	var x1 = points[line.pt2].coord.x
+	var y1 = points[line.pt2].coord.y
+	
+	return lineInRect(x0: &x0, y0: &y0, x1: &x1, y1: &y1, rect: rect)
+}
+
 // Cohen–Sutherland clipping algorithm clips a line from
 // P0 = (x0, y0) to P1 = (x1, y1) against a rectangle with
 // diagonal from (xmin, ymin) to (xmax, ymax).

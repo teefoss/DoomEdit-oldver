@@ -19,8 +19,6 @@ var points: [Point] = []
 var lines: [Line] = []
 var things: [Thing] = []
 
-var convertedPoints: [Point] = []
-
 struct CopyLine {
 	var line = Line()
 	var p1 = NSPoint()

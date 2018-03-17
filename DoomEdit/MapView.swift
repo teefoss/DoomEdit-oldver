@@ -129,6 +129,13 @@ class MapView: NSView, NSPopoverDelegate {
 		
 		editWorld.delegate = self
 		initLineCross()
+		
+		if let currentContext = NSGraphicsContext.current {
+			currentContext.shouldAntialias = false
+		} else {
+			print("no graphics context!")
+		}
+
 
 //		NotificationCenter.default.addObserver(self,
 //											   selector: #selector(redrawVisibleRect),

@@ -26,7 +26,7 @@
                 <subviews>
                     <scrollView horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" allowsMagnification="YES" minMagnification="0.125" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OTZ-fo-Sfz">
                         <rect key="frame" x="0.0" y="0.0" width="640" height="640"/>
-                        <clipView key="contentView" drawsBackground="NO" id="rH1-Au-p1r">
+                        <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="rH1-Au-p1r">
                             <rect key="frame" x="1" y="1" width="623" height="623"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>

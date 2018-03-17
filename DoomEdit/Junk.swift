@@ -38,42 +38,7 @@ for i in 0..<width {
 }
 */
 
-/// old version of selection box (three-method approach)
-/*
-func dragBox_LMDown(with event: NSEvent) {
-startPoint = convert(event.locationInWindow, from: nil)
-shapeLayer = CAShapeLayer()
-shapeLayer.lineWidth = SELECTION_BOX_WIDTH
-shapeLayer.fillColor = NSColor.clear.cgColor
-shapeLayer.strokeColor = NSColor.gray.cgColor
-self.layer?.addSublayer(shapeLayer)
-didDragSelectionBox = true
-shouldDragSelectionBox = false
-}
-
-func dragBox_LMDragged(with event: NSEvent) {
-let dragPoint = convert(event.locationInWindow, from: nil)
-let path = CGMutablePath()
-path.move(to: NSPoint(x: startPoint.x, y: startPoint.y))
-path.addLine(to: NSPoint(x: dragPoint.x, y: startPoint.y))
-path.addLine(to: NSPoint(x: dragPoint.x, y: dragPoint.y))
-path.addLine(to: NSPoint(x: startPoint.x, y: dragPoint.y))
-path.closeSubpath()
-let pt1 = convert(startPoint, to: superview)
-let pt2 = convert(dragPoint, to: superview)
-makeRect(&selectionBox, with: pt1, and: pt2)
-shapeLayer.path = path
-}
-
-func dragBox_LMUp() {
-selectObjectsInBox()
-shapeLayer.removeFromSuperlayer()
-shapeLayer = nil
-didDragSelectionBox = false
-selectionBox = NSRect.zero
-}
-*/
-
+/// pointers
 /*
 let ptr = UnsafeMutablePointer<Point>.allocate(capacity: points.count)
 defer { ptr.deallocate(capacity: points.count) }
