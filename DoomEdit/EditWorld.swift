@@ -118,6 +118,12 @@ class EditWorld {
 		if dirtyRect.size.width == 0 {
 			return
 		}
+		let margin = CGFloat(LINE_NORMAL_LENGTH)
+		dirtyRect.origin.x -= margin
+		dirtyRect.origin.y -= margin
+		dirtyRect.size.width += margin * 2
+		dirtyRect.size.height += margin * 2
+		
 		delegate?.redisplay(dirtyRect)
 		dirtyRect = NSRect.zero
 	}

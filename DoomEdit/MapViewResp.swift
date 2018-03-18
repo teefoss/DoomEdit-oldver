@@ -935,6 +935,56 @@ extension MapView {
 	// MARK: - Create Stuff
 	// ====================
 	
+	func addLine(from fixedpoint: NSPoint, to dragpoint: NSPoint) {
+		
+		var newline = 	Line()
+		var line: 		Int
+		
+		if let l = lines.last {
+			newline = l
+		}
+		
+		line = editWorld.newLine(line: &newline, from: fixedpoint, to: dragpoint)
+		
+		editWorld.selectLine(line)
+		editWorld.selectPoint(lines[line].pt1)
+		editWorld.selectPoint(lines[line].pt2)
+	}
+	
+	/*
+	func dragLine(_ event: NSEvent) {
+		
+		var fixedpoint, dragpoint: NSPoint
+		var nextevent: NSEvent?
+		
+		self.lockFocus()
+		COLOR_LINE_ONESIDED.setStroke()
+		NSBezierPath.defaultLineWidth = 1.0
+		
+		fixedpoint = getGridPoint(from: event)
+		
+		repeat {
+			nextevent = window?.nextEvent(matching: NSEvent.EventTypeMask.leftMouseDragged.union(.leftMouseUp))
+			dragpoint = getGridPoint(from: nextevent!)
+			
+			NSBezierPath.strokeLine(from: fixedpoint, to: dragpoint)
+			setNeedsDisplay(visibleRect)
+		} while nextevent?.type != .leftMouseUp
+		
+		// add to the world
+		self.unlockFocus()
+		
+		if dragpoint.x == fixedpoint.x && dragpoint.y == fixedpoint.y {
+			return
+		}
+		
+		editWorld.deselectAll()
+		addLine(from: fixedpoint, to: dragpoint)
+		editWorld.updateWindows()
+		doomProject.setDirtyMap(true)
+	}
+	*/
+	
 	func dragLine(_ event: NSEvent) {
 		// TODO: Draw the 'tick' mark while adding a line
 		
@@ -944,24 +994,23 @@ extension MapView {
 		
 		editWorld.deselectAll()
 		
-		// animated drawing is done in view coord system
 		fixedPoint = getGridPoint(from: event)
-		dragPoint = fixedPoint
+//		dragPoint = fixedPoint
 		shapeLayer.lineWidth = 1.0
 		shapeLayer.fillColor = NSColor.clear.cgColor
-		shapeLayer.strokeColor = NSColor.black.cgColor
+		shapeLayer.strokeColor = COLOR_LINE_ONESIDED.cgColor
 		layer?.addSublayer(shapeLayer)
 		shapeLayerIndex = layer?.sublayers?.index(of: shapeLayer)
 		
 		//
 		// Mouse-tracking loop
 		//
+
 		var nextEvent: NSEvent?
 		repeat {
-			
 			nextEvent = window?.nextEvent(matching: NSEvent.EventTypeMask.leftMouseDragged.union(.leftMouseUp))
 			dragPoint = getGridPoint(from: nextEvent!)
-			
+
 			let path = CGMutablePath()
 			path.move(to: fixedPoint)
 			path.addLine(to: dragPoint)
@@ -969,36 +1018,32 @@ extension MapView {
 			
 		} while nextEvent?.type != .leftMouseUp
 		
-		var line = Line()
-		line.side[0] = lines.last?.side[0]
-		
-		if let i = shapeLayerIndex {
-			layer?.sublayers?.remove(at: i)
-		}
-		
-		// convert startPoint to world coord
-		let pt1 = convert(fixedPoint, to: superview)
-		
-		// convert endPoint to world coord
-		let pt2 = convert(dragPoint, to: superview)
-		// if line didn't end where it started
-		if pt1.x == pt2.x && pt1.y == pt2.y {
+		if dragPoint.x == fixedPoint.x && dragPoint.y == fixedPoint.y {
 			return
 		}
+		
 		editWorld.deselectAll()
-		editWorld.newLine(line: &line, from: pt1, to: pt2)
-		//		editWorld.selectLine(lines.count-1)
-		frame = editWorld.getBounds()
-		var updateRect = NSRect()
-		makeRect(&updateRect, with: pt1, and: pt2)
-		setNeedsDisplay(bounds)
-		displayIfNeeded()
+		shapeLayer.removeFromSuperlayer()
+		addLine(from: fixedPoint, to: dragPoint)
 		
-		
+		if pointOutsideRect(fixedPoint, frame) || pointOutsideRect(dragPoint, frame) {
+			frame = editWorld.getBounds()
+			bounds = frame
+		}
+//		var updateRect = NSRect()
+//		makeRect(&updateRect, with: fixedPoint, and: dragPoint)
+//		setNeedsDisplay(updateRect)
+		editWorld.updateWindows()
 		doomProject.mapDirty = true
-		
-		
 	}
+	
+	func pointOutsideRect(_ point: NSPoint, _ rect: NSRect) -> Bool {
+		if point.x > rect.maxX || point.x < rect.minX || point.y > rect.maxY || point.y < rect.minY {
+			return true
+		}
+		return false
+	}
+
 	func placeThing(at event: NSEvent) {
 		
 		let loc = getGridPoint(from: event)
