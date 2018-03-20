@@ -12,11 +12,6 @@ extension NSNib.Name {
 	static let MapWindowController = NSNib.Name("MapWindowController")
 }
 
-protocol MapViewDelegate {
-	func zoom(to point: NSPoint, with scale: CGFloat)
-	func redisplay(_ dirtyrect: NSRect)
-}
-
 class MapWindowController: NSWindowController, MapViewDelegate {
 	
 	var mapView = MapView()
@@ -59,7 +54,7 @@ class MapWindowController: NSWindowController, MapViewDelegate {
 		scrollView.allowsMagnification = true
 		scrollView.autoresizingMask = [.width, .height]
 		
-		// FIXME: scroll to center of map on load
+		// Scroll to center of map
 		let mapBounds = editWorld.getBounds()
 		var origin = NSPoint()
 		origin.x = mapBounds.origin.x + (mapBounds.size.width / 2) - (newSize.width / 2)
@@ -70,16 +65,9 @@ class MapWindowController: NSWindowController, MapViewDelegate {
 		window?.makeFirstResponder(mapView)
     }
 	
-	// TODO: Animate zooming
+	// TODO: Animate zooming?
 	func zoom(to point: NSPoint, with scale: CGFloat) {
-		scrollView.setMagnification(CGFloat(scale), centeredAt: point)
-	}
-	
-	func redisplay(_ dirtyrect: NSRect) {
-		print("mapView.setneedsdisplay called")
-		let newRect = mapView.convert(dirtyrect, from: self.window?.contentView)
-		mapView.setNeedsDisplay(newRect)
-		mapView.displayIfNeeded()
+		scrollView.setMagnification(scale, centeredAt: point)
 	}
 }
 
@@ -88,8 +76,6 @@ class MapWindowController: NSWindowController, MapViewDelegate {
 // ================================
 // MARK: - NSWindowDelegate Methods
 // ================================
-
-// TODO: Get all this working
 
 extension MapWindowController: NSWindowDelegate {
 	
@@ -106,7 +92,6 @@ extension MapWindowController: NSWindowDelegate {
 	/// Adjust world bounds for the new frame
 	func windowDidResize(_ notification: Notification) {
 		
-		let scale = mapView.scale
 		var newScreenOrigin = NSPoint.zero
 		window!.convertBaseToScreen(&newScreenOrigin)
 		
@@ -117,6 +102,7 @@ extension MapWindowController: NSWindowDelegate {
 	
 	
 	// FIXME: Put everything in editworld save/close and just call from here
+	// FIXME: Put runmap in mapview or editworld so the menu item disables automatically
 	func windowWillClose(_ notification: Notification) {
 		if doomProject.mapDirty {
 			let val = runDialogPanel(question: "Hey!", text: "Your map has been modified! Save it?")

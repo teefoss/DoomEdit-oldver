@@ -172,7 +172,6 @@ class PreferencesWindowController: NSWindowController {
 		
 		defaults.set(theme, forKey: PrefKeys.theme)
 		DoomEdit.setTheme()
-		editWorld.updateWindows()
 		defaults.set(doomTextField.stringValue, forKey: PrefKeys.doomWADPath)
 		defaults.set(doom2TextField.stringValue, forKey: PrefKeys.doom2WADPath)
 		defaults.set(chocDoomTextField.stringValue, forKey: PrefKeys.chocolateDoomPath)

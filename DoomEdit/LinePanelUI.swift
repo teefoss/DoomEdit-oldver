@@ -127,7 +127,7 @@ extension LinePanel {
 	func setTitle() {
 		
 		if selectedLineIndices.count == 1 {
-			titleLabel.textColor = NSColor.black
+			titleLabel.textColor = (THEME == .light) ? NSColor.black : NSColor.white
 			titleLabel.stringValue = "Line \(lineIndex) Properties"
 		} else if selectedLineIndices.count > 1 {
 			titleLabel.textColor = NSColor.red

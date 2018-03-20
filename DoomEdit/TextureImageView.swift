@@ -33,7 +33,7 @@ class TextureImageView: NSImageView, NSPopoverDelegate {
 	func initPopover(_ popover: inout NSPopover, with viewController: NSViewController) {
 		popover = NSPopover.init()
 		popover.contentViewController = viewController
-		popover.appearance = NSAppearance.init(named: .vibrantLight)
+		popover.appearance = (THEME == .light) ? (NSAppearance(named: .vibrantLight)) :(NSAppearance(named: .vibrantDark))
 		popover.animates = false
 		popover.behavior = .semitransient
 		popover.delegate = self

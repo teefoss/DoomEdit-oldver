@@ -208,8 +208,12 @@ func lineInRect(x0: inout CGFloat, y0: inout CGFloat, x1: inout CGFloat, y1: ino
 	}
 }
 
-
-
+func pointOutsideRect(_ point: NSPoint, _ rect: NSRect) -> Bool {
+	if point.x > rect.maxX || point.x < rect.minX || point.y > rect.maxY || point.y < rect.minY {
+		return true
+	}
+	return false
+}
 
 
 

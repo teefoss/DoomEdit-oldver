@@ -8,16 +8,6 @@
 
 import Cocoa
 
-
-// Grid Style Constants
-
-fileprivate let tileAlpha: CGFloat = 0.3		// originally 3 and 1
-fileprivate let gridAlpha: CGFloat = 0.1
-fileprivate let tileColor = NSColor.systemBlue.withAlphaComponent(tileAlpha)
-fileprivate let gridColor = NSColor.systemBlue.withAlphaComponent(gridAlpha)
-//fileprivate let tileColor = NSColor.gridColor
-//fileprivate let gridColor = NSColor.gridColor
-
 let DRAWOFFSET: CGFloat = 0.5
 
 /**
@@ -137,17 +127,6 @@ extension MapView: EditWorldDelegate {
 
 	}
 	
-	func redisplay(_ dirtyRect: NSRect) {
-
-		// convert from world coord to view coord
-		var rect = convert(dirtyRect, from: superview)
-		
-		// adjust for draw offset
-		
-		setNeedsDisplay(rect)
-		displayIfNeeded()
-	}
-
 	/// Draws the 64x64 fixed tiles and the adjustable grid
 	private func drawGrid(in rect: NSRect) {
 
@@ -164,12 +143,11 @@ extension MapView: EditWorldDelegate {
 		
 		NSBezierPath.defaultLineWidth = LINE_WIDTH
 
-		
 		//
 		// Grid
 		//
 		let gridPath = NSBezierPath()
-		gridColor.setStroke()
+		COLOR_GRID.setStroke()
 
 		for y in bottom...top {
 			if y % 64 == 0 { continue }
@@ -189,7 +167,7 @@ extension MapView: EditWorldDelegate {
 		// 64 x 64 Tiles
 		//
 		let tilePath = NSBezierPath()
-		tileColor.setStroke()
+		COLOR_TILE.setStroke()
 		
 		for y in bottom...top {
 			if y % 64 == 0 {

@@ -13,8 +13,8 @@ import Cocoa
 fileprivate let BOUNDSBORDER = 128
 fileprivate let selectionRadius: CGFloat = 16
 
-var editWorld = EditWorld()
-
+// ================================
+// Global storage for world objects
 var points: [Point] = []
 var lines: [Line] = []
 var things: [Thing] = []
@@ -24,6 +24,17 @@ struct CopyLine {
 	var p1 = NSPoint()
 	var p2 = NSPoint()
 }
+
+protocol EditWorldDelegate {
+	func displayDirty(_ dirtyRect: NSRect)
+	func redisplay(_ rect: NSRect)
+}
+
+var editWorld = EditWorld()
+
+/**
+Object that handles map properties and editing. Accessible via global instance `editWorld`
+*/
 
 class EditWorld {
 	
@@ -105,7 +116,6 @@ class EditWorld {
 	
 	func addPointToDirtyRect(_ point: NSPoint) {
 		enclosePoint(rect: &dirtyRect, point: point)
-		
 	}
 
 	/// The rect around the two points is added to the dirty rect.
@@ -114,17 +124,13 @@ class EditWorld {
 		addPointToDirtyRect(points[pt2].coord)
 	}
 	
+	/// Tells the Map View to redraw the dirty rect.
 	func updateWindows() {
+
 		if dirtyRect.size.width == 0 {
 			return
 		}
-		let margin = CGFloat(LINE_NORMAL_LENGTH)
-		dirtyRect.origin.x -= margin
-		dirtyRect.origin.y -= margin
-		dirtyRect.size.width += margin * 2
-		dirtyRect.size.height += margin * 2
-		
-		delegate?.redisplay(dirtyRect)
+		delegate?.displayDirty(dirtyRect)
 		dirtyRect = NSRect.zero
 	}
 	
@@ -196,7 +202,6 @@ class EditWorld {
 		changeLine(lines.count-1, to: &line)
 
 		dirtyPoints = true
-		boundsDirty = true // added
 		
 		updateLineNormal(lines.count-1)
 		
@@ -281,7 +286,7 @@ class EditWorld {
 	func changeThing(_ num: Int, to data: inout Thing) {
 		
 		var drect: NSRect
-		
+		let size = CGFloat(THING_DRAW_SIZE)
 		boundsDirty = true
 		
 		if num >= things.count {
@@ -290,10 +295,10 @@ class EditWorld {
 		
 		// mark the old position as dirty
 		if things[num].selected != -1 {
-			drect = NSRect(x: data.origin.x - CGFloat(THING_DRAW_SIZE/2),
-						   y: data.origin.y - CGFloat(THING_DRAW_SIZE/2),
-						   width: CGFloat(THING_DRAW_SIZE),
-						   height: CGFloat(THING_DRAW_SIZE))
+			drect = NSRect(x: data.origin.x - size/2,
+						   y: data.origin.y - size/2,
+						   width: size,
+						   height: size)
 			dirtyRect = NSUnionRect(drect, dirtyRect)
 		}
 		
@@ -302,10 +307,10 @@ class EditWorld {
 		
 		// mark the new position as dirty
 		if things[num].selected != -1 {
-			drect = NSRect(x: data.origin.x - CGFloat(THING_DRAW_SIZE/2),
-						   y: data.origin.y - CGFloat(THING_DRAW_SIZE/2),
-						   width: CGFloat(THING_DRAW_SIZE),
-						   height: CGFloat(THING_DRAW_SIZE))
+			drect = NSRect(x: data.origin.x - size/2,
+						   y: data.origin.y - size/2,
+						   width: size,
+						   height: size)
 			dirtyRect = NSUnionRect(drect, dirtyRect)
 		}
 		
@@ -393,12 +398,7 @@ class EditWorld {
 			return
 		}
 		data.selected = 1
-		changeLine(num, to: &data)
-//		points[lines[num].pt1].selected = 1
-//		points[lines[num].pt2].selected = 1
-//		selectPoint(lines[num].pt1)
-//		selectPoint(lines[num].pt2)
-		
+		changeLine(num, to: &data)		
 	}
 	
 	func deselectLine(_ num: Int) {

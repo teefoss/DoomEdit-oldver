@@ -24,24 +24,24 @@
                 <rect key="frame" x="0.0" y="0.0" width="640" height="640"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <scrollView horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" allowsMagnification="YES" minMagnification="0.125" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OTZ-fo-Sfz">
+                    <scrollView borderType="none" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" allowsMagnification="YES" minMagnification="0.125" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OTZ-fo-Sfz">
                         <rect key="frame" x="0.0" y="0.0" width="640" height="640"/>
                         <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="rH1-Au-p1r">
-                            <rect key="frame" x="1" y="1" width="623" height="623"/>
+                            <rect key="frame" x="0.0" y="0.0" width="640" height="640"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
                                 <view fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="VMI-Nl-RrZ">
-                                    <rect key="frame" x="0.0" y="0.0" width="608" height="608"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="625" height="625"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 </view>
                             </subviews>
                         </clipView>
                         <scroller key="horizontalScroller" verticalHuggingPriority="750" horizontal="YES" id="0jJ-2H-z0L">
-                            <rect key="frame" x="1" y="624" width="623" height="15"/>
+                            <rect key="frame" x="0.0" y="624" width="640" height="16"/>
                             <autoresizingMask key="autoresizingMask"/>
                         </scroller>
                         <scroller key="verticalScroller" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="heK-5i-cig">
-                            <rect key="frame" x="624" y="1" width="15" height="623"/>
+                            <rect key="frame" x="624" y="0.0" width="16" height="640"/>
                             <autoresizingMask key="autoresizingMask"/>
                         </scroller>
                     </scrollView>

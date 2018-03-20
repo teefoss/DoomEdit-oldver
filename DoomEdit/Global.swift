@@ -40,6 +40,9 @@ var COLOR_LINE_ONESIDED = NSColor.black
 let COLOR_LINE_TWOSIDED = NSColor.gray
 var COLOR_MONSTER = NSColor.black
 var COLOR_THINGINFO = NSColor.white
+var COLOR_GRID = NSColor.systemBlue
+var COLOR_TILE = NSColor.systemBlue
+
 // Other
 let SIDE_BIT = 0x8000
 
@@ -68,12 +71,17 @@ func setTheme() {
 		COLOR_LINE_ONESIDED = NSColor.black
 		COLOR_MONSTER = NSColor.black
 		COLOR_THINGINFO = NSColor.white
+		COLOR_GRID = NSColor.systemBlue.withAlphaComponent(0.1)
+		COLOR_TILE = NSColor.systemBlue.withAlphaComponent(0.3)
 	case .dark:
 		COLOR_BKG = NSColor.black
 		COLOR_LINE_ONESIDED = NSColor.yellow
 		COLOR_MONSTER = NSColor.white
 		COLOR_THINGINFO = NSColor.black
+		COLOR_GRID = NSColor.systemBlue.withAlphaComponent(0.2)
+		COLOR_TILE = NSColor.systemBlue.withAlphaComponent(0.4)
 	}
+	editWorld.delegate?.redisplay(editWorld.bounds)
 }
 
 // Color

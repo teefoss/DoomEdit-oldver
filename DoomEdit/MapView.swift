@@ -8,10 +8,9 @@
 
 import Cocoa
 
-protocol EditWorldDelegate {
-	func redisplay(_ dirtyRect: NSRect)
+protocol MapViewDelegate {
+	func zoom(to point: NSPoint, with scale: CGFloat)
 }
-
 
 /**
 View that displays the map
@@ -172,7 +171,7 @@ class MapView: NSView, NSPopoverDelegate {
 	func initPopover(_ popover: inout NSPopover, with viewController: NSViewController) {
 		popover = NSPopover.init()
 		popover.contentViewController = viewController
-		popover.appearance = NSAppearance.init(named: .vibrantLight)
+		popover.appearance = (THEME == .light) ? (NSAppearance(named: .vibrantLight)) :(NSAppearance(named: .vibrantDark))
 		popover.animates = false
 		popover.behavior = .transient
 		popover.delegate = self
@@ -205,26 +204,15 @@ class MapView: NSView, NSPopoverDelegate {
 	required init?(coder decoder: NSCoder) {
 		fatalError("init(coder:) has not been implemented")
 	}
-	
-	/*
-	override func updateTrackingAreas() {
-		guard var trackingArea = self.trackingArea else {
-			return super.updateTrackingAreas()
-		}
-		removeTrackingArea(trackingArea)
-		trackingArea = NSTrackingArea(rect: self.bounds, options: [NSTrackingArea.Options.activeInKeyWindow, NSTrackingArea.Options.inVisibleRect, NSTrackingArea.Options.mouseMoved], owner: self, userInfo: nil)
-		self.trackingArea = trackingArea
-		addTrackingArea(trackingArea)
-	}
-	*/
-	
+		
 	
 	
 	// ================================
 	// MARK: - View & Coordinate System
 	// ================================
 
-	func displayDirty(dirtyrect: NSRect) {
+	/// Tells the Map View to redraw the given rect. Adds a margin to cover point edges and line ticks.
+	func displayDirty(_ dirtyrect: NSRect) {
 		
 		var rect = NSRect()
 		var adjust: CGFloat
@@ -243,6 +231,11 @@ class MapView: NSView, NSPopoverDelegate {
 		NSIntegralRect(rect)
 		
 		display(rect)
+	}
+	
+	func redisplay(_ rect: NSRect) {
+		
+		setNeedsDisplay(rect)
 	}
 	
 	/// Get the mouse click location in view coordinates

@@ -171,8 +171,7 @@ extension MapView {
 		case .edit, .line:
 			selectObject(at: event, shouldDrag: true)
 		case .draw:
-			dragLine(event)
-			//drawLine_LMDown(with: event)
+			lineDragPoly(event)
 		case .thing:
 			return
 		}
@@ -186,7 +185,6 @@ extension MapView {
 			print("To do")
 		case .draw:
 			print("To do")
-			//drawLine_LMDragged(with: event)
 		case .thing:
 			return
 		}
@@ -199,9 +197,6 @@ extension MapView {
 		case .edit, .line:
 			print("To do")
 		case .draw:
-//			if didDragLine {
-//				drawLine_LMUp()
-//			}
 			print("Todo")
 		case .thing:
 			return
@@ -424,12 +419,11 @@ extension MapView {
 		
 		// check if origin is inside click radius
 		for i in 0..<things.count {
-			let thing = things[i]
-			if thing.selected == -1 {
+			if things[i].selected == -1 {
 				continue
 			}
-			if thing.origin.x > left && thing.origin.x < right
-				&& thing.origin.y < top && thing.origin.y > bottom {
+			if things[i].origin.x > left && things[i].origin.x < right
+				&& things[i].origin.y < top && things[i].origin.y > bottom {
 				thingIndex = i
 				break
 			}
@@ -706,7 +700,6 @@ extension MapView {
 					}
 				}
 				*/
-
 				
 				for i in 0..<points.count {
 					if points[i].selected == 1 {
@@ -715,26 +708,22 @@ extension MapView {
 					}
 				}
 
-				
 				for i in 0..<things.count {
 					if things[i].selected == 1 {
 						things[i].origin.x += moved.x
 						things[i].origin.y += moved.y
 					}
 				}
-				
-				
-				/*
-				for index in pointList {
-					points[index].coord.x += moved.x
-					points[index].coord.y += moved.y
-				}
-				
-				for index in thingList {
-					things[index].origin.x += moved.x
-					things[index].origin.y += moved.y
-				}
-				*/
+
+//				for index in pointList {
+//					points[index].coord.x += moved.x
+//					points[index].coord.y += moved.y
+//				}
+//
+//				for index in thingList {
+//					things[index].origin.x += moved.x
+//					things[index].origin.y += moved.y
+//				}
 				
 				if moved.x != 0 || moved.y != 0 {
 					print("dirty map")
@@ -756,18 +745,11 @@ extension MapView {
 			updateRect = currentDragRect
 			updateRect = NSUnionRect(oldDragRect, updateRect)
 			updateRect = NSUnionRect(fixedRect, updateRect)
-			oldDragRect = currentDragRect;
-			var viewUpdateRect = convert(updateRect, from: superview)
+			oldDragRect = currentDragRect
 			
-			// extend to include any line normals and point edges
-//			viewUpdateRect.origin.x -= CGFloat(LINE_NORMAL_LENGTH+1)
-//			viewUpdateRect.origin.y -= CGFloat(LINE_NORMAL_LENGTH+1)
-//			viewUpdateRect.size.width += CGFloat(LINE_NORMAL_LENGTH*2+1)
-//			viewUpdateRect.size.height += CGFloat(LINE_NORMAL_LENGTH*2+1)
-
 			self.testingRect = updateRect
 			
-			displayDirty(dirtyrect: viewUpdateRect)
+			displayDirty(updateRect)
 			
 		} while true
 		
@@ -780,9 +762,7 @@ extension MapView {
 		
 		totalMoved.x = cursor.x - totalMoved.x;
 		totalMoved.y = cursor.y - totalMoved.y;
-		
-		print("totalMoved = \(totalMoved)")
-		
+				
 		for i in 0..<points.count {
 			if points[i].selected == 1 {
 				let newPoint = points[i]
@@ -938,10 +918,18 @@ extension MapView {
 	func addLine(from fixedpoint: NSPoint, to dragpoint: NSPoint) {
 		
 		var newline = 	Line()
-		var line: 		Int
+		var i, line: 		Int
 		
-		if let l = lines.last {
-			newline = l
+		// set the new line to the most recent data but make sure it's not deleted
+		if lines.count > 0 {
+			i = lines.count-1
+			repeat {
+				if lines[i].selected != -1 {
+					newline = lines[i]
+					break
+				}
+				i -= 1
+			} while i >= 0
 		}
 		
 		line = editWorld.newLine(line: &newline, from: fixedpoint, to: dragpoint)
@@ -985,22 +973,149 @@ extension MapView {
 	}
 	*/
 	
+	/// Click to begin a poly-line or click-drag for a single line.
+	func lineDragPoly(_ event: NSEvent) {
+		
+		var fixedpoint, dragpoint: NSPoint
+		let linelayer = CAShapeLayer()
+		
+		fixedpoint = getGridPoint(from: event)
+		linelayer.lineWidth = 1.0
+		linelayer.fillColor = NSColor.clear.cgColor
+		linelayer.strokeColor = COLOR_LINE_ONESIDED.cgColor
+		layer?.addSublayer(linelayer)
+
+		var nextevent: NSEvent?
+		
+		//
+		// Dragging loop
+		//
+		repeat {
+			nextevent = window?.nextEvent(matching: NSEvent.EventTypeMask.leftMouseDragged.union(.leftMouseUp))
+			dragpoint = getGridPoint(from: nextevent!)
+
+			let path = CGMutablePath()
+			path.move(to: fixedpoint)
+			path.addLine(to: dragpoint)
+			linelayer.path = path
+		} while nextevent?.type != .leftMouseUp
+		
+		linelayer.path = nil
+		
+		// User dragged and ended in different spot, add a line and return
+		if dragpoint.x != fixedpoint.x || dragpoint.y != fixedpoint.y {
+			
+			linelayer.removeFromSuperlayer()
+			editWorld.deselectAll()
+			addLine(from: fixedpoint, to: dragpoint)
+			if pointOutsideRect(fixedpoint, frame) || pointOutsideRect(dragpoint, frame) {
+				frame = editWorld.getBounds()
+				bounds = frame
+			}
+			editWorld.updateWindows()
+			doomProject.mapDirty = true
+			return
+		}
+		
+		//
+		// Poly line
+		//
+		repeat {
+			fixedpoint = getGridPoint(from: nextevent!)
+			
+			repeat {
+				nextevent = window?.nextEvent(matching: NSEvent.EventTypeMask.leftMouseDown.union(.leftMouseUp).union(.mouseMoved).union(.leftMouseDragged))
+				dragpoint = getGridPoint(from: nextevent!)
+				if nextevent?.type == .leftMouseUp {
+					linelayer.path = nil
+					break
+				}
+				
+				let path = CGMutablePath()
+				path.move(to: fixedpoint)
+				path.addLine(to: dragpoint)
+				linelayer.path = path
+			} while true
+			
+			// add to the world
+			if dragpoint.x == fixedpoint.x && dragpoint.y == fixedpoint.y {
+				linelayer.removeFromSuperlayer()
+				return
+			}
+			
+			addLine(from: fixedpoint, to: dragpoint)
+			if pointOutsideRect(fixedpoint, frame) || pointOutsideRect(dragpoint, frame) {
+				frame = editWorld.getBounds()
+				bounds = frame
+			}
+			editWorld.updateWindows()
+			doomProject.setDirtyMap(true)
+		} while true
+	}
+	
+
+	func polyLine(_ event: NSEvent) {
+		
+		var fixedpoint, dragpoint: NSPoint
+		let shapelayer = CAShapeLayer()
+		
+		fixedpoint = getGridPoint(from: event)
+		shapelayer.lineWidth = 1.0
+		shapelayer.fillColor = NSColor.clear.cgColor
+		shapelayer.strokeColor = COLOR_LINE_ONESIDED.cgColor
+		layer?.addSublayer(shapelayer)
+
+		var nextevent: NSEvent?
+		var oldmask: NSEvent?
+		repeat {
+			nextevent = window?.nextEvent(matching: NSEvent.EventTypeMask.leftMouseUp)
+		} while nextevent?.type != .leftMouseUp
+		
+		repeat {
+			fixedpoint = getGridPoint(from: nextevent!)
+			oldmask = window?.nextEvent(matching: NSEvent.EventTypeMask.mouseMoved)
+			
+			repeat {
+				nextevent = window?.nextEvent(matching: NSEvent.EventTypeMask.leftMouseDown.union(.leftMouseUp).union(.mouseMoved).union(.leftMouseDragged))
+				dragpoint = getGridPoint(from: nextevent!)
+				if nextevent?.type == .leftMouseUp {
+					break
+				}
+				
+				let path = CGMutablePath()
+				path.move(to: fixedpoint)
+				path.addLine(to: dragpoint)
+				shapelayer.path = path
+			} while true
+			
+			// add to the world
+			if dragpoint.x == fixedpoint.x && dragpoint.y == fixedpoint.y {
+				break
+			}
+			
+			addLine(from: fixedpoint, to: dragpoint)
+			if pointOutsideRect(fixedpoint, frame) || pointOutsideRect(dragpoint, frame) {
+				frame = editWorld.getBounds()
+				bounds = frame
+			}
+			editWorld.updateWindows()
+			doomProject.setDirtyMap(true)
+		} while true
+	}
+	
 	func dragLine(_ event: NSEvent) {
 		// TODO: Draw the 'tick' mark while adding a line
 		
 		var fixedPoint, dragPoint: NSPoint
-		var shapeLayer = CAShapeLayer()
-		var shapeLayerIndex: Int?
+		let shapeLayer = CAShapeLayer()
 		
 		editWorld.deselectAll()
 		
 		fixedPoint = getGridPoint(from: event)
-//		dragPoint = fixedPoint
 		shapeLayer.lineWidth = 1.0
 		shapeLayer.fillColor = NSColor.clear.cgColor
 		shapeLayer.strokeColor = COLOR_LINE_ONESIDED.cgColor
 		layer?.addSublayer(shapeLayer)
-		shapeLayerIndex = layer?.sublayers?.index(of: shapeLayer)
 		
 		//
 		// Mouse-tracking loop
@@ -1036,14 +1151,8 @@ extension MapView {
 		editWorld.updateWindows()
 		doomProject.mapDirty = true
 	}
-	
-	func pointOutsideRect(_ point: NSPoint, _ rect: NSRect) -> Bool {
-		if point.x > rect.maxX || point.x < rect.minX || point.y > rect.maxY || point.y < rect.minY {
-			return true
-		}
-		return false
-	}
 
+	
 	func placeThing(at event: NSEvent) {
 		
 		let loc = getGridPoint(from: event)
