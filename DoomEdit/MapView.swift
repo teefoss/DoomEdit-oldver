@@ -134,12 +134,6 @@ class MapView: NSView, NSPopoverDelegate {
 		} else {
 			print("no graphics context!")
 		}
-
-
-//		NotificationCenter.default.addObserver(self,
-//											   selector: #selector(redrawVisibleRect),
-//											   name: NSScrollView.didLiveScrollNotification,
-//											   object: nil)
 	}
 	
 
@@ -177,34 +171,54 @@ class MapView: NSView, NSPopoverDelegate {
 		popover.delegate = self
 	}
 	
-	func displayThingPopover(at thing: NSView) {
-		var thingPopover = NSPopover()
-		initPopover(&thingPopover, with: thingViewController)
-		thingViewController.thing = selectedThing
-		thingViewController.thingIndex = selectedThingIndex
-		thingPopover.show(relativeTo: thing.bounds, of: thing, preferredEdge: .maxX)
-	}
-	
-	func displayLinePopover(at line: NSView) {
-		var linePopover = NSPopover()
-		initPopover(&linePopover, with: linePanel)
-		linePanel.lineIndex = selectedLineIndex
-		linePopover.show(relativeTo: line.bounds, of: line, preferredEdge: .maxX)
-	}
-	
-	func displaySectorPanel(at pointRect: NSView) {
-		var sectorPanel = NSPopover()
-		initPopover(&sectorPanel, with: self.sectorPanel)
-		self.sectorPanel.def = selectedDef
-		self.sectorPanel.selectedSides = selectedSides
-		//sectorPanel.lineIndex = selectedLineIndex
-		sectorPanel.show(relativeTo: pointRect.bounds, of: pointRect, preferredEdge: .maxX)
-	}
-
 	required init?(coder decoder: NSCoder) {
 		fatalError("init(coder:) has not been implemented")
 	}
+	
+	func openLinePanel(atLine index: Int) {
 		
+		let lineRect = NSRect(x: lines[index].midpoint.x-16,
+							  y: lines[index].midpoint.y-16,
+							  width: 32,
+							  height: 32)
+		let lineView = NSView(frame: lineRect)
+		self.addSubview(lineView)
+		var linePopover = NSPopover()
+		initPopover(&linePopover, with: linePanel)
+		linePanel.lineIndex = index
+		linePopover.show(relativeTo: lineView.bounds, of: lineView, preferredEdge: .maxX)
+	}
+	
+	func openThingPanel(atThing index: Int) {
+		let thingRect = NSRect(x: things[index].origin.x-16,
+							   y: things[index].origin.y-16,
+							   width: 32,
+							   height: 32)
+		let thingView = NSView(frame: thingRect)
+		self.addSubview(thingView)
+		var thingPopover = NSPopover()
+		initPopover(&thingPopover, with: thingViewController)
+		thingViewController.thing = selectedThing
+		thingViewController.thingIndex = index
+		thingPopover.show(relativeTo: thingView.bounds, of: thingView, preferredEdge: .maxX)
+	}
+	
+	func openSectorPanel(at event: NSEvent) {
+		
+		guard let def = getSectorDef(from: event) else { return }
+		
+		var pointRect = NSRect(x: event.locationInWindow.x-16, y: event.locationInWindow.y-16, width: 32, height: 32)
+		pointRect = convert(pointRect, from: nil)
+		let pointView = NSView(frame: pointRect)
+		self.addSubview(pointView)
+		
+		selectSector(at: event)
+		var sectorPanel = NSPopover()
+		initPopover(&sectorPanel, with: self.sectorPanel)
+		self.sectorPanel.def = def
+		
+		sectorPanel.show(relativeTo: pointView.bounds, of: pointView, preferredEdge: .maxX)
+	}
 	
 	
 	// ================================

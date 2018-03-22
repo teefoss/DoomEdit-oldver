@@ -40,7 +40,7 @@ struct SectorDef: Equatable {
 	}
 	
 	static func == (l: SectorDef, r: SectorDef) -> Bool {
-		return l.ceilingFlat != r.ceilingFlat &&
+		return l.ceilingFlat == r.ceilingFlat &&
 			   l.floorFlat == r.floorFlat &&
 			   l.ceilingHeight == r.ceilingHeight &&
 			   l.floorHeight == r.floorHeight &&

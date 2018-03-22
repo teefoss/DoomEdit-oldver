@@ -10,24 +10,6 @@
 
 import Cocoa
 
-// Dragging Objects
-/*
-fileprivate var cursor = NSPoint.zero
-fileprivate var oldDragRect = NSRect.zero
-fileprivate var fixedRect = NSRect.zero
-fileprivate var dragRect = NSRect.zero
-fileprivate var currentDragRect = NSRect.zero
-fileprivate var updateRect = NSRect.zero
-fileprivate var lineList: [Int] = []
-fileprivate var pointList: [Int] = []
-fileprivate var thingList:[Int] = []
-fileprivate var lineCount: Int = 0
-fileprivate var lastPoint: Int = 0
-fileprivate var pointCount: Int = 0
-fileprivate var totalMoved = NSPoint.zero
-fileprivate var moved = NSPoint.zero
-*/
-
 /**
 MapView Responder Methods
 */
@@ -78,6 +60,14 @@ extension MapView {
 			} else {
 				setMode(.draw)
 			}
+			return
+		case Keycode.s:
+			print("Connect Sectors:")
+			let check = blockWorld.connectSectors()
+			if check {
+				print("Sectors OK")
+			}
+			print(sectors.count)
 			return
 		default:
 			break
@@ -144,50 +134,24 @@ extension MapView {
 	
 	
 	
-	
-	// ===========================
-	// MARK: - Testing Information
-	// ===========================
-	
-	func printCoordInfo() {
-		print("frame: \(frame)")
-		print("frame.origin.x: \(frame.origin.x)")
-		print("bounds: \(bounds)")
-		print("visibleRect: \(visibleRect)")
-		let converted = convert(visibleRect.origin, from: nil)
-		print("viz rect origin converted: \(converted)")
-	}
-	
-	
-	
-	
 	// =====================
 	// MARK: - Mouse Actions
 	// =====================
 	
 	override func mouseDown(with event: NSEvent) {
 		
+		let clickPoint = getGridPoint(from: event)
+		print("clickpoint = \(clickPoint)")
+		
 		switch currentMode {
 		case .edit, .line:
-			selectObject(at: event, shouldDrag: true)
+			selectObject(at: event, rightClicked: false)
 		case .draw:
 			lineDragPoly(event)
 		case .thing:
 			return
 		}
 		editWorld.updateWindows()
-	}
-	
-	override func mouseDragged(with event: NSEvent) {
-		
-		switch currentMode {
-		case .edit, .line:
-			print("To do")
-		case .draw:
-			print("To do")
-		case .thing:
-			return
-		}
 	}
 	
 	override func mouseUp(with event: NSEvent) {
@@ -227,56 +191,14 @@ extension MapView {
 		displayIfNeeded()
 	}
 
-	
 	override func rightMouseDown(with event: NSEvent) {
 		
 		if currentMode == .draw {
 			placeThing(at: event)
 			editWorld.updateWindows()
 			return
-		}
-		
-		selectObject(at: event, shouldDrag: false)
-		if didClickThing {
-			let thingRect = NSRect(x: selectedThing.origin.x-16, y: selectedThing.origin.y-16, width: 32, height: 32)
-			let newThingRect = convert(thingRect, from: superview)
-			let thingView = NSView(frame: newThingRect)
-			self.addSubview(thingView)
-			displayThingPopover(at: thingView)
-			didClickThing = false
-		} else if didClickLine {
-			let lineRect = NSRect(x: lines[selectedLineIndex].midpoint.x-16, y: lines[selectedLineIndex].midpoint.y-16, width: 32, height: 32)
-			let newLineRect = convert(lineRect, from: superview)
-			let lineView = NSView(frame: newLineRect)
-			self.addSubview(lineView)
-			//editWorld.selectLine(selectedLineIndex)
-			//editWorld.updateWindows()
-			displayLinePopover(at: lineView)
-			didClickLine = false
-		} else if didClickSector {
-			if !event.modifierFlags.contains(.shift) {
-				let pointRect = NSRect(x: event.locationInWindow.x-16, y: event.locationInWindow.y-16, width: 32, height: 32)
-				let newPointRect = convert(pointRect, from: nil)
-				let pointView = NSView(frame: newPointRect)
-				self.addSubview(pointView)
-				let clickpoint = getPoint(from: event)
-				blockWorld.floodFillSector(from: clickpoint)
-				setCurrentSector()
-				displaySectorPanel(at: pointView)
-				selectedSides = []
-				didClickSector = false
-				setNeedsDisplay(self.bounds)
-				displayIfNeeded()
-			} else {
-				let clickpoint = getPoint(from: event)
-				blockWorld.floodFillSector(from: clickpoint)
-				setCurrentSector()
-				selectedSides = []
-				didClickSector = false
-				setNeedsDisplay(self.bounds)
-				displayIfNeeded()
-			}
-		}
+		}		
+		selectObject(at: event, rightClicked: true)
 		editWorld.updateWindows()
 	}
 	
@@ -288,7 +210,7 @@ extension MapView {
 	
 	// https://stackoverflow.com/questions/33158513/checking-keydown-event-modifierflags-yields-error
 	/// Selects a point at the mouse location. If no point is present, selects a line or thing.
-	func selectObject(at event: NSEvent, shouldDrag: Bool) {
+	func selectObject(at event: NSEvent, rightClicked: Bool) {
 		
 		var pointIndex: Int = -1
 		var thingIndex: Int = -1
@@ -337,7 +259,7 @@ extension MapView {
 				editWorld.selectPoint(pointIndex)
 			}
 			editWorld.updateWindows()
-			if shouldDrag {
+			if !rightClicked {
 				dragObjects(with: event)
 			}
 			return
@@ -385,15 +307,17 @@ extension MapView {
 					return
 				}
 				
+				// select the line and its points and redraw
 				editWorld.selectLine(i)
-				didClickLine = true
-				selectedLineIndex = i
-				
 				editWorld.selectPoint(lines[i].pt1)
 				editWorld.selectPoint(lines[i].pt2)
-				
 				editWorld.updateWindows()
-				if shouldDrag { dragObjects(with: event) }
+				
+				if !rightClicked {
+					dragObjects(with: event)
+				} else {
+					openLinePanel(atLine: i)
+				}
 				return
 			}
 		}
@@ -403,12 +327,15 @@ extension MapView {
 		// didn't hit a line, check for a thing
 		//
 		
-		// If in line mode, things shouldn't be clickable so just skip to selection box dragging
+		// If in line mode, things shouldn't be clickable, so just drag selection box and return
 		if currentMode == .line {
 			if !event.modifierFlags.contains(.shift) {
 				editWorld.deselectAll()
 			}
-			if shouldDrag { dragSelectionBox(event) }
+			if !rightClicked {
+				dragSelectionBox(event)
+			}
+				
 			return
 		}
 		
@@ -441,28 +368,32 @@ extension MapView {
 			}
 			
 			editWorld.selectThing(thingIndex)
-			didClickThing = true
 			selectedThing = things[thingIndex]
 			selectedThingIndex = thingIndex
 			
-			if shouldDrag { dragObjects(with: event) }
+			if !rightClicked {
+				dragObjects(with: event)
+			} else {
+				openThingPanel(atThing: thingIndex)
+			}
 			return
 		}
 		
 		//
-		//  Hit nothing, drag a selection box & get the sector def
+		//  Hit nothing, drag a selection box or open sector panel if right clicked
 		//
-		didClickLine = false; didClickThing = false
-		if !event.modifierFlags.contains(.shift) {
+		if rightClicked {
 			editWorld.deselectAll()
-			didClickSector = true
-			if let def = getSector(from: event) {
-				selectedDef = def
+			if !event.modifierFlags.contains(.shift) {
+				openSectorPanel(at: event)
 			} else {
-				didClickSector = false
+				selectSector(at: event)
 			}
-		}
-		if shouldDrag {
+		} else {
+			// left checked
+			if !event.modifierFlags.contains(.shift) {
+				editWorld.deselectAll()
+			}
 			dragSelectionBox(event)
 		}
 	}
@@ -677,30 +608,6 @@ extension MapView {
 				moved.x = cursor.x - moved.x
 				moved.y = cursor.y - moved.y
 				
-				/*
-				let ptr = UnsafeMutablePointer<Point>.allocate(capacity: points.count)
-				defer { ptr.deallocate(capacity: points.count) }
-				let points_p = UnsafeMutableBufferPointer(start: ptr, count: points.count)
-				
-				for (i, _) in points_p.enumerated() {
-					if points_p[i].selected == 1 {
-						points_p[i].coord.x += moved.x
-						points_p[i].coord.y += moved.y
-					}
-				}
-
-				let ptr2 = UnsafeMutablePointer<Thing>.allocate(capacity: things.count)
-				defer { ptr2.deallocate(capacity: things.count) }
-				let things_p = UnsafeMutableBufferPointer(start: ptr2, count: things.count)
-				
-				for (i, _) in things_p.enumerated() {
-					if things_p[i].selected == 1 {
-						things_p[i].origin.x += moved.x
-						things_p[i].origin.y += moved.y
-					}
-				}
-				*/
-				
 				for i in 0..<points.count {
 					if points[i].selected == 1 {
 						points[i].coord.x += moved.x
@@ -714,16 +621,6 @@ extension MapView {
 						things[i].origin.y += moved.y
 					}
 				}
-
-//				for index in pointList {
-//					points[index].coord.x += moved.x
-//					points[index].coord.y += moved.y
-//				}
-//
-//				for index in thingList {
-//					things[index].origin.x += moved.x
-//					things[index].origin.y += moved.y
-//				}
 				
 				if moved.x != 0 || moved.y != 0 {
 					print("dirty map")
@@ -882,8 +779,9 @@ extension MapView {
 		}
 		return 1		// back side
 	}
-	
-	func getSector(from event: NSEvent) -> SectorDef? {
+
+	/// Returns the sectordef of the line closest to the click point
+	func getSectorDef(from event: NSEvent) -> SectorDef? {
 		
 		var side: Int = 0
 		
@@ -896,19 +794,15 @@ extension MapView {
 		return nil
 	}
 	
-	func setCurrentSector() {
-		for i in 0..<lines.count {
-			if lines[i].selected < 1 {
-				continue
-			} else if lines[i].selected == 1 {
-				selectedSides.append(i)
-			} else if lines[i].selected == 2 {
-				selectedSides.append(i | SIDE_BIT)
-			}
-		}
-		print(selectedSides)
+	/// Selects all the lines in the sector that encompasses the click point
+	func selectSector(at event: NSEvent) {
+		
+		let clickpoint = getPoint(from: event)
+		blockWorld.floodFillSector(from: clickpoint)
+		setNeedsDisplay(bounds)
+		displayIfNeeded()
 	}
-	
+
 	
 	
 	// ====================
@@ -938,40 +832,6 @@ extension MapView {
 		editWorld.selectPoint(lines[line].pt1)
 		editWorld.selectPoint(lines[line].pt2)
 	}
-	
-	/*
-	func dragLine(_ event: NSEvent) {
-		
-		var fixedpoint, dragpoint: NSPoint
-		var nextevent: NSEvent?
-		
-		self.lockFocus()
-		COLOR_LINE_ONESIDED.setStroke()
-		NSBezierPath.defaultLineWidth = 1.0
-		
-		fixedpoint = getGridPoint(from: event)
-		
-		repeat {
-			nextevent = window?.nextEvent(matching: NSEvent.EventTypeMask.leftMouseDragged.union(.leftMouseUp))
-			dragpoint = getGridPoint(from: nextevent!)
-			
-			NSBezierPath.strokeLine(from: fixedpoint, to: dragpoint)
-			setNeedsDisplay(visibleRect)
-		} while nextevent?.type != .leftMouseUp
-		
-		// add to the world
-		self.unlockFocus()
-		
-		if dragpoint.x == fixedpoint.x && dragpoint.y == fixedpoint.y {
-			return
-		}
-		
-		editWorld.deselectAll()
-		addLine(from: fixedpoint, to: dragpoint)
-		editWorld.updateWindows()
-		doomProject.setDirtyMap(true)
-	}
-	*/
 	
 	/// Click to begin a poly-line or click-drag for a single line.
 	func lineDragPoly(_ event: NSEvent) {
@@ -1054,103 +914,6 @@ extension MapView {
 	}
 	
 
-	func polyLine(_ event: NSEvent) {
-		
-		var fixedpoint, dragpoint: NSPoint
-		let shapelayer = CAShapeLayer()
-		
-		fixedpoint = getGridPoint(from: event)
-		shapelayer.lineWidth = 1.0
-		shapelayer.fillColor = NSColor.clear.cgColor
-		shapelayer.strokeColor = COLOR_LINE_ONESIDED.cgColor
-		layer?.addSublayer(shapelayer)
-
-		var nextevent: NSEvent?
-		var oldmask: NSEvent?
-		repeat {
-			nextevent = window?.nextEvent(matching: NSEvent.EventTypeMask.leftMouseUp)
-		} while nextevent?.type != .leftMouseUp
-		
-		repeat {
-			fixedpoint = getGridPoint(from: nextevent!)
-			oldmask = window?.nextEvent(matching: NSEvent.EventTypeMask.mouseMoved)
-			
-			repeat {
-				nextevent = window?.nextEvent(matching: NSEvent.EventTypeMask.leftMouseDown.union(.leftMouseUp).union(.mouseMoved).union(.leftMouseDragged))
-				dragpoint = getGridPoint(from: nextevent!)
-				if nextevent?.type == .leftMouseUp {
-					break
-				}
-				
-				let path = CGMutablePath()
-				path.move(to: fixedpoint)
-				path.addLine(to: dragpoint)
-				shapelayer.path = path
-			} while true
-			
-			// add to the world
-			if dragpoint.x == fixedpoint.x && dragpoint.y == fixedpoint.y {
-				break
-			}
-			
-			addLine(from: fixedpoint, to: dragpoint)
-			if pointOutsideRect(fixedpoint, frame) || pointOutsideRect(dragpoint, frame) {
-				frame = editWorld.getBounds()
-				bounds = frame
-			}
-			editWorld.updateWindows()
-			doomProject.setDirtyMap(true)
-		} while true
-	}
-	
-	func dragLine(_ event: NSEvent) {
-		// TODO: Draw the 'tick' mark while adding a line
-		
-		var fixedPoint, dragPoint: NSPoint
-		let shapeLayer = CAShapeLayer()
-		
-		editWorld.deselectAll()
-		
-		fixedPoint = getGridPoint(from: event)
-		shapeLayer.lineWidth = 1.0
-		shapeLayer.fillColor = NSColor.clear.cgColor
-		shapeLayer.strokeColor = COLOR_LINE_ONESIDED.cgColor
-		layer?.addSublayer(shapeLayer)
-		
-		//
-		// Mouse-tracking loop
-		//
-
-		var nextEvent: NSEvent?
-		repeat {
-			nextEvent = window?.nextEvent(matching: NSEvent.EventTypeMask.leftMouseDragged.union(.leftMouseUp))
-			dragPoint = getGridPoint(from: nextEvent!)
-
-			let path = CGMutablePath()
-			path.move(to: fixedPoint)
-			path.addLine(to: dragPoint)
-			shapeLayer.path = path
-			
-		} while nextEvent?.type != .leftMouseUp
-		
-		if dragPoint.x == fixedPoint.x && dragPoint.y == fixedPoint.y {
-			return
-		}
-		
-		editWorld.deselectAll()
-		shapeLayer.removeFromSuperlayer()
-		addLine(from: fixedPoint, to: dragPoint)
-		
-		if pointOutsideRect(fixedPoint, frame) || pointOutsideRect(dragPoint, frame) {
-			frame = editWorld.getBounds()
-			bounds = frame
-		}
-//		var updateRect = NSRect()
-//		makeRect(&updateRect, with: fixedPoint, and: dragPoint)
-//		setNeedsDisplay(updateRect)
-		editWorld.updateWindows()
-		doomProject.mapDirty = true
-	}
 
 	
 	func placeThing(at event: NSEvent) {

@@ -47,6 +47,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 	@IBAction func runMap(_ sender: Any) {
 		editWorld.saveWorld()
 		
+		if !blockWorld.connectSectors() {
+			return
+		}
+		
 		let url = Bundle.main.resourceURL?.appendingPathComponent("doombsp")
 		
 		let process = Process()

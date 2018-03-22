@@ -305,6 +305,7 @@ class BlockWorld {
 		}
 	}
 	
+	/// Selects all lines of a sector that encompasses the click point
 	func floodFillSector(from point: NSPoint) {
 		var x1, y1: Int
 		
@@ -328,10 +329,19 @@ class BlockWorld {
 		
 		aRect = NSRect(x: 100, y: 100, width: brow/WLSIZE, height: bheight)
 		window = NSWindow.init(contentRect: aRect, styleMask: .titled, backing: .buffered, defer: false)
+
 		window.display()
+		window.orderFront(nil)
 		
-		window.contentView = blockView
+		blockView = window.contentView!
 		size = brow/WLSIZE*bheight
+		var src = bmap
+		var start = 0
+		for i in 0..<size {
+			if src![start+WL_MARK] != 0 {
+				dest = 0xff
+			} else if src![]
+		}
 		
 		for i in 0..<size {
 			if bmap![WL_MARK] != 0 {
@@ -345,6 +355,9 @@ class BlockWorld {
 	//
 	// The bcmp() function shall compare the first n bytes of the area pointed to by s1 with the area pointed to by s2.
 	// The bcmp() function shall return 0 if s1 and s2 are identical; otherwise, it shall return non-zero. Both areas are assumed to be n bytes long. If the value of n is 0, bcmp() shall return 0.
+	//
+	// void* memcpy( void* dest, const void* src, std::size_t count );
+	// Copies count bytes from the object pointed to by src to the object pointed to by dest
 	
 	// FIXME: makeSector() : get it working
 	
@@ -352,66 +365,45 @@ class BlockWorld {
 	/// Returns `false` and presents an alert panel if there is an error.
 	func makeSector() -> Bool {
 		
-		var side = Side()
+		var side: Side
 		var backline, frontline: Int
 		var newSector = Sector()
-		var nilSide = false
 		
 		backline = -1
 		frontline = -1
-		
 		
 		for i in 0..<lines.count {
 			
 			let line = lines[i]
 
-			if line.selected < 1 {  // deleted line
+			if line.selected < 1 {  // unselected or deleted
 				continue
 			}
 			
-			// backside of two-sided line selected
-			if line.selected == 2 && (line.flags & TWO_SIDED == 1) {
+			if line.selected == 2 && !(line.flags & TWO_SIDED != 0) {
 				backline = i
 				continue
 			}
-			
-			// flood point outside of level
-//			if line.selected == 2 && (line.flags & TWO_SIDED != 1) {
-//				continue
-//			}
-
-//			// added because sometimes the back side (side[1]) is nil
-			if line.side[line.selected-1] == nil {
-				continue
-			}
-			
-			// shouldn't be nil!(?)
-			side = lines[i].side[line.selected-1]!  // the selected side
+						
+			side = line.side[line.selected-1]!  // the selected side
 			
 			if frontline == -1 {
 				newSector.def = side.ends
-			} else {
-				if newSector.def == side.ends {
-					newSector.lines = []
-					sectorError(message: "Line side sectordefs differ", line1: i, line2: frontline)
-					return false
-				}
+			} else if newSector.def != side.ends {
+				newSector.lines = []
+				sectorError(message: "Line side sectordefs differ", line1: i, line2: frontline)
+				return false
 			}
 			
 			newSector.lines.append(i)
 			frontline = i
-			if lines[i].side[line.selected-1]?.sector != -1 {
+			if side.sector != -1 {
 				newSector.lines = []
 				sectorError(message: "Line side grouped into multiple sectors", line1: i, line2: -1)
 				return false
 			} else {
 				lines[i].side[line.selected-1]?.sector = sectors.count
 			}
-			
-//			if nilSide {  // set it back to nil again
-//				lines[i].side[line.selected-1] == nil
-//				nilSide = false
-//			}
 		}
 		
 		if backline > -1 && frontline > -1 {
@@ -432,13 +424,6 @@ class BlockWorld {
 	func connectSectors() -> Bool {
 
 		var sector = Sector()
-
-		// clear all sector marks
-		
-		for i in 0..<sectors.count {
-			sector = sectors[i]
-			sector.lines = []
-		}
 		
 		sectors = []
 		
@@ -457,7 +442,7 @@ class BlockWorld {
 				if bmap![dest+WL_MARK] == 0 && bmap![dest+WL_NWSE] == 0 && bmap![dest+WL_NESW] == 0 {
 					editWorld.deselectAll()
 					floodLine(startx: x, y: y)
-					if makeSector() == false {
+					if !makeSector() {
 						return false
 					}
 				}
@@ -473,7 +458,9 @@ class BlockWorld {
 				continue
 			}
 						
-			if lines[i].side[0]?.sector == -1 || ((lines[i].flags & TWO_SIDED) == 1 && lines[i].side[1]?.sector == -1) {
+			if lines[i].side[0]?.sector == -1 ||
+				((lines[i].flags & TWO_SIDED) != 0 && lines[i].side[1]?.sector == -1)
+			{
 				sectorError(message: "Line side not grouped", line1: i, line2: -1)
 				return false
 			}
@@ -482,32 +469,6 @@ class BlockWorld {
 		editWorld.deselectAll()
 		return true
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
 	
 }

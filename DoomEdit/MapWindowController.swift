@@ -53,6 +53,10 @@ class MapWindowController: NSWindowController, MapViewDelegate {
 		scrollView.documentView = mapView
 		scrollView.allowsMagnification = true
 		scrollView.autoresizingMask = [.width, .height]
+		scrollView.hasVerticalRuler = true
+		scrollView.hasHorizontalRuler = true
+		scrollView.autohidesScrollers = true
+		scrollView.scrollerKnobStyle = Settings.knobStyle
 		
 		// Scroll to center of map
 		let mapBounds = editWorld.getBounds()

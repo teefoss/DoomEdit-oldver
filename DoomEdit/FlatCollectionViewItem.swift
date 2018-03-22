@@ -14,7 +14,7 @@ class FlatCollectionViewItem: NSCollectionViewItem {
         super.viewDidLoad()
 
 		view.wantsLayer = true
-		view.layer?.backgroundColor = NSColor.gridColor.cgColor
+		//view.layer?.backgroundColor = NSColor.gridColor.cgColor
 		view.layer?.borderColor = NSColor.red.cgColor
 		view.layer?.borderWidth = 0.0
 	}

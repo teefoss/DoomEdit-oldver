@@ -292,25 +292,24 @@ class LinePanel: NSViewController, TexturePanelDelegate, NSTabViewDelegate {
 	
 	func updateTextureLabelFromPanel(name: String, position: Int) {
 		
-		
 		switch position {
 		case 1:
-			frontLowerLabel.textColor = NSColor.black
+			frontLowerLabel.textColor = Color.textColor
 			frontLowerLabel.stringValue = name
 		case 2:
-			frontMiddleLabel.textColor = NSColor.black
+			frontMiddleLabel.textColor = Color.textColor
 			frontMiddleLabel.stringValue = name
 		case 3:
-			frontUpperLabel.textColor = NSColor.black
+			frontUpperLabel.textColor = Color.textColor
 			frontUpperLabel.stringValue = name
 		case -1:
-			backLowerLabel.textColor = NSColor.black
+			backLowerLabel.textColor = Color.textColor
 			backLowerLabel.stringValue = name
 		case -2:
-			backLowerLabel.textColor = NSColor.black
+			backLowerLabel.textColor = Color.textColor
 			backMiddleLabel.stringValue = name
 		case -3:
-			backLowerLabel.textColor = NSColor.black
+			backLowerLabel.textColor = Color.textColor
 			backUpperLabel.stringValue = name
 		default: return
 		}
@@ -322,7 +321,7 @@ class LinePanel: NSViewController, TexturePanelDelegate, NSTabViewDelegate {
 			frontUpperLabel.textColor = NSColor.red
 			frontUpperLabel.stringValue = "Multiple"
 		} else {
-			frontUpperLabel.textColor = NSColor.black
+			frontUpperLabel.textColor = Color.textColor
 			frontUpperLabel.stringValue = lines[selectedLineIndices[0]].side[0]?.upperTexture ?? "-"
 		}
 		
@@ -330,7 +329,7 @@ class LinePanel: NSViewController, TexturePanelDelegate, NSTabViewDelegate {
 			frontMiddleLabel.textColor = NSColor.red
 			frontMiddleLabel.stringValue = "Multiple"
 		} else {
-			frontMiddleLabel.textColor = NSColor.black
+			frontMiddleLabel.textColor = Color.textColor
 			frontMiddleLabel.stringValue = lines[selectedLineIndices[0]].side[0]?.middleTexture ?? "-"
 		}
 
@@ -338,7 +337,7 @@ class LinePanel: NSViewController, TexturePanelDelegate, NSTabViewDelegate {
 			frontLowerLabel.textColor = NSColor.red
 			frontLowerLabel.stringValue = "Multiple"
 		} else {
-			frontLowerLabel.textColor = NSColor.black
+			frontLowerLabel.textColor = Color.textColor
 			frontLowerLabel.stringValue = lines[selectedLineIndices[0]].side[0]?.lowerTexture ?? "-"
 		}
 
@@ -346,7 +345,7 @@ class LinePanel: NSViewController, TexturePanelDelegate, NSTabViewDelegate {
 			backUpperLabel.textColor = NSColor.red
 			backUpperLabel.stringValue = "Multiple"
 		} else {
-			backUpperLabel.textColor = NSColor.black
+			backUpperLabel.textColor = Color.textColor
 			backUpperLabel.stringValue = lines[selectedLineIndices[0]].side[1]?.upperTexture ?? "-"
 		}
 		
@@ -354,7 +353,7 @@ class LinePanel: NSViewController, TexturePanelDelegate, NSTabViewDelegate {
 			backMiddleLabel.textColor = NSColor.red
 			backMiddleLabel.stringValue = "Multiple"
 		} else {
-			backMiddleLabel.textColor = NSColor.black
+			backMiddleLabel.textColor = Color.textColor
 			backMiddleLabel.stringValue = lines[selectedLineIndices[0]].side[1]?.middleTexture ?? "-"
 		}
 		
@@ -362,7 +361,7 @@ class LinePanel: NSViewController, TexturePanelDelegate, NSTabViewDelegate {
 			backLowerLabel.textColor = NSColor.red
 			backLowerLabel.stringValue = "Multiple"
 		} else {
-			backLowerLabel.textColor = NSColor.black
+			backLowerLabel.textColor = Color.textColor
 			backLowerLabel.stringValue = lines[selectedLineIndices[0]].side[1]?.lowerTexture ?? "-"
 		}
 	}

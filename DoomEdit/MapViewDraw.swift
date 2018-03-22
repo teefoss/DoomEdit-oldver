@@ -80,6 +80,7 @@ extension MapView: EditWorldDelegate {
 					
 					let label = NSTextField(frame: NSRect(x: mid.x, y: mid.y, width: 0, height: 0))
 					label.isBordered = false
+					label.textColor = (THEME == .light) ? .black : .white
 					label.backgroundColor = NSColor.clear
 					label.integerValue = line.length
 					label.sizeToFit()
@@ -281,7 +282,11 @@ extension MapView: EditWorldDelegate {
 			}
 			
 			if currentMode == .line {
-				NSColor.black.withAlphaComponent(0.1).set()
+				if THEME == .light {
+					NSColor.black.withAlphaComponent(0.1).set()
+				} else {
+					NSColor.white.withAlphaComponent(0.2).set()
+				}
 			}
 //			if currentMode != .thing {
 //			}

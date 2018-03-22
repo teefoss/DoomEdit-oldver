@@ -38,7 +38,8 @@ for i in 0..<width {
 }
 */
 
-/// pointers
+/// ==============
+//  MARK: pointers
 /*
 let ptr = UnsafeMutablePointer<Point>.allocate(capacity: points.count)
 defer { ptr.deallocate(capacity: points.count) }
@@ -54,6 +55,7 @@ buf[i].coord.y += moved.y
 */
 
 /// version that uses linecross
+// MARK: drawLines(in:)
 /*
 func drawLines(in rect: NSRect) {
 
@@ -127,4 +129,105 @@ NSBezierPath.strokeLine(from: newMidPt, to: newNormPt)	// line normal 'tick'
 }
 */
 
+// MARK: polyLine(event:)
+/*
+func polyLine(_ event: NSEvent) {
+	
+	var fixedpoint, dragpoint: NSPoint
+	let shapelayer = CAShapeLayer()
+	
+	fixedpoint = getGridPoint(from: event)
+	shapelayer.lineWidth = 1.0
+	shapelayer.fillColor = NSColor.clear.cgColor
+	shapelayer.strokeColor = COLOR_LINE_ONESIDED.cgColor
+	layer?.addSublayer(shapelayer)
+	
+	var nextevent: NSEvent?
+	var oldmask: NSEvent?
+	repeat {
+		nextevent = window?.nextEvent(matching: NSEvent.EventTypeMask.leftMouseUp)
+	} while nextevent?.type != .leftMouseUp
+	
+	repeat {
+		fixedpoint = getGridPoint(from: nextevent!)
+		oldmask = window?.nextEvent(matching: NSEvent.EventTypeMask.mouseMoved)
+		
+		repeat {
+			nextevent = window?.nextEvent(matching: NSEvent.EventTypeMask.leftMouseDown.union(.leftMouseUp).union(.mouseMoved).union(.leftMouseDragged))
+			dragpoint = getGridPoint(from: nextevent!)
+			if nextevent?.type == .leftMouseUp {
+				break
+			}
+			
+			let path = CGMutablePath()
+			path.move(to: fixedpoint)
+			path.addLine(to: dragpoint)
+			shapelayer.path = path
+		} while true
+		
+		// add to the world
+		if dragpoint.x == fixedpoint.x && dragpoint.y == fixedpoint.y {
+			break
+		}
+		
+		addLine(from: fixedpoint, to: dragpoint)
+		if pointOutsideRect(fixedpoint, frame) || pointOutsideRect(dragpoint, frame) {
+			frame = editWorld.getBounds()
+			bounds = frame
+		}
+		editWorld.updateWindows()
+		doomProject.setDirtyMap(true)
+	} while true
+}
+
+// MARK: dragLine(event:)
+func dragLine(_ event: NSEvent) {
+	// TODO: Draw the 'tick' mark while adding a line
+	
+	var fixedPoint, dragPoint: NSPoint
+	let shapeLayer = CAShapeLayer()
+	
+	editWorld.deselectAll()
+	
+	fixedPoint = getGridPoint(from: event)
+	shapeLayer.lineWidth = 1.0
+	shapeLayer.fillColor = NSColor.clear.cgColor
+	shapeLayer.strokeColor = COLOR_LINE_ONESIDED.cgColor
+	layer?.addSublayer(shapeLayer)
+	
+	//
+	// Mouse-tracking loop
+	//
+	
+	var nextEvent: NSEvent?
+	repeat {
+		nextEvent = window?.nextEvent(matching: NSEvent.EventTypeMask.leftMouseDragged.union(.leftMouseUp))
+		dragPoint = getGridPoint(from: nextEvent!)
+		
+		let path = CGMutablePath()
+		path.move(to: fixedPoint)
+		path.addLine(to: dragPoint)
+		shapeLayer.path = path
+		
+	} while nextEvent?.type != .leftMouseUp
+	
+	if dragPoint.x == fixedPoint.x && dragPoint.y == fixedPoint.y {
+		return
+	}
+	
+	editWorld.deselectAll()
+	shapeLayer.removeFromSuperlayer()
+	addLine(from: fixedPoint, to: dragPoint)
+	
+	if pointOutsideRect(fixedPoint, frame) || pointOutsideRect(dragPoint, frame) {
+		frame = editWorld.getBounds()
+		bounds = frame
+	}
+	//		var updateRect = NSRect()
+	//		makeRect(&updateRect, with: fixedPoint, and: dragPoint)
+	//		setNeedsDisplay(updateRect)
+	editWorld.updateWindows()
+	doomProject.mapDirty = true
+}
+*/
 

@@ -15,8 +15,7 @@ protocol FlatPanelDelegate {
 class SectorPanel: NSViewController, NSTextDelegate, FlatPanelDelegate {
 	
 	var def = SectorDef()
-	var selectedSides: [Int] = []
-	var newDef = SectorDef()
+	var selectedLineIndices: [Int] = []
 //	var wad = WadFile()
 	
 	@IBOutlet weak var sectorLabel: NSTextField!
@@ -74,20 +73,31 @@ class SectorPanel: NSViewController, NSTextDelegate, FlatPanelDelegate {
 		ceilingImageView.image = imageNamed(def.ceilingFlat)
 		floorImageView.image = imageNamed(def.floorFlat)
 		
+		// Store the currently selected line so they can be set on viewWillDisappear
+		selectedLineIndices = []
+		for i in 0..<lines.count {
+			if lines[i].selected < 1 {
+				continue
+			} else if lines[i].selected == 1 {
+				selectedLineIndices.append(i)
+			} else if lines[i].selected == 2 {
+				selectedLineIndices.append(i | SIDE_BIT)
+			}
+		}
 	}
 	
 	override func viewWillDisappear() {
 		super.viewWillDisappear()
-				
-		newDef.ceilingHeight = ceilingHeightTextField.integerValue
-		newDef.floorHeight = floorHeightTextField.integerValue
-		newDef.tag = tagTextField.integerValue
-		newDef.lightLevel = lightTextField.integerValue
-		newDef.special = specialTextField.integerValue
-		newDef.ceilingFlat = ceilingLabel.stringValue
-		newDef.floorFlat = floorLabel.stringValue
+
+		def.ceilingHeight = ceilingHeightTextField.integerValue
+		def.floorHeight = floorHeightTextField.integerValue
+		def.tag = tagTextField.integerValue
+		def.lightLevel = lightTextField.integerValue
+		def.special = specialTextField.integerValue
+		def.ceilingFlat = ceilingLabel.stringValue
+		def.floorFlat = floorLabel.stringValue
 		
-		fillSector(with: newDef)
+		fillSector()
 	}
 	
 	/// Look up the image for the flat name. Called to update the floor/ceiling image views
@@ -113,17 +123,39 @@ class SectorPanel: NSViewController, NSTextDelegate, FlatPanelDelegate {
 	}
 	
 	/// Set all the selected lines with the new sector def.
-	func fillSector(with def: SectorDef) {
-		for i in 0..<selectedSides.count {
-			if selectedSides[i] & SIDE_BIT == SIDE_BIT {
-				var line = selectedSides[i]
-				line &= ~SIDE_BIT
-				lines[line].side[1]?.ends = def
+	func fillSector() {
+		
+		var i: Int = 0
+		var side: Int = 0
+		
+		for index in selectedLineIndices {
+			i = index
+			if index & SIDE_BIT != 0 {
+				i &= ~SIDE_BIT
+				lines[i].side[1]?.ends = def
 			} else {
-				let line = selectedSides[i]
-				lines[line].side[0]?.ends = def
+				lines[i].side[0]?.ends = def
 			}
 		}
+//		for i in 0..<lines.count {
+//			if lines[i].selected < 1 {
+//				continue }
+//			side = lines[i].selected - 1
+//			lines[i].side[side]?.ends = def
+//		}
+		doomProject.setDirtyMap(true)
+		
+		
+//		for i in 0..<lines.count {
+//			if selectedSides[i] & SIDE_BIT == SIDE_BIT {
+//				var line = selectedSides[i]
+//				line &= ~SIDE_BIT
+//				lines[line].side[1]?.ends = def
+//			} else {
+//				let line = selectedSides[i]
+//				lines[line].side[0]?.ends = def
+//			}
+//		}
 	}
 	
 	/// Set the name and image view with the flat selected in the flat panel.
@@ -163,7 +195,6 @@ class SectorPanel: NSViewController, NSTextDelegate, FlatPanelDelegate {
 		}
 		
 		tagTextField.integerValue = maxTag + 1
-		newDef.tag = tagTextField.integerValue
 	}
 	
 	

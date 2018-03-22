@@ -18,13 +18,13 @@
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="196" y="240" width="640" height="640"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1280" height="778"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1058"/>
             <value key="minSize" type="size" width="320" height="320"/>
             <view key="contentView" wantsLayer="YES" id="se5-gp-TjO">
                 <rect key="frame" x="0.0" y="0.0" width="640" height="640"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <scrollView borderType="none" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" allowsMagnification="YES" minMagnification="0.125" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OTZ-fo-Sfz">
+                    <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" allowsMagnification="YES" minMagnification="0.125" usesPredominantAxisScrolling="NO" scrollerKnobStyle="dark" translatesAutoresizingMaskIntoConstraints="NO" id="OTZ-fo-Sfz">
                         <rect key="frame" x="0.0" y="0.0" width="640" height="640"/>
                         <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="rH1-Au-p1r">
                             <rect key="frame" x="0.0" y="0.0" width="640" height="640"/>
@@ -36,12 +36,12 @@
                                 </view>
                             </subviews>
                         </clipView>
-                        <scroller key="horizontalScroller" verticalHuggingPriority="750" horizontal="YES" id="0jJ-2H-z0L">
-                            <rect key="frame" x="0.0" y="624" width="640" height="16"/>
+                        <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="0jJ-2H-z0L">
+                            <rect key="frame" x="0.0" y="625" width="625" height="15"/>
                             <autoresizingMask key="autoresizingMask"/>
                         </scroller>
-                        <scroller key="verticalScroller" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="heK-5i-cig">
-                            <rect key="frame" x="624" y="0.0" width="16" height="640"/>
+                        <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="heK-5i-cig">
+                            <rect key="frame" x="625" y="0.0" width="15" height="625"/>
                             <autoresizingMask key="autoresizingMask"/>
                         </scroller>
                     </scrollView>

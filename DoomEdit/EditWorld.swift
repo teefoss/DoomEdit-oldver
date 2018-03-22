@@ -393,6 +393,10 @@ class EditWorld {
 			return
 		}
 		data = lines[num]
+		print("===============")
+		print("front \(data.side[0]?.ends)")
+		print("back \(data.side[1]?.ends)")
+		
 		if data.selected == -1 {
 			print("selectLine: deleted")
 			return

@@ -87,8 +87,13 @@ func setTheme() {
 // Color
 
 struct Color {
-	static let lineTwoSided = NSColor.gray
+	static let lineTwoSided = NSColor.lightGray
 	static let lineSpecial = NSColor.green
+	static let textColor: NSColor = (THEME == .light) ? .black : .white
+}
+
+struct Settings {
+	static let knobStyle: NSScroller.KnobStyle = (THEME == .light) ? .dark : .light
 }
 
 
