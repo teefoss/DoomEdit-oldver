@@ -17,14 +17,12 @@ class TextureImageView: NSImageView, NSPopoverDelegate {
 	
 	var textureIndex: Int = -1
 	var selectedLineIndices: [Int] = []
-	var lineIndex = 0
 	var texturePosition: Int = 0	// 1,2,3 lower, middle, upper: front
 									// -1,-2,-3 lower, middle, upper: back
 	var texturePanel = TexturePanel()
 	
 	override func mouseDown(with event: NSEvent) {
 		texturePanel.selectedLineIndices = selectedLineIndices
-		texturePanel.lineIndex = self.lineIndex
 		texturePanel.selectedTextureIndex = self.textureIndex
 		texturePanel.texturePosition = self.texturePosition
 		displayTexturePopover(at: self)

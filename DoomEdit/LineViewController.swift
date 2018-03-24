@@ -17,7 +17,6 @@ protocol TexturePanelDelegate {
 class LineViewController: NSViewController, TexturePanelDelegate, NSTabViewDelegate {
 
 	// The selected line
-	var lineIndex: Int = 0
 	var selectedLineIndices: [Int] = []
 	var baseline: Line
 	
@@ -141,15 +140,6 @@ class LineViewController: NSViewController, TexturePanelDelegate, NSTabViewDeleg
 	}
 	
 	
-	override func viewWillDisappear() {
-		super.viewWillDisappear()
-
-		setTag()
-		setOffsets()
-		selectedLineIndices = []
-	}
-	
-	
 	
 	// =================
 	// MARK: - Update UI
@@ -270,13 +260,6 @@ class LineViewController: NSViewController, TexturePanelDelegate, NSTabViewDeleg
 		updateImages()
 		
 		// Set the line index so the Texture Panel can update this line's texture
-		frontUpperImageView.lineIndex = lineIndex
-		frontMiddleImageView.lineIndex = lineIndex
-		frontLowerImageView.lineIndex = lineIndex
-		backUpperImageView.lineIndex = lineIndex
-		backMiddleImageView.lineIndex = lineIndex
-		backLowerImageView.lineIndex = lineIndex
-		
 		frontUpperImageView.selectedLineIndices = selectedLineIndices
 		frontMiddleImageView.selectedLineIndices = selectedLineIndices
 		frontLowerImageView.selectedLineIndices = selectedLineIndices
@@ -566,8 +549,44 @@ class LineViewController: NSViewController, TexturePanelDelegate, NSTabViewDeleg
 		return -1
 	}
 	
-	@IBAction func changeOption(_ sender: NSButton) {
+	/// Disable the back side tab is not two-sided
+	func tabView(_ tabView: NSTabView, shouldSelect tabViewItem: NSTabViewItem?) -> Bool {
+		if tabViewItem == tabView.tabViewItem(at: 0) {
+			return true
+		} else {
+			return flagButtons[2].state == .on
+		}
+	}
+	
+	
+	
+	// ==================
+	// MARK: - IB Actions
+	// ==================
+	
+	/// Suggest the next unused tag number
+	@IBAction func suggestTagClicked(_ sender: NSButton) {
+		
+		var maxTag: Int = 0
+		for line in lines {
+			if line.tag > maxTag {
+				maxTag = line.tag
+			}
+		}
+		tagTextField.integerValue = maxTag + 1
+	}
 
+	/// Set the line(s) tag when the value in the text field changes
+	@IBAction func tagDidChange(_ sender: NSTextField) {
+		
+		for index in selectedLineIndices {
+			lines[index].tag = sender.integerValue
+		}
+	}
+	
+	/// One of the option buttons was clicked.
+	@IBAction func changeOption(_ sender: NSButton) {
+		
 		sender.allowsMixedState = false
 		
 		if sender.state == .on {
@@ -590,24 +609,19 @@ class LineViewController: NSViewController, TexturePanelDelegate, NSTabViewDeleg
 		}
 	}
 	
-	/// Suggest the next unused tag number
-	@IBAction func suggestTagClicked(_ sender: NSButton) {
+	@IBAction func xoffsetDidChange(_ sender: NSTextField) {
 		
-		var maxTag: Int = 0
-		for line in lines {
-			if line.tag > maxTag {
-				maxTag = line.tag
-			}
+		for index in selectedLineIndices {
+			lines[index].side[sender.tag]?.x_offset = sender.integerValue
 		}
-		tagTextField.integerValue = maxTag + 1
 	}
 	
-	/// Disable the back side tab is not two-sided
-	func tabView(_ tabView: NSTabView, shouldSelect tabViewItem: NSTabViewItem?) -> Bool {
-		if tabViewItem == tabView.tabViewItem(at: 0) {
-			return true
-		} else {
-			return flagButtons[2].state == .on
+	@IBAction func yoffsetDidChange(_ sender: NSTextField) {
+		
+		for index in selectedLineIndices {
+			lines[index].side[sender.tag]?.y_offset = sender.integerValue
 		}
 	}
+	
+	
 }

@@ -198,7 +198,6 @@ class MapView: NSView, EditWorldDelegate, NSPopoverDelegate {
 							  height: 32)
 		let lineView = NSView(frame: lineRect)
 		self.addSubview(lineView)
-		lineViewController.lineIndex = index
 		linePopover.show(relativeTo: lineView.bounds, of: lineView, preferredEdge: .maxX)
 	}
 	

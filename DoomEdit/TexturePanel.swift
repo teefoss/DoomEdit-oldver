@@ -18,7 +18,6 @@ class TexturePanel: NSViewController, NSCollectionViewDataSource, NSCollectionVi
 	
 	var selectedTextureIndex: Int = -1
 	var selectedLineIndices: [Int] = []
-	var lineIndex: Int = 0
 	var texturePosition: Int = 0
 	
 	var window: NSWindow?
@@ -108,8 +107,6 @@ class TexturePanel: NSViewController, NSCollectionViewDataSource, NSCollectionVi
 	// MARK: - Textures
 	// ================
 	
-
-
 	func selectTexture() {
 
 		collectionView.deselectAll(nil)

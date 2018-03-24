@@ -119,6 +119,9 @@
                                     <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
+                                <connections>
+                                    <action selector="tagDidChange:" target="-2" id="JqC-hi-wi0"/>
+                                </connections>
                             </textField>
                             <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2fF-V1-u5w">
                                 <rect key="frame" x="90" y="8" width="101" height="32"/>
@@ -266,7 +269,7 @@
                     <font key="font" metaFont="system"/>
                     <tabViewItems>
                         <tabViewItem label="Front" identifier="1" id="cCk-M3-0eL">
-                            <view key="view" ambiguous="YES" id="ld2-tj-Kse">
+                            <view key="view" id="ld2-tj-Kse">
                                 <rect key="frame" x="10" y="33" width="218" height="398"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <subviews>
@@ -356,6 +359,9 @@
                                             <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
+                                        <connections>
+                                            <action selector="xoffsetDidChange:" target="-2" id="3hs-Ev-Uhp"/>
+                                        </connections>
                                     </textField>
                                     <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6bo-xD-XAt">
                                         <rect key="frame" x="97" y="17" width="90" height="22"/>
@@ -365,6 +371,9 @@
                                             <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
+                                        <connections>
+                                            <action selector="yoffsetDidChange:" target="-2" id="TGH-6B-vkn"/>
+                                        </connections>
                                     </textField>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="44b-SB-3ad">
                                         <rect key="frame" x="29" y="48" width="54" height="17"/>
@@ -379,7 +388,7 @@
                             </view>
                         </tabViewItem>
                         <tabViewItem label="Back" identifier="2" id="jJW-R8-Y44">
-                            <view key="view" id="W0Z-pV-wh2">
+                            <view key="view" ambiguous="YES" id="W0Z-pV-wh2">
                                 <rect key="frame" x="10" y="33" width="218" height="398"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <subviews>
@@ -461,7 +470,7 @@
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
                                     </textField>
-                                    <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="a6F-bi-d9h">
+                                    <textField verticalHuggingPriority="750" fixedFrame="YES" tag="1" translatesAutoresizingMaskIntoConstraints="NO" id="a6F-bi-d9h">
                                         <rect key="frame" x="97" y="46" width="90" height="22"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" title="0" drawsBackground="YES" id="VJ6-Aq-BYO">
@@ -469,8 +478,11 @@
                                             <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
+                                        <connections>
+                                            <action selector="xoffsetDidChange:" target="-2" id="wla-rl-3DW"/>
+                                        </connections>
                                     </textField>
-                                    <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="GSa-Qz-bTu">
+                                    <textField verticalHuggingPriority="750" fixedFrame="YES" tag="1" translatesAutoresizingMaskIntoConstraints="NO" id="GSa-Qz-bTu">
                                         <rect key="frame" x="97" y="17" width="90" height="22"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" title="0" drawsBackground="YES" id="kF1-Ru-BnF">
@@ -478,6 +490,9 @@
                                             <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
+                                        <connections>
+                                            <action selector="yoffsetDidChange:" target="-2" id="pFh-jq-1OW"/>
+                                        </connections>
                                     </textField>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="kgM-hu-c9t">
                                         <rect key="frame" x="29" y="48" width="54" height="17"/>
