@@ -8,7 +8,7 @@
 
 import Cocoa
 
-extension LinePanel {
+extension LineViewController {
 	
 	/// Create all the menu items, set submenus, add specials to menu.
 	func setupSpecialMenu() {
@@ -41,7 +41,7 @@ extension LinePanel {
 		effectMenu.setSubmenu(effectMenu, for: effectMenuItem)
 		impactMenu.setSubmenu(impactMenu, for: impactMenuItem)
 		
-		for special in doomData.doom1LineSpecials {
+		for special in doomData.lineSpecials {
 			
 			switch special.type {
 			case "Manual":

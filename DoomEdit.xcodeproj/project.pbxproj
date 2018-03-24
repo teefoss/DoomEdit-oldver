@@ -26,8 +26,8 @@
 		304B550F205BF99100863E93 /* MapScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 304B550E205BF99100863E93 /* MapScrollView.swift */; };
 		304B5511205C459C00863E93 /* NSWindowExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 304B5510205C459C00863E93 /* NSWindowExtension.swift */; };
 		30533AA41FE17CC70039DCFB /* BlockWorld.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30533AA31FE17CC70039DCFB /* BlockWorld.swift */; };
-		30533AA91FE45E620039DCFB /* SectorPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30533AA71FE45E620039DCFB /* SectorPanel.swift */; };
-		30533AAA1FE45E620039DCFB /* SectorPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 30533AA81FE45E620039DCFB /* SectorPanel.xib */; };
+		30533AA91FE45E620039DCFB /* SectorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30533AA71FE45E620039DCFB /* SectorViewController.swift */; };
+		30533AAA1FE45E620039DCFB /* SectorViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 30533AA81FE45E620039DCFB /* SectorViewController.xib */; };
 		3060F2B4201FEE7800996FDB /* ProjectWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3060F2B2201FEE7800996FDB /* ProjectWindowController.swift */; };
 		3060F2B5201FEE7800996FDB /* ProjectWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3060F2B3201FEE7800996FDB /* ProjectWindowController.xib */; };
 		3060F2B7201FFE9B00996FDB /* DoomProject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3060F2B6201FFE9B00996FDB /* DoomProject.swift */; };
@@ -55,9 +55,9 @@
 		30A00BB11FD6F1AF00EBCA27 /* things.dsp in Resources */ = {isa = PBXBuildFile; fileRef = 30A00BAA1FD6F1AE00EBCA27 /* things.dsp */; };
 		30B16B1C1FDCBF930066DEC3 /* DoomData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30B16B1B1FDCBF930066DEC3 /* DoomData.swift */; };
 		30B16B1F1FDE01CB0066DEC3 /* ThingPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30B16B1D1FDE01CB0066DEC3 /* ThingPanel.swift */; };
-		30B16B201FDE01CB0066DEC3 /* ThingPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 30B16B1E1FDE01CB0066DEC3 /* ThingPanel.xib */; };
+		30B16B201FDE01CB0066DEC3 /* ThingViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 30B16B1E1FDE01CB0066DEC3 /* ThingViewController.xib */; };
 		30B16B221FDE15A70066DEC3 /* IntExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30B16B211FDE15A70066DEC3 /* IntExtension.swift */; };
-		30B16B251FDE376A0066DEC3 /* LinePanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30B16B231FDE376A0066DEC3 /* LinePanel.swift */; };
+		30B16B251FDE376A0066DEC3 /* LineViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30B16B231FDE376A0066DEC3 /* LineViewController.swift */; };
 		30B16B261FDE376A0066DEC3 /* LinePanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 30B16B241FDE376A0066DEC3 /* LinePanel.xib */; };
 		30C41A4C20098CD6000E3F9B /* WadFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30C41A4B20098CD6000E3F9B /* WadFile.swift */; };
 		30C41A4E2009B339000E3F9B /* DataExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30C41A4D2009B339000E3F9B /* DataExtension.swift */; };
@@ -102,8 +102,8 @@
 		304B550E205BF99100863E93 /* MapScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapScrollView.swift; sourceTree = "<group>"; };
 		304B5510205C459C00863E93 /* NSWindowExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSWindowExtension.swift; sourceTree = "<group>"; };
 		30533AA31FE17CC70039DCFB /* BlockWorld.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockWorld.swift; sourceTree = "<group>"; };
-		30533AA71FE45E620039DCFB /* SectorPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectorPanel.swift; sourceTree = "<group>"; };
-		30533AA81FE45E620039DCFB /* SectorPanel.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SectorPanel.xib; sourceTree = "<group>"; };
+		30533AA71FE45E620039DCFB /* SectorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectorViewController.swift; sourceTree = "<group>"; };
+		30533AA81FE45E620039DCFB /* SectorViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SectorViewController.xib; sourceTree = "<group>"; };
 		3060F2B2201FEE7800996FDB /* ProjectWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectWindowController.swift; sourceTree = "<group>"; };
 		3060F2B3201FEE7800996FDB /* ProjectWindowController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ProjectWindowController.xib; sourceTree = "<group>"; };
 		3060F2B6201FFE9B00996FDB /* DoomProject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoomProject.swift; sourceTree = "<group>"; };
@@ -134,9 +134,9 @@
 		30A00BAA1FD6F1AE00EBCA27 /* things.dsp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = things.dsp; sourceTree = "<group>"; };
 		30B16B1B1FDCBF930066DEC3 /* DoomData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoomData.swift; sourceTree = "<group>"; };
 		30B16B1D1FDE01CB0066DEC3 /* ThingPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThingPanel.swift; sourceTree = "<group>"; };
-		30B16B1E1FDE01CB0066DEC3 /* ThingPanel.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ThingPanel.xib; sourceTree = "<group>"; };
+		30B16B1E1FDE01CB0066DEC3 /* ThingViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ThingViewController.xib; sourceTree = "<group>"; };
 		30B16B211FDE15A70066DEC3 /* IntExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntExtension.swift; sourceTree = "<group>"; };
-		30B16B231FDE376A0066DEC3 /* LinePanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinePanel.swift; sourceTree = "<group>"; };
+		30B16B231FDE376A0066DEC3 /* LineViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LineViewController.swift; sourceTree = "<group>"; };
 		30B16B241FDE376A0066DEC3 /* LinePanel.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LinePanel.xib; sourceTree = "<group>"; };
 		30C41A4B20098CD6000E3F9B /* WadFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WadFile.swift; sourceTree = "<group>"; };
 		30C41A4D2009B339000E3F9B /* DataExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataExtension.swift; sourceTree = "<group>"; };
@@ -240,7 +240,7 @@
 				30C41A57200A79DB000E3F9B /* FlatCollectionViewItem.xib */,
 				30FBF63A1FC52D500035671D /* MainMenu.xib */,
 				30FBF6451FC52DB70035671D /* MapWindowController.xib */,
-				30533AA81FE45E620039DCFB /* SectorPanel.xib */,
+				30533AA81FE45E620039DCFB /* SectorViewController.xib */,
 				3060F2B9201FFF4000996FDB /* LaunchWindowController.xib */,
 				30B16B241FDE376A0066DEC3 /* LinePanel.xib */,
 				3060F2C32021168000996FDB /* LoadDWDWindowController.xib */,
@@ -249,7 +249,7 @@
 				3060F2B3201FEE7800996FDB /* ProjectWindowController.xib */,
 				306C8B231FF9A17D00C2C47C /* TextureCollectionViewItem.xib */,
 				306C8B1F1FF9610D00C2C47C /* TexturePanel.xib */,
-				30B16B1E1FDE01CB0066DEC3 /* ThingPanel.xib */,
+				30B16B1E1FDE01CB0066DEC3 /* ThingViewController.xib */,
 			);
 			path = Nibs;
 			sourceTree = "<group>";
@@ -290,7 +290,7 @@
 				301CC5B32011032D00E208FF /* Junk.swift */,
 				3060F2B8201FFF4000996FDB /* LaunchWindowController.swift */,
 				30399CCA1FD3049E00503DB4 /* Line.swift */,
-				30B16B231FDE376A0066DEC3 /* LinePanel.swift */,
+				30B16B231FDE376A0066DEC3 /* LineViewController.swift */,
 				30714E9320519820000D06BF /* LinePanelUI.swift */,
 				3060F2C22021168000996FDB /* LoadDWDWindowController.swift */,
 				30FBF6441FC52DB70035671D /* MapWindowController.swift */,
@@ -300,7 +300,7 @@
 				301CC5B520119EB400E208FF /* PatchWindow.swift */,
 				3042DC54201FD8C600D4434F /* PreferencesWindowController.swift */,
 				3060F2B2201FEE7800996FDB /* ProjectWindowController.swift */,
-				30533AA71FE45E620039DCFB /* SectorPanel.swift */,
+				30533AA71FE45E620039DCFB /* SectorViewController.swift */,
 				301CC5B9201245B300E208FF /* Texture.swift */,
 				306C8B221FF9A17D00C2C47C /* TextureCollectionViewItem.swift */,
 				306C8B261FFB22D800C2C47C /* TextureImageView.swift */,
@@ -403,10 +403,10 @@
 				3060F2B5201FEE7800996FDB /* ProjectWindowController.xib in Resources */,
 				3060F2BB201FFF4000996FDB /* LaunchWindowController.xib in Resources */,
 				306C8B251FF9A17D00C2C47C /* TextureCollectionViewItem.xib in Resources */,
-				30B16B201FDE01CB0066DEC3 /* ThingPanel.xib in Resources */,
+				30B16B201FDE01CB0066DEC3 /* ThingViewController.xib in Resources */,
 				303D699C201D7C57009A8CA5 /* map15.dwd in Resources */,
 				30A00BAC1FD6F1AF00EBCA27 /* sectorspecials.dsp in Resources */,
-				30533AAA1FE45E620039DCFB /* SectorPanel.xib in Resources */,
+				30533AAA1FE45E620039DCFB /* SectorViewController.xib in Resources */,
 				30C41A52200A701E000E3F9B /* FlatPanel.xib in Resources */,
 				301CC5B820119EB400E208FF /* PatchWindow.xib in Resources */,
 				3044B7092048E6AE006492DB /* doombsp in Resources */,
@@ -428,7 +428,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				30533AA91FE45E620039DCFB /* SectorPanel.swift in Sources */,
+				30533AA91FE45E620039DCFB /* SectorViewController.swift in Sources */,
 				30FBF6461FC52DB70035671D /* MapWindowController.swift in Sources */,
 				30FBF64C1FC52F6A0035671D /* WorldObjects.swift in Sources */,
 				301CC5B42011032D00E208FF /* Junk.swift in Sources */,
@@ -450,7 +450,7 @@
 				30C41A58200A79DB000E3F9B /* FlatCollectionViewItem.swift in Sources */,
 				30C41A55200A7236000E3F9B /* FlatImageView.swift in Sources */,
 				3060F2B7201FFE9B00996FDB /* DoomProject.swift in Sources */,
-				30B16B251FDE376A0066DEC3 /* LinePanel.swift in Sources */,
+				30B16B251FDE376A0066DEC3 /* LineViewController.swift in Sources */,
 				3060F2BA201FFF4000996FDB /* LaunchWindowController.swift in Sources */,
 				30FBF64D1FC52F6A0035671D /* EditWorld.swift in Sources */,
 				30FBF6371FC52D500035671D /* AppDelegate.swift in Sources */,

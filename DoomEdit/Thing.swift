@@ -33,3 +33,48 @@ struct Thing {
 		return ThingDef()
 	}
 }
+
+struct ThingDef {
+	var type: Int = 0
+	var name: String = ""
+	var category: String = ""
+	var size: Int = 0
+	var game: Int = 0
+	var spriteName: String = ""
+	var image: NSImage? {
+		for sprite in wad.sprites {
+			if sprite.name == spriteName {
+				return sprite.image
+			}
+		}
+		return nil
+	}
+	var color: NSColor {
+		switch category {
+		case "Player": return .systemGreen
+		case "Demon": return COLOR_MONSTER
+		case "Power": return .systemBlue
+		case "Ammo": return .systemOrange
+		case "Health": return .systemYellow
+		case "Armor": return .systemYellow
+		case "Card": return .systemPurple
+		case "Weapon": return .systemBrown
+		case "Gore": return .darkGray
+		case "Dead": return .darkGray
+		case "Decor": return .lightGray
+		case "Light": return .lightGray
+		case "Other": return .systemPink
+		default: return .systemPink
+		}
+	}
+	var hasDirection: Bool {
+		switch category {
+		case "Player": return true
+		case "Demon": return true
+		case "Other": return true
+		default: return false
+		}
+	}
+	
+}
+

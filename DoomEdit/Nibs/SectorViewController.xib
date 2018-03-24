@@ -7,7 +7,7 @@
         <capability name="system font weights other than Regular or Bold" minToolsVersion="7.0"/>
     </dependencies>
     <objects>
-        <customObject id="-2" userLabel="File's Owner" customClass="SectorPanel" customModule="DoomEdit" customModuleProvider="target">
+        <customObject id="-2" userLabel="File's Owner" customClass="SectorViewController" customModule="DoomEdit" customModuleProvider="target">
             <connections>
                 <outlet property="ceilingHeightTextField" destination="WzW-bN-Guk" id="mFq-Rq-Fe6"/>
                 <outlet property="ceilingImageView" destination="7OT-zW-bVm" id="d3J-a3-qwa"/>

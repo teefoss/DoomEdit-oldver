@@ -31,10 +31,10 @@ struct Side {
 struct Line {
 	
 	var pt1, pt2: Int
-	var side: [Side?]	// side[0] front, side[1] back
-	var flags: Int
-	var special: Int
-	var tag: Int
+	var side:     [Side?]	// side[0] front, side[1] back
+	var flags:    Int
+	var special:  Int
+	var tag:      Int
 	var selected: Int = 0
 	
 	var length: Int {
@@ -44,10 +44,9 @@ struct Line {
 		ylen = ylen * ylen
 		return Int(sqrt(xlen + ylen))
 	}
-	var midpoint: NSPoint
-
-	/// The point at the end of the 'tick mark' of a line
-	var normal: NSPoint
+	var midpoint:   NSPoint
+	var normal:     NSPoint	 // The point at the end of the 'tick mark' of a line
+	var backNormal: NSPoint  // The point on the opposite side from the normal (backside)
 
 	var color: NSColor {
 		if special != 0 {
@@ -67,6 +66,7 @@ struct Line {
 		tag = 0
 		midpoint = NSPoint()
 		normal = NSPoint()
+		backNormal = NSPoint()
 	}
 
 	func hasOption(_ option: Int) -> Bool {

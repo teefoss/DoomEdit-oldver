@@ -28,6 +28,7 @@ struct CopyLine {
 protocol EditWorldDelegate {
 	func displayDirty(_ dirtyRect: NSRect)
 	func redisplay(_ rect: NSRect)
+	func updatePanels()
 }
 
 var editWorld = EditWorld()
@@ -112,6 +113,9 @@ class EditWorld {
 		lines[num].midpoint.y = p1.y + dy/2
 		lines[num].normal.x = lines[num].midpoint.x + dy/length
 		lines[num].normal.y = lines[num].midpoint.y - dx/length
+		lines[num].backNormal.x = lines[num].midpoint.x - dy/length
+		lines[num].backNormal.y = lines[num].midpoint.y + dx/length
+
 	}
 	
 	func addPointToDirtyRect(_ point: NSPoint) {
@@ -327,6 +331,7 @@ class EditWorld {
 		deselectAllPoints()
 		deselectAllLines()
 		deselectAllThings()
+		delegate?.updatePanels()
 	}
 
 	
@@ -380,7 +385,6 @@ class EditWorld {
 	
 	// MARK: Lines
 	
-	// NB: Currently points are selected directly instead of calling changePoint (problem?)
 	func selectLine(_ num: Int) {
 		
 		var data: Line
@@ -402,7 +406,8 @@ class EditWorld {
 			return
 		}
 		data.selected = 1
-		changeLine(num, to: &data)		
+		changeLine(num, to: &data)
+		delegate?.updatePanels()
 	}
 	
 	func deselectLine(_ num: Int) {
@@ -422,6 +427,8 @@ class EditWorld {
 		changeLine(num, to: &data)
 		deselectPoint(lines[num].pt1)
 		deselectPoint(lines[num].pt2)
+		
+		delegate?.updatePanels()
 	}
 	
 	func deselectAllLines() {
@@ -452,7 +459,8 @@ class EditWorld {
 		}
 		data.selected = 1
 		changeThing(num, to: &data)
-		// update thing panel
+
+		delegate?.updatePanels()
 	}
 	
 	func deselectThing(_ num: Int) {
@@ -469,6 +477,8 @@ class EditWorld {
 		}
 		data.selected = 0
 		changeThing(num, to: &data)
+		
+		delegate?.updatePanels()
 	}
 	
 	func deselectAllThings() {

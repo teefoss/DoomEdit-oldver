@@ -148,10 +148,12 @@ class DoomProject {
 			let path = UserDefaults.standard.value(forKey: "DoomWADPath") as! String
 			wadURL = URL(fileURLWithPath: path)
 			wad.setWadLoation(wadURL)
+			doomData.loadLineSpecials(forResource: "linespecials", ofType: "doom1")
 		case .doom2:
 			let path = UserDefaults.standard.value(forKey: "Doom2WADPath") as! String
 			let wadURL = URL(fileURLWithPath: path)
 			wad.setWadLoation(wadURL)
+			doomData.loadLineSpecials(forResource: "linespecials", ofType: "dsp")
 		default:
 			break
 		}

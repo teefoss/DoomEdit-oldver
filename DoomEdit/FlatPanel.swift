@@ -113,7 +113,7 @@ class FlatPanel: NSViewController, NSCollectionViewDataSource, NSCollectionViewD
 	
 	/// Called when exiting panel to update sector panel with new selection.
 	func setFlat() {
-		delegate?.updatePanel(for: flatPosition, with: selectedFlatIndex)
+		delegate?.updateFromFlatPanel(for: flatPosition, with: selectedFlatIndex)
 	}
 
 	func updateLabel(texture: String) {

@@ -9,10 +9,10 @@
 import Cocoa
 
 protocol FlatPanelDelegate {
-	func updatePanel(for position: Int, with index: Int)
+	func updateFromFlatPanel(for position: Int, with index: Int)
 }
 
-class SectorPanel: NSViewController, NSTextDelegate, FlatPanelDelegate {
+class SectorViewController: NSViewController, NSTextDelegate, FlatPanelDelegate {
 	
 	var def = SectorDef()
 	var selectedLineIndices: [Int] = []
@@ -132,34 +132,19 @@ class SectorPanel: NSViewController, NSTextDelegate, FlatPanelDelegate {
 			i = index
 			if index & SIDE_BIT != 0 {
 				i &= ~SIDE_BIT
+				if lines[i].side[1] == nil {
+					lines[i].side[1] = Side()
+				}
 				lines[i].side[1]?.ends = def
 			} else {
 				lines[i].side[0]?.ends = def
 			}
 		}
-//		for i in 0..<lines.count {
-//			if lines[i].selected < 1 {
-//				continue }
-//			side = lines[i].selected - 1
-//			lines[i].side[side]?.ends = def
-//		}
 		doomProject.setDirtyMap(true)
-		
-		
-//		for i in 0..<lines.count {
-//			if selectedSides[i] & SIDE_BIT == SIDE_BIT {
-//				var line = selectedSides[i]
-//				line &= ~SIDE_BIT
-//				lines[line].side[1]?.ends = def
-//			} else {
-//				let line = selectedSides[i]
-//				lines[line].side[0]?.ends = def
-//			}
-//		}
 	}
 	
 	/// Set the name and image view with the flat selected in the flat panel.
-	func updatePanel(for position: Int, with index: Int) {
+	func updateFromFlatPanel(for position: Int, with index: Int) {
 		
 		switch position {
 		case 0:
@@ -175,6 +160,9 @@ class SectorPanel: NSViewController, NSTextDelegate, FlatPanelDelegate {
 		}
 	}
 	
+	func updatePanel() {
+		
+	}
 	
 	// =================
 	// MARK: - IBActions

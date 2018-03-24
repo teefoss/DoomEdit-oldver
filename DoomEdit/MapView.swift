@@ -15,43 +15,50 @@ protocol MapViewDelegate {
 /**
 View that displays the map
 */
-class MapView: NSView, NSPopoverDelegate {
+class MapView: NSView, EditWorldDelegate, NSPopoverDelegate {
 
-	var thingViewController = ThingPanel()
-	var linePanel = LinePanel()
-	var sectorPanel = SectorPanel()
-	var patchWindow: PatchWindow?
-	
 	var delegate: MapViewDelegate?
 	
 	var levelInfo: String
 	var gridSize: Int
 	var scale: CGFloat
+
+	// Popovers
+	var linePopover = NSPopover()
+	var thingPopover = NSPopover()
+	var sectorPopover = NSPopover()
+	
+	// View Controllers for popovers
+	var thingViewController = ThingViewController()
+	var lineViewController = LineViewController()
+	var sectorViewController = SectorViewController()
+	
+	// Windows for detached popovers
+	var lineWindow = NSPanel()
+	var thingWindow = NSPanel()
+	var sectorWindow = NSPanel()
 	
 	var overlappingPointIndices: [Int] = []
-	
-	// dragging objects
-	var testingRect = NSRect()
 	
 	// for line drawing
 	var lineCross: [[Bool]] = Array(repeating: Array(repeating: false, count: 9), count: 9)
 	
-	var didClickThing = false
+	// selection
 	var selectedThing = Thing()
 	var selectedThingIndex: Int = 0
-	
-	var didClickLine = false
 	var selectedLineIndex = -1
-	
-	var didClickSector = false
 	var selectedDef = SectorDef()
 	var selectedSides: [Int] = []
 	
+	// testing
+	var patchWindow: PatchWindow?
+	var testingRect = NSRect()
+
 	
 	
-	// ==================
-	// MARK: - Mode Stuff
-	// ==================
+	// =============
+	// MARK: - Modes
+	// =============
 	
 	var showAllLineLabels: Bool = false
 	var showAllThingImages: Bool = false
@@ -77,6 +84,7 @@ class MapView: NSView, NSPopoverDelegate {
 			needsDisplay = true
 		}
 	}
+	var previousMode: Mode = .edit
 	
 	func setMode(_ mode: Mode) {
 		if currentMode != mode {
@@ -111,7 +119,6 @@ class MapView: NSView, NSPopoverDelegate {
 	// MARK: - Init
 	// ============
 	
-	
 	init() {
 
 		levelInfo = "\(doomProject.openMap?.name ?? "") (\(doomProject.openMap?.level ?? "")) "
@@ -129,21 +136,12 @@ class MapView: NSView, NSPopoverDelegate {
 		editWorld.delegate = self
 		initLineCross()
 		
-		if let currentContext = NSGraphicsContext.current {
-			currentContext.shouldAntialias = false
-		} else {
-			print("no graphics context!")
-		}
+		// Set up the popovers and link their windows
+		initPopover(&linePopover, with: lineViewController, and: &lineWindow)
+		initPopover(&thingPopover, with: thingViewController, and: &thingWindow)
+		initPopover(&sectorPopover, with: sectorViewController, and: &sectorWindow)
 	}
 	
-
-	
-	@objc func redrawVisibleRect() {
-		print("called")
-		//setNeedsDisplay(visibleRect)
-		displayIfNeeded()
-	}
-
 	func initLineCross() {
 		for x1 in 0..<3 {
 			for y1 in 0..<3 {
@@ -162,19 +160,36 @@ class MapView: NSView, NSPopoverDelegate {
 		}
 	}
 	
-	func initPopover(_ popover: inout NSPopover, with viewController: NSViewController) {
+	required init?(coder decoder: NSCoder) {
+		fatalError("init(coder:) has not been implemented")
+	}
+
+	
+	
+	// ====================================
+	// MARK: - Line, Sector, and Thing Panels
+	// ====================================
+
+	func popoverShouldDetach(_ popover: NSPopover) -> Bool {
+		return true
+	}
+
+	func initPopover(_ popover: inout NSPopover, with viewController: NSViewController, and window: inout NSPanel) {
 		popover = NSPopover.init()
 		popover.contentViewController = viewController
 		popover.appearance = (THEME == .light) ? (NSAppearance(named: .vibrantLight)) :(NSAppearance(named: .vibrantDark))
 		popover.animates = false
 		popover.behavior = .transient
 		popover.delegate = self
+		
+		let frame = viewController.view.bounds
+		let style: NSWindow.StyleMask = [.titled, .closable, .hudWindow, .utilityWindow]
+		let contentRect = NSWindow.contentRect(forFrameRect: frame, styleMask: style)
+		window = NSPanel(contentRect: contentRect, styleMask: style, backing: .buffered, defer: true)
+		window.contentViewController = viewController
+		window.isReleasedWhenClosed = false
 	}
-	
-	required init?(coder decoder: NSCoder) {
-		fatalError("init(coder:) has not been implemented")
-	}
-	
+
 	func openLinePanel(atLine index: Int) {
 		
 		let lineRect = NSRect(x: lines[index].midpoint.x-16,
@@ -183,9 +198,7 @@ class MapView: NSView, NSPopoverDelegate {
 							  height: 32)
 		let lineView = NSView(frame: lineRect)
 		self.addSubview(lineView)
-		var linePopover = NSPopover()
-		initPopover(&linePopover, with: linePanel)
-		linePanel.lineIndex = index
+		lineViewController.lineIndex = index
 		linePopover.show(relativeTo: lineView.bounds, of: lineView, preferredEdge: .maxX)
 	}
 	
@@ -196,8 +209,6 @@ class MapView: NSView, NSPopoverDelegate {
 							   height: 32)
 		let thingView = NSView(frame: thingRect)
 		self.addSubview(thingView)
-		var thingPopover = NSPopover()
-		initPopover(&thingPopover, with: thingViewController)
 		thingViewController.thing = selectedThing
 		thingViewController.thingIndex = index
 		thingPopover.show(relativeTo: thingView.bounds, of: thingView, preferredEdge: .maxX)
@@ -213,11 +224,21 @@ class MapView: NSView, NSPopoverDelegate {
 		self.addSubview(pointView)
 		
 		selectSector(at: event)
-		var sectorPanel = NSPopover()
-		initPopover(&sectorPanel, with: self.sectorPanel)
-		self.sectorPanel.def = def
+		self.sectorViewController.def = def
 		
-		sectorPanel.show(relativeTo: pointView.bounds, of: pointView, preferredEdge: .maxX)
+		sectorPopover.show(relativeTo: pointView.bounds, of: pointView, preferredEdge: .maxX)
+	}
+	
+	func updatePanels() {
+		if let line = lineWindow.contentViewController as? LineViewController {
+			line.updatePanel()
+		}
+		if let thing = thingWindow.contentViewController as? ThingViewController {
+			thing.updatePanel()
+		}
+		if let sector = sectorWindow.contentViewController as? SectorViewController {
+			sector.updatePanel()
+		}
 	}
 	
 	
@@ -252,6 +273,11 @@ class MapView: NSView, NSPopoverDelegate {
 		setNeedsDisplay(rect)
 	}
 	
+	@objc func redrawVisibleRect() {
+		setNeedsDisplay(visibleRect)
+		displayIfNeeded()
+	}
+	
 	/// Get the mouse click location in view coordinates
 	func getPoint(from event: NSEvent) -> NSPoint {
 		
@@ -277,8 +303,7 @@ class MapView: NSView, NSPopoverDelegate {
 	///  Returns the current origin of the visible rect in world coordinates
 	func currentOrigin() -> NSPoint {
 
-		var global = NSRect()
-		global = (superview?.bounds)!
+		var global = (superview?.bounds)!
 		global.origin = convert(global.origin, from: superview)
 		
 		return global.origin
@@ -344,10 +369,12 @@ class MapView: NSView, NSPopoverDelegate {
 	
 	@IBAction func fusePoint(_ sender: Any) {
 		editWorld.fusePoints()
+		checkPoints()
 	}
 	
 	@IBAction func separatePoint(_ sender: Any) {
 		editWorld.separatePoints()
+		checkPoints()
 	}
 	
 	@IBAction func increaseGrid(_ sender: Any) {
@@ -384,7 +411,6 @@ class MapView: NSView, NSPopoverDelegate {
 			setMode(.draw)
 		}
 		setModeCursor()
-
 	}
 	
 	@IBAction func setLineMode(_ sender: Any) {

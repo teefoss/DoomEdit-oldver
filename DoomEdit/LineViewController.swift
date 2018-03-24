@@ -14,11 +14,12 @@ protocol TexturePanelDelegate {
 	func updateImageFromPanel(name: String, position: Int)
 }
 
-class LinePanel: NSViewController, TexturePanelDelegate, NSTabViewDelegate {
+class LineViewController: NSViewController, TexturePanelDelegate, NSTabViewDelegate {
 
 	// The selected line
 	var lineIndex: Int = 0
 	var selectedLineIndices: [Int] = []
+	var baseline: Line
 	
 	@IBOutlet weak var tabView: NSTabView!
 	@IBOutlet weak var titleLabel: NSTextField!
@@ -62,8 +63,27 @@ class LinePanel: NSViewController, TexturePanelDelegate, NSTabViewDelegate {
 	var backMiddles: [String] = []
 	var backLowers: [String] = []
 
-	
+	init() {
+		baseline = Line()
+		baseline.flags = BLOCKS_ALL
+		baseline.pt1 = -1
+		baseline.pt2 = -1
+		baseline.side[0]?.upperTexture = "-"
+		baseline.side[0]?.lowerTexture = "-"
+		baseline.side[0]?.middleTexture = "-"
+		baseline.side[0] = Side()
+		baseline.side[0]?.ends.floorHeight = 0
+		baseline.side[0]?.ends.ceilingHeight = 80
+		baseline.side[0]?.ends.floorFlat = "FLAT1"
+		baseline.side[0]?.ends.ceilingFlat = "FLAT2"
 
+		super.init(nibName: NSNib.Name(rawValue: "LinePanel"), bundle: nil)
+	}
+	
+	required init?(coder: NSCoder) {
+		fatalError("init(coder:) has not been implemented")
+	}
+	
 	// =======================
 	// MARK: - View Life Cycle
 	// =======================
@@ -106,113 +126,7 @@ class LinePanel: NSViewController, TexturePanelDelegate, NSTabViewDelegate {
 	override func viewWillAppear() {
 		super.viewWillAppear()
 
-		initSelectedLines()  // Store indices of currently selected lines
-
-		print("num selected lines: \(selectedLineIndices.count)")
-		// Add an nsmenuitem if there are multiple specials
-		if selectedLineIndices.count == 1 {
-			updateSpecialLabel(for: lines[lineIndex].special)
-			updateSpecialButton(for: lines[lineIndex].special)
-		} else {
-			let first = lines[selectedLineIndices[0]].special
-			var next = -1
-			loop: for i in 1..<selectedLineIndices.count {
-				next = lines[selectedLineIndices[i]].special
-				if next != first {
-					break loop
-				}
-			}
-			if next != first {
-				let mult = NSMenuItem(title: "Multiple", action: nil, keyEquivalent: "")
-				specialsPopUpButton.menu?.addItem(NSMenuItem.separator())
-				specialsPopUpButton.menu?.addItem(mult)
-				specialsPopUpButton.select(mult)
-				specialLabel.stringValue = "--"
-			} else {
-				updateSpecialLabel(for: first)
-				updateSpecialButton(for: first)
-			}
-		}
-		
-		setAllowedButtonState()
-		setTitle()
-		tabView.selectTabViewItem(at: 0)  // Open with front side tab selected
-		
-		// Set the options buttons
-		if selectedLineIndices.count == 1 {
-			for i in 0..<flagButtons.count {
-				lines[lineIndex].flags & (1 << i) == (1 << i) ? (flagButtons[i].state = .on) : (flagButtons[i].state = .off)
-			}
-		} else {
-			setButtonState(&blocksAllButton, option: BLOCKS_ALL)
-			setButtonState(&blocksMonstersButton, option: BLOCKS_MONSTERS)
-			setButtonState(&blocksSoundButton, option: BLOCKS_SOUND)
-			setButtonState(&twoSidedButton, option: TWO_SIDED)
-			setButtonState(&upperUnpeggedButton, option: UPPER_UNPEGGED)
-			setButtonState(&lowerUnpeggedButton, option: LOWER_UNPEGGED)
-			setButtonState(&onMapButton, option: SHOW_ON_MAP)
-			setButtonState(&notOnMapButton, option: NOT_ON_MAP)
-			setButtonState(&secretButton, option: SECRET)
-		}
-		
-		if flagButtons[2].state == .off {
-			tabView.tabViewItems[1].label = "-"
-		} else {
-			tabView.tabViewItems[1].label = "Back"
-		}
-		
-		// Set the tag number
-		if selectedLineIndices.count == 1 {
-			lines[lineIndex].tag == 0 ? (tagTextField.stringValue = "") : (tagTextField.integerValue = lines[lineIndex].tag)
-		} else {
-			let first = lines[selectedLineIndices[0]].tag
-			var next = 0
-			loop: for i in 1..<selectedLineIndices.count {
-				next = lines[selectedLineIndices[i]].tag
-				if next != first {
-					break loop
-				}
-			}
-			if next != first {
-				tagTextField.stringValue = ""
-			} else {
-				tagTextField.integerValue = first
-			}
-		}
-		// Display the line information
-		
-		frontUppers = []; frontMiddles = []; frontLowers = []
-		backUppers = []; backMiddles = []; backLowers = []
-		for index in selectedLineIndices {
-			frontUppers.append(lines[index].side[0]?.upperTexture ?? "-")
-			frontMiddles.append(lines[index].side[0]?.middleTexture ?? "-")
-			frontLowers.append(lines[index].side[0]?.lowerTexture ?? "-")
-			if let side = lines[index].side[1] {
-				backUppers.append(side.upperTexture ?? "-")
-				backMiddles.append(side.middleTexture ?? "-")
-				backLowers.append(side.lowerTexture ?? "-")
-			}
-		}
-		
-		updateTextureLabels()
-		updateOffsets()
-		updateImages()
-		
-		// Set the line index so the Texture Panel can update this line's texture
-		frontUpperImageView.lineIndex = lineIndex
-		frontMiddleImageView.lineIndex = lineIndex
-		frontLowerImageView.lineIndex = lineIndex
-		backUpperImageView.lineIndex = lineIndex
-		backMiddleImageView.lineIndex = lineIndex
-		backLowerImageView.lineIndex = lineIndex
-
-		frontUpperImageView.selectedLineIndices = selectedLineIndices
-		frontMiddleImageView.selectedLineIndices = selectedLineIndices
-		frontLowerImageView.selectedLineIndices = selectedLineIndices
-		backUpperImageView.selectedLineIndices = selectedLineIndices
-		backMiddleImageView.selectedLineIndices = selectedLineIndices
-		backLowerImageView.selectedLineIndices = selectedLineIndices
-
+		updatePanel()
 	}
 	
 	func hasMultiple<T: Equatable>(array: [T]) -> Bool {
@@ -241,12 +155,142 @@ class LinePanel: NSViewController, TexturePanelDelegate, NSTabViewDelegate {
 	// MARK: - Update UI
 	// =================
 	
+	func clearPanel() {
+
+		titleLabel.stringValue = "Line Properties (No Selection)"
+		for button in flagButtons {
+			button.state = .off
+		}
+		updateSpecialButton(for: 0)
+		tagTextField.stringValue = ""
+		tabView.selectTabViewItem(at: 0)
+		frontUpperImageView.image = nil
+		frontUpperLabel.stringValue = "--"
+		frontMiddleImageView.image = nil
+		frontMiddleLabel.stringValue = "--"
+		frontLowerImageView.image = nil
+		frontLowerLabel.stringValue = "--"
+		frontXOffsetTextField.stringValue = ""
+		frontYOffsetTextField.stringValue = ""
+	}
+	
+	func updatePanel() {
+		
+		initSelectedLines()  // Store indices of currently selected lines
+		
+		
+		
+		print("num selected lines: \(selectedLineIndices.count)")
+		// Add an nsmenuitem if there are multiple specials
+		if selectedLineIndices.count == 0 {
+			clearPanel()
+			return
+		} else if selectedLineIndices.count == 1 {
+			updateSpecialButton(for: lines[selectedLineIndices[0]].special)
+			
+			for i in 0..<flagButtons.count {
+				lines[selectedLineIndices[0]].flags & (1 << i) == (1 << i) ? (flagButtons[i].state = .on) : (flagButtons[i].state = .off)
+			}
+
+			lines[selectedLineIndices[0]].tag == 0 ? (tagTextField.stringValue = "") : (tagTextField.integerValue = lines[selectedLineIndices[0]].tag)
+
+		} else {
+			let first = lines[selectedLineIndices[0]].special
+			var next = -1
+			loop: for i in 1..<selectedLineIndices.count {
+				next = lines[selectedLineIndices[i]].special
+				if next != first {
+					break loop
+				}
+			}
+			if next != first {
+				let mult = NSMenuItem(title: "Multiple", action: nil, keyEquivalent: "")
+				specialsPopUpButton.menu?.addItem(NSMenuItem.separator())
+				specialsPopUpButton.menu?.addItem(mult)
+				specialsPopUpButton.select(mult)
+				specialLabel.stringValue = "--"
+			} else {
+				//updateSpecialLabel(for: first)
+				updateSpecialButton(for: first)
+			}
+			
+			setButtonState(&blocksAllButton, option: BLOCKS_ALL)
+			setButtonState(&blocksMonstersButton, option: BLOCKS_MONSTERS)
+			setButtonState(&blocksSoundButton, option: BLOCKS_SOUND)
+			setButtonState(&twoSidedButton, option: TWO_SIDED)
+			setButtonState(&upperUnpeggedButton, option: UPPER_UNPEGGED)
+			setButtonState(&lowerUnpeggedButton, option: LOWER_UNPEGGED)
+			setButtonState(&onMapButton, option: SHOW_ON_MAP)
+			setButtonState(&notOnMapButton, option: NOT_ON_MAP)
+			setButtonState(&secretButton, option: SECRET)
+
+			let firsttag = lines[selectedLineIndices[0]].tag
+			var nexttag = 0
+			loop: for i in 1..<selectedLineIndices.count {
+				nexttag = lines[selectedLineIndices[i]].tag
+				if nexttag != firsttag {
+					break loop
+				}
+			}
+			if nexttag != firsttag {
+				tagTextField.stringValue = ""
+			} else {
+				tagTextField.integerValue = firsttag
+			}
+
+		}
+		
+		setAllowedButtonState()
+		setTitle()
+		tabView.selectTabViewItem(at: 0)  // Open with front side tab selected
+		
+		if flagButtons[2].state == .off {
+			tabView.tabViewItems[1].label = "-"
+		} else {
+			tabView.tabViewItems[1].label = "Back"
+		}
+		
+		// Display the line information
+		
+		frontUppers = []; frontMiddles = []; frontLowers = []
+		backUppers = []; backMiddles = []; backLowers = []
+		for index in selectedLineIndices {
+			frontUppers.append(lines[index].side[0]?.upperTexture ?? "-")
+			frontMiddles.append(lines[index].side[0]?.middleTexture ?? "-")
+			frontLowers.append(lines[index].side[0]?.lowerTexture ?? "-")
+			if let side = lines[index].side[1] {
+				backUppers.append(side.upperTexture ?? "-")
+				backMiddles.append(side.middleTexture ?? "-")
+				backLowers.append(side.lowerTexture ?? "-")
+			}
+		}
+		
+		updateTextureLabels()
+		updateOffsets()
+		updateImages()
+		
+		// Set the line index so the Texture Panel can update this line's texture
+		frontUpperImageView.lineIndex = lineIndex
+		frontMiddleImageView.lineIndex = lineIndex
+		frontLowerImageView.lineIndex = lineIndex
+		backUpperImageView.lineIndex = lineIndex
+		backMiddleImageView.lineIndex = lineIndex
+		backLowerImageView.lineIndex = lineIndex
+		
+		frontUpperImageView.selectedLineIndices = selectedLineIndices
+		frontMiddleImageView.selectedLineIndices = selectedLineIndices
+		frontLowerImageView.selectedLineIndices = selectedLineIndices
+		backUpperImageView.selectedLineIndices = selectedLineIndices
+		backMiddleImageView.selectedLineIndices = selectedLineIndices
+		backLowerImageView.selectedLineIndices = selectedLineIndices
+	}
+	
+
 	/// Set the current line's special from the menu selection
 	@objc func setSpecial(sender: NSMenuItem) {
 		for index in selectedLineIndices {
 			lines[index].special = sender.tag
 		}
-		updateSpecialLabel(for: sender.tag)
 		updateSpecialButton(for: sender.tag)
 	}
 	
@@ -254,30 +298,19 @@ class LinePanel: NSViewController, TexturePanelDelegate, NSTabViewDelegate {
 		for index in selectedLineIndices {
 			lines[index].special = 0
 		}
-		updateSpecialLabel(for: 0)
-		updateSpecialLabel(for: 0)
+		updateSpecialButton(for: 0)
 	}
 
-	func updateSpecialLabel(for tag: Int) {
+	func updateSpecialButton(for tag: Int) {
 		
-		for special in doomData.doom1LineSpecials {
-			if lines[lineIndex].special == special.index {
+		for special in doomData.lineSpecials {
+			if tag == special.index {
+				specialsPopUpButton.selectItem(withTitle: special.type)
 				specialLabel.stringValue = special.name
 				break
 			} else {
-				specialLabel.stringValue = "--"
-			}
-		}
-	}
-	
-	func updateSpecialButton(for tag: Int) {
-		
-		for special in doomData.doom1LineSpecials {
-			if tag == special.index {
-				specialsPopUpButton.selectItem(withTitle: special.type)
-				break
-			} else {
 				specialsPopUpButton.selectItem(withTitle: "None")
+				specialLabel.stringValue = "--"
 			}
 		}
 	}

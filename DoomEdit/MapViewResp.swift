@@ -61,14 +61,6 @@ extension MapView {
 				setMode(.draw)
 			}
 			return
-		case Keycode.s:
-			print("Connect Sectors:")
-			let check = blockWorld.connectSectors()
-			if check {
-				print("Sectors OK")
-			}
-			print(sectors.count)
-			return
 		default:
 			break
 		}
@@ -76,6 +68,7 @@ extension MapView {
 	}
 	
 	override func keyUp(with event: NSEvent) {
+		
 		switch event.keyCode {
 		case Keycode.l:
 			setMode(.edit)
@@ -103,6 +96,45 @@ extension MapView {
 			print("grid size = \(gridSize)")
 			needsDisplay = true
 		}
+	}
+	
+	
+	
+	// ======================
+	// MARK: - Alterting View
+	// ======================
+	
+	func slideView(_ event: NSEvent) {
+		
+		var oldpt, pt, origin: NSPoint
+		var dx,dy: CGFloat
+		
+		oldpt = convert(event.locationInWindow, from: nil)
+
+		let mask = NSEvent.EventTypeMask.leftMouseUp.union(.leftMouseDragged)
+		var nextevent: NSEvent?
+		
+		repeat {
+			nextevent = window?.nextEvent(matching: mask)
+			if nextevent?.type == .leftMouseUp {
+				break
+			}
+
+			pt = convert((nextevent?.locationInWindow)!, from: nil)
+			dx = oldpt.x - pt.x
+			dy = oldpt.y - pt.y
+			
+			if dx != 0 || dy != 0 {
+				origin = currentOrigin()
+				origin.x += dx
+				origin.y += dy
+				window?.isAutodisplay = false
+				setOrigin(for: origin)
+				superview?.superview?.display()
+				window?.isAutodisplay = true
+				oldpt = convert((nextevent?.locationInWindow)!, from: nil)
+			}
+		} while true
 	}
 	
 	// FIXME: When mouse is outside window?
@@ -139,30 +171,32 @@ extension MapView {
 	// =====================
 	
 	override func mouseDown(with event: NSEvent) {
-		
-		let clickPoint = getGridPoint(from: event)
-		print("clickpoint = \(clickPoint)")
+
+		if event.modifierFlags.contains(.command) {
+			slideView(event)
+			return
+		}
 		
 		switch currentMode {
 		case .edit, .line:
 			selectObject(at: event, rightClicked: false)
 		case .draw:
 			lineDragPoly(event)
-		case .thing:
+		default:
 			return
 		}
+				
 		editWorld.updateWindows()
 	}
 	
 	override func mouseUp(with event: NSEvent) {
 		
-		print("this is called!")
 		switch currentMode {
 		case .edit, .line:
 			print("To do")
 		case .draw:
 			print("Todo")
-		case .thing:
+		default:
 			return
 		}
 		setNeedsDisplay(visibleRect)
@@ -802,7 +836,7 @@ extension MapView {
 		setNeedsDisplay(bounds)
 		displayIfNeeded()
 	}
-
+	
 	
 	
 	// ====================
@@ -811,10 +845,11 @@ extension MapView {
 	
 	func addLine(from fixedpoint: NSPoint, to dragpoint: NSPoint) {
 		
-		var newline = 	Line()
+		var newline = 	lineViewController.baseline
 		var i, line: 		Int
 		
 		// set the new line to the most recent data but make sure it's not deleted
+		/*
 		if lines.count > 0 {
 			i = lines.count-1
 			repeat {
@@ -825,6 +860,7 @@ extension MapView {
 				i -= 1
 			} while i >= 0
 		}
+*/
 		
 		line = editWorld.newLine(line: &newline, from: fixedpoint, to: dragpoint)
 		

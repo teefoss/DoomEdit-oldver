@@ -14,7 +14,7 @@ let DRAWOFFSET: CGFloat = 0.5
 MapView Drawing-related Methods
 */
 
-extension MapView: EditWorldDelegate {
+extension MapView {
 	
 	override func draw(_ dirtyRect: NSRect) {
 		super.draw(dirtyRect)

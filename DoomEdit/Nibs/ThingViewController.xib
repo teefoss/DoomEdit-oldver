@@ -7,7 +7,7 @@
         <capability name="stacking Non-gravity area distributions on NSStackView" minToolsVersion="7.0" minSystemVersion="10.11"/>
     </dependencies>
     <objects>
-        <customObject id="-2" userLabel="File's Owner" customClass="ThingPanel" customModule="DoomEdit" customModuleProvider="target">
+        <customObject id="-2" userLabel="File's Owner" customClass="ThingViewController" customModule="DoomEdit" customModuleProvider="target">
             <connections>
                 <outlet property="ambushButton" destination="kKc-Kl-ZAN" id="MGf-gc-L0i"/>
                 <outlet property="countLabel" destination="L4v-DJ-26Y" id="2yQ-l1-fQV"/>
