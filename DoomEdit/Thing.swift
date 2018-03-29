@@ -32,6 +32,13 @@ struct Thing {
 		}
 		return ThingDef()
 	}
+	
+	func hasOption(_ option: Int) -> Bool {
+		if self.options & option != 0 {
+			return true
+		}
+		return false
+	}
 }
 
 struct ThingDef {

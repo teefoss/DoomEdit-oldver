@@ -128,16 +128,6 @@ class LineViewController: NSViewController, TexturePanelDelegate, NSTabViewDeleg
 		updatePanel()
 	}
 	
-	func hasMultiple<T: Equatable>(array: [T]) -> Bool {
-
-		let first = array.first
-		for element in array {
-			if element != first {
-				return true
-			}
-		}
-		return false
-	}
 	
 	
 	
@@ -167,8 +157,6 @@ class LineViewController: NSViewController, TexturePanelDelegate, NSTabViewDeleg
 	func updatePanel() {
 		
 		initSelectedLines()  // Store indices of currently selected lines
-		
-		
 		
 		print("num selected lines: \(selectedLineIndices.count)")
 		// Add an nsmenuitem if there are multiple specials

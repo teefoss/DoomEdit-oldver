@@ -47,15 +47,14 @@ class TexturePanel: NSViewController, NSCollectionViewDataSource, NSCollectionVi
 		collectionView.dataSource = self
 		collectionView.delegate = self
 		configureCollectionView()
+		
+		filteredTextures = wad.textures
 	}
 	
 	override func viewWillAppear() {
 		super.viewWillAppear()
 		
 		window = self.view.window
-		searchField.stringValue = ""
-		filteredTextures = wad.textures
-		print(wad.sprites.count)
 	}
 	
 	override func viewWillLayout() {

@@ -86,7 +86,34 @@ class ProjectWindowController: NSWindowController {
 	// ===============
 	
 	@IBAction func createMap(_ sender: Any) {
-		// TODO:
+		
+		if mapNameTextField.stringValue.isEmpty {
+			runAlertPanel(title: "Hey!", message: "You haven't entered a map name.")
+			return
+		}
+		
+		var name = mapNameTextField.stringValue
+
+		// No illegal characters
+		let dot: CharacterSet = [".", "-", "_"]
+		let alphanumAndDot = dot.union(.alphanumerics)
+		if !alphanumAndDot.isSuperset(of: CharacterSet(charactersIn: name)) {
+			runAlertPanel(title: "Warning", message: "File name should contain only letters, numbers, '-' or '_'. Please rename.")
+			return
+		}
+		
+		// Add an extension if needed
+		let suffix = name.suffix(4)
+		if suffix != ".dwd" {
+			name += ".dwd"
+		}
+		
+		let dwd = "" // no map data yet
+		let map = Map(name: name, level: levelButton.titleOfSelectedItem!, dwd: dwd)
+		doomProject.addMapToProjectFile(map)
+		tableView.reloadData()
+		
+		print(name)
 	}
 	
 	@IBAction func openMap(_ sender: Any) {

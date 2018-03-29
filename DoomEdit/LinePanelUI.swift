@@ -97,10 +97,8 @@ extension LineViewController {
 			}
 		}
 		if next != first {
-			print("next != first")
 			button.state = .mixed
 		} else {
-			print("else")
 			first ? (button.state = .on) : (button.state = .off)
 		}
 	}
@@ -110,7 +108,7 @@ extension LineViewController {
 		
 		selectedLineIndices = []
 		for i in 0..<lines.count {
-			if lines[i].selected == 1 {
+			if lines[i].selected > 0 {
 				selectedLineIndices.append(i)
 			}
 		}

@@ -140,3 +140,20 @@ func runDialogPanel(question: String, text: String) -> Bool {
 	return alert.runModal() == .alertFirstButtonReturn
 }
 
+func hasMultiple<T: Equatable>(array: [T]) -> Bool {
+	
+	let first = array.first
+	for element in array {
+		if element != first {
+			return true
+		}
+	}
+	return false
+}
+
+func buttonState(for bool: Bool) -> NSButton.StateValue {
+	
+	return bool ? .on : .off
+}
+
+

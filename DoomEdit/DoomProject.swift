@@ -9,9 +9,9 @@
 import Cocoa
 
 struct Map {
-	var name: String = ""
+	var name: String = ""  // should end in .dwd !
 	var level: String = ""
-	var dwd: String = ""
+	var dwd: String = ""   // the actual dwd data
 }
 
 
@@ -26,7 +26,7 @@ class DoomProject {
 	var projectURL: URL!		// the project folder
 	var projectMapsURL: URL!	// the folder containing the project dwd and wad files
 	var projectFileURL: URL!	// the url to the project file
-	var currentMapURL: URL? {
+	var currentMapURL: URL? {	// url to the dwd file
 		if let map = openMap {
 			return projectMapsURL.appendingPathComponent(map.name)
 		} else {

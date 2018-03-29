@@ -229,6 +229,9 @@ class MapView: NSView, EditWorldDelegate, NSPopoverDelegate {
 	}
 	
 	func updatePanels() {
+		
+		// FIXME: Only update if detached panel is visible
+		
 		if let line = lineWindow.contentViewController as? LineViewController {
 			line.updatePanel()
 		}
@@ -326,7 +329,7 @@ class MapView: NSView, EditWorldDelegate, NSPopoverDelegate {
 			// FIXME: ???
 		}
 		
-		newBounds = visibleRect
+		newBounds = (superview?.visibleRect)!
 		newBounds = convert(newBounds, from: superview)
 		newBounds.origin = origin
 
@@ -337,10 +340,12 @@ class MapView: NSView, EditWorldDelegate, NSPopoverDelegate {
 		if newBounds.size.width != bounds.size.width || newBounds.size.height != bounds.size.height
 		{
 			// TODO: Adjust for scale
+			setFrameSize(NSSize(width: newBounds.size.width, height: newBounds.size.height))
 			setBoundsSize(NSSize(width: newBounds.size.width, height: newBounds.size.height))
 		}
 
 		if newBounds.origin.x != bounds.origin.x || newBounds.origin.y != bounds.origin.y {
+			setFrameOrigin(newBounds.origin)
 			setBoundsOrigin(newBounds.origin)
 		}		
 	}

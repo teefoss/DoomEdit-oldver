@@ -68,6 +68,7 @@
 		30C41A59200A79DB000E3F9B /* FlatCollectionViewItem.xib in Resources */ = {isa = PBXBuildFile; fileRef = 30C41A57200A79DB000E3F9B /* FlatCollectionViewItem.xib */; };
 		30C421BB200FAF54000E3F9B /* ImageFunctions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30C421BA200FAF54000E3F9B /* ImageFunctions.swift */; };
 		30E827E31FC9FC7B00992422 /* e4m1.dwd in Resources */ = {isa = PBXBuildFile; fileRef = 30E827E21FC9FC7B00992422 /* e4m1.dwd */; };
+		30F97CE02066B1A30073DC51 /* ThingPanelUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30F97CDF2066B1A30073DC51 /* ThingPanelUI.swift */; };
 		30FBF6371FC52D500035671D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30FBF6361FC52D500035671D /* AppDelegate.swift */; };
 		30FBF6391FC52D500035671D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 30FBF6381FC52D500035671D /* Assets.xcassets */; };
 		30FBF63C1FC52D500035671D /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 30FBF63A1FC52D500035671D /* MainMenu.xib */; };
@@ -147,6 +148,7 @@
 		30C41A57200A79DB000E3F9B /* FlatCollectionViewItem.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FlatCollectionViewItem.xib; sourceTree = "<group>"; };
 		30C421BA200FAF54000E3F9B /* ImageFunctions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageFunctions.swift; sourceTree = "<group>"; };
 		30E827E21FC9FC7B00992422 /* e4m1.dwd */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = e4m1.dwd; sourceTree = "<group>"; };
+		30F97CDF2066B1A30073DC51 /* ThingPanelUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThingPanelUI.swift; sourceTree = "<group>"; };
 		30FBF6331FC52D500035671D /* DoomEdit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DoomEdit.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		30FBF6361FC52D500035671D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		30FBF6381FC52D500035671D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -307,6 +309,7 @@
 				306C8B1E1FF9610D00C2C47C /* TexturePanel.swift */,
 				30399CCC1FD3050800503DB4 /* Thing.swift */,
 				30B16B1D1FDE01CB0066DEC3 /* ThingPanel.swift */,
+				30F97CDF2066B1A30073DC51 /* ThingPanelUI.swift */,
 				30FBF6481FC52F690035671D /* WorldObjects.swift */,
 				30C41A4B20098CD6000E3F9B /* WadFile.swift */,
 				30A00B9E1FD6EB5800EBCA27 /* Extensions */,
@@ -449,6 +452,7 @@
 				30399CC91FD1E8A600503DB4 /* Global.swift in Sources */,
 				30C41A58200A79DB000E3F9B /* FlatCollectionViewItem.swift in Sources */,
 				30C41A55200A7236000E3F9B /* FlatImageView.swift in Sources */,
+				30F97CE02066B1A30073DC51 /* ThingPanelUI.swift in Sources */,
 				3060F2B7201FFE9B00996FDB /* DoomProject.swift in Sources */,
 				30B16B251FDE376A0066DEC3 /* LineViewController.swift in Sources */,
 				3060F2BA201FFF4000996FDB /* LaunchWindowController.swift in Sources */,

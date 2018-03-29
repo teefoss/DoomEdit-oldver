@@ -96,12 +96,26 @@ extension MapWindowController: NSWindowDelegate {
 	/// Adjust world bounds for the new frame
 	func windowDidResize(_ notification: Notification) {
 		
+//		var wincont: NSRect
+//		var scrollcont = NSRect()
 		var newScreenOrigin = NSPoint.zero
 		window!.convertBaseToScreen(&newScreenOrigin)
 		
 		preResizeOrigin.x += (newScreenOrigin.x - oldScreenOrigin.x)// / CGFloat(scale)
 		preResizeOrigin.y += (newScreenOrigin.y - oldScreenOrigin.y)// / CGFloat(scale)
 		mapView.setOrigin(for: preResizeOrigin)
+		
+		// ASKABOUT:
+		/*
+		wincont = (window?.contentRect(forFrameRect: (window?.frame)!))!
+		scrollcont.size = NSScrollView.contentSize(forFrameSize: wincont.size,
+												   horizontalScrollerClass: NSScroller.self,
+												   verticalScrollerClass: NSScroller.self,
+											  borderType: .noBorder,
+											  controlSize: .regular,
+											  scrollerStyle: .overlay)
+		*/
+		
 	}
 	
 	

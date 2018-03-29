@@ -17,14 +17,12 @@ class FlatImageView: NSImageView, NSPopoverDelegate {
 
 	var flatPosition = 0	// 0 = floor, 1 = ceiling
 	var selectedFlatIndex = -1
-//	var selectedFlatName = ""
 	
 	var flatPanel = FlatPanel()
 	
 	override func mouseDown(with event: NSEvent) {
 		flatPanel.flatPosition = self.flatPosition
 		flatPanel.selectedFlatIndex = self.selectedFlatIndex
-//		flatPanel.selectedFlatName = self.selectedFlatName
 		displayFlatPopover(at: self)
 	}
 	

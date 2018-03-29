@@ -17,9 +17,7 @@ Displays all the WAD's flats in a collection view.
 class FlatPanel: NSViewController, NSCollectionViewDataSource, NSCollectionViewDelegateFlowLayout {
 	
 	var flatPosition = 0
-//	var selectedFlatName = ""
-	var selectedFlatIndex: Int = -1
-//	var wad = WadFile()
+	var selectedFlatIndex: Int = -1 // this is set (using the sectordef's flat name) when the sector panel opens the flat panel
 
 	var window: NSWindow?
 	var delegate: FlatPanelDelegate?
@@ -45,20 +43,23 @@ class FlatPanel: NSViewController, NSCollectionViewDataSource, NSCollectionViewD
 		collectionView.dataSource = self
 		collectionView.delegate = self
 		configureCollectionView()
+		
     }
 	
 	override func viewWillAppear() {
 		super.viewWillAppear()
 		
 		window = self.view.window
+		
 		searchField.stringValue = ""
 		filteredFlats = wad.flats
+		collectionView.reloadData()
+		selectFlat()
 	}
 	
 	override func viewWillLayout() {
 		super.viewWillLayout()
-		
-		selectFlat()
+
 	}
 	
 	
@@ -113,6 +114,7 @@ class FlatPanel: NSViewController, NSCollectionViewDataSource, NSCollectionViewD
 	
 	/// Called when exiting panel to update sector panel with new selection.
 	func setFlat() {
+		
 		delegate?.updateFromFlatPanel(for: flatPosition, with: selectedFlatIndex)
 	}
 
@@ -132,7 +134,7 @@ class FlatPanel: NSViewController, NSCollectionViewDataSource, NSCollectionViewD
 	}
 	
 	func collectionView(_ collectionView: NSCollectionView, numberOfItemsInSection section: Int) -> Int {
-//		return filteredFlats.count
+
 		return filteredFlats.count
 	}
 	

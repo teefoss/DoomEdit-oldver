@@ -44,6 +44,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 		self.preferencesWindowController = prefs
 	}
 	
+	/// Process BSP and launch Chocolate Doom
 	@IBAction func runMap(_ sender: Any) {
 		editWorld.saveWorld()
 		
@@ -52,10 +53,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 		}
 		
 		let url = Bundle.main.resourceURL?.appendingPathComponent("doombsp")
-		
+				
 		let process = Process()
 		process.launchPath = url?.path
 		process.arguments = [(doomProject.currentMapURL?.path)!, doomProject.projectMapsURL.path]
+		
+		print(process.arguments)
 		
 		process.terminationHandler = {
 			task in
@@ -74,15 +77,21 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 			return
 		}
 		var wadfile = openMap.name
+		let level = openMap.level
 		
+		// Remove extention if it has one.
 		if let range = wadfile.range(of: ".") {
 			wadfile.removeSubrange(range.lowerBound..<wadfile.endIndex)
 		}
-		guard let warparg = convertMapToArg(mapname: wadfile) else {
+		
+		guard let warparg = convertMapToArg(mapname: level) else {
 			print("Error. warparg")
 			return
 		}
 		wadfile += ".wad"
+		
+		print(wadfile)
+		print(warparg)
 		
 		// Launch chocolate doom with appropriate iwad, level, and pwad
 		let process = Process()

@@ -954,9 +954,14 @@ extension MapView {
 	
 	func placeThing(at event: NSEvent) {
 		
+		var newThing: Thing
 		let loc = getGridPoint(from: event)
 		
-		var newThing = Thing(selected: 0, origin: loc, angle: things[things.count-1].angle, type: things[things.count-1].type, options: things[things.count-1].options)
+		if things.count > 0 {
+			newThing = Thing(selected: 0, origin: loc, angle: things[things.count-1].angle, type: things[things.count-1].type, options: things[things.count-1].options)
+		} else {
+			newThing = Thing(selected: 0, origin: loc, angle: 0, type: 1, options: 7) // P1 start
+		}
 		things.append(newThing)
 		editWorld.changeThing(things.count-1, to: &newThing)
 		doomProject.setDirtyMap(true)
