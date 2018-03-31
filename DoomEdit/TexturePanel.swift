@@ -48,29 +48,36 @@ class TexturePanel: NSViewController, NSCollectionViewDataSource, NSCollectionVi
 		collectionView.delegate = self
 		configureCollectionView()
 		
-		filteredTextures = wad.textures
 	}
 	
 	override func viewWillAppear() {
 		super.viewWillAppear()
 		
 		window = self.view.window
+		
+		// Reset the collection view in case it  was filtered in previous appearance
+		searchField.stringValue = ""
+		filteredTextures = wad.textures
+		collectionView.reloadData()
 	}
 	
-	override func viewWillLayout() {
-		super.viewWillLayout()
-		
+	override func viewDidAppear() {
+		super.viewDidAppear()
+
+		collectionView.deselectAll(nil)
+
+		// Select the current texture, or just scroll to top if none
 		if selectedTextureIndex != -1 {
 			selectTexture()
 		} else {
-			collectionView.deselectAll(nil)
 			collectionView.scrollToItems(at: indexSet(for: 0), scrollPosition: .top)
 			titleLabel.stringValue = "--"
 			sizeLabel.stringValue = ""
 		}
+
 	}
 	
-
+	
 	
 	// ======================
 	// MARK: - Helper Methods
@@ -106,18 +113,22 @@ class TexturePanel: NSViewController, NSCollectionViewDataSource, NSCollectionVi
 	// MARK: - Textures
 	// ================
 	
+	/// Programmatically selects and scrolls to the texture
 	func selectTexture() {
 
 		collectionView.deselectAll(nil)
 		
 		for i in 0..<filteredTextures.count {
 			if filteredTextures[i].index == selectedTextureIndex {
+				print("selectedTextureIndex = \(selectedTextureIndex)")
 				collectionView.selectItems(at: indexSet(for: i), scrollPosition: .centeredVertically)
 				updateLabels(texture: filteredTextures[i])
 				return
 			}
 		}
 	}
+	
+	// Helper methods called used by setTexture()
 	
 	func setUpperTexture(name: String, side: Int) {
 		
@@ -147,7 +158,7 @@ class TexturePanel: NSViewController, NSCollectionViewDataSource, NSCollectionVi
 	}
 
 
-	/// Sets all selected lines
+	/// Sets linedef with the texture for all selected lines
 	func setTexture() {
 		
 		if collectionView.selectionIndexes.isEmpty {
@@ -256,10 +267,12 @@ class TexturePanel: NSViewController, NSCollectionViewDataSource, NSCollectionVi
 	
 	@IBAction func okClicked(_ sender: Any) {
 		
+		var name = selectedTextureIndex != -1 ? wad.textures[selectedTextureIndex].name : "-"
+		
 		setTexture()
 		window?.performClose(nil)
-		delegate?.updateImageFromPanel(name: wad.textures[selectedTextureIndex].name, position: texturePosition)
-		delegate?.updateTextureLabelFromPanel(name: wad.textures[selectedTextureIndex].name, position: texturePosition)
+		delegate?.updateImageFromPanel(name: name, position: texturePosition)
+		delegate?.updateTextureLabelFromPanel(name: name, position: texturePosition)
 	}
 	
 	@IBAction func updateFilter(_ sender: Any) {
@@ -347,6 +360,7 @@ class TexturePanel: NSViewController, NSCollectionViewDataSource, NSCollectionVi
 	
 	@IBAction func removeTexture(_ sender: NSButton) {
 		collectionView.deselectAll(nil)
+		selectedTextureIndex = -1
 		okClicked(sender)
 	}
 	

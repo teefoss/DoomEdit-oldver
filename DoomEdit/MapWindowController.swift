@@ -133,7 +133,7 @@ extension MapWindowController: NSWindowDelegate {
 		
 		let appDelegate = NSApplication.shared.delegate as! AppDelegate
 		appDelegate.mapWindowController = nil
-		appDelegate.runMapMenuItem.isEnabled = false
+		//appDelegate.runMapMenuItem.isEnabled = false
 	}
 }
 

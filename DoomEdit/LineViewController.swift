@@ -51,7 +51,6 @@ class LineViewController: NSViewController, TexturePanelDelegate, NSTabViewDeleg
 	@IBOutlet weak var specialsPopUpButton: NSPopUpButton!
 	@IBOutlet weak var specialLabel: NSTextField!
 	@IBOutlet weak var suggestButton: NSButton!
-	@IBOutlet weak var setAllTexturesButton: NSButton!
 	
 	var flagButtons: [NSButton] = []
 	

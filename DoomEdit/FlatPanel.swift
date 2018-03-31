@@ -54,12 +54,12 @@ class FlatPanel: NSViewController, NSCollectionViewDataSource, NSCollectionViewD
 		searchField.stringValue = ""
 		filteredFlats = wad.flats
 		collectionView.reloadData()
-		selectFlat()
+
 	}
 	
-	override func viewWillLayout() {
-		super.viewWillLayout()
-
+	override func viewDidAppear() {
+		super.viewDidAppear()
+		selectFlat()
 	}
 	
 	
@@ -101,6 +101,7 @@ class FlatPanel: NSViewController, NSCollectionViewDataSource, NSCollectionViewD
 	/// Called on view load to select the current flat and update label.
 	func selectFlat() {
 		
+		print("selectFlat")
 		collectionView.deselectAll(nil)
 		
 		for i in 0..<filteredFlats.count {

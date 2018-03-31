@@ -15,7 +15,7 @@ Displays the Texture Panel when clicked.
 
 class TextureImageView: NSImageView, NSPopoverDelegate {
 	
-	var textureIndex: Int = -1
+	var textureIndex: Int = -1	
 	var selectedLineIndices: [Int] = []
 	var texturePosition: Int = 0	// 1,2,3 lower, middle, upper: front
 									// -1,-2,-3 lower, middle, upper: back
@@ -23,7 +23,7 @@ class TextureImageView: NSImageView, NSPopoverDelegate {
 	
 	override func mouseDown(with event: NSEvent) {
 		texturePanel.selectedLineIndices = selectedLineIndices
-		texturePanel.selectedTextureIndex = self.textureIndex
+		texturePanel.selectedTextureIndex = textureIndex
 		texturePanel.texturePosition = self.texturePosition
 		displayTexturePopover(at: self)
 	}

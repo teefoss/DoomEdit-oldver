@@ -60,6 +60,14 @@ class MapView: NSView, EditWorldDelegate, NSPopoverDelegate {
 	// MARK: - Modes
 	// =============
 	
+	enum Mode {
+		case edit
+		case draw
+		case line
+		case thing
+		case test
+	}
+
 	var showAllLineLabels: Bool = false
 	var showAllThingImages: Bool = false
 	
@@ -80,6 +88,8 @@ class MapView: NSView, EditWorldDelegate, NSPopoverDelegate {
 			case .thing:
 				window?.title = levelInfo + ": Thing View"
 				addThingImages()
+			case .test:
+				window?.title = levelInfo + ": Launch at Point"
 			}
 			needsDisplay = true
 		}
@@ -92,19 +102,15 @@ class MapView: NSView, EditWorldDelegate, NSPopoverDelegate {
 		}
 		setModeCursor()
 	}
-
-	enum Mode {
-		case edit
-		case draw
-		case line
-		case thing
-	}
-
 	
 	func setModeCursor() {
 		if currentMode == .draw {
 			DispatchQueue.main.async {
 				NSCursor.crosshair.set()
+			}
+		} else if currentMode == .test {
+			DispatchQueue.main.async {
+				NSCursor.pointingHand.set()
 			}
 		} else {
 			DispatchQueue.main.async {
@@ -350,6 +356,12 @@ class MapView: NSView, EditWorldDelegate, NSPopoverDelegate {
 		}		
 	}
 	
+	
+	
+	// =========================
+	// MARK: - Main Menu Actions
+	// =========================
+	
 	@IBAction func cut(_ sender: Any) {
 		editWorld.cut()
 	}
@@ -426,6 +438,15 @@ class MapView: NSView, EditWorldDelegate, NSPopoverDelegate {
 	@IBAction func saveMap(_ sender: Any) {
 		editWorld.saveWorld()
 	}
+	
+	@IBAction func runMap(_ sender: Any) {
+		editWorld.processBSPandLaunch()
+	}
+	
+	@IBAction func setRunMode(_ sender: Any) {
+		setMode(.test)
+	}
+	
 	
 
 	/*

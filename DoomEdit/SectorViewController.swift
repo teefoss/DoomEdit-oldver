@@ -31,6 +31,8 @@ class SectorViewController: NSViewController, NSTextDelegate, FlatPanelDelegate 
 	@IBOutlet weak var floorLabel: NSTextField!
 	@IBOutlet weak var specialButton: NSPopUpButton!
 	@IBOutlet weak var specialTextField: NSTextField!
+	@IBOutlet weak var ceilingStepper: NSStepper!
+	@IBOutlet weak var floorStepper: NSStepper!
 	
 	
 	
@@ -64,6 +66,8 @@ class SectorViewController: NSViewController, NSTextDelegate, FlatPanelDelegate 
 		floorLabel.stringValue = def.floorFlat
 		specialTextField.integerValue = def.special
 		specialButton.selectItem(withTag: def.special)
+		ceilingStepper.integerValue = def.ceilingHeight
+		floorStepper.integerValue = def.floorHeight
 		
 		// Send the current flat indices.
 		ceilingImageView.selectedFlatIndex = indexForFlat(named: def.ceilingFlat)
@@ -185,10 +189,26 @@ class SectorViewController: NSViewController, NSTextDelegate, FlatPanelDelegate 
 		tagTextField.integerValue = maxTag + 1
 	}
 	
-	
-	
 	@IBAction func specialChanged(_ sender: NSPopUpButton) {
 		specialTextField.integerValue = sender.selectedItem?.tag ?? 0
 	}
+	
+	@IBAction func ceilingStepperChanged(_ sender: NSStepper) {
+		
+		ceilingHeightTextField.integerValue = sender.integerValue
+		heightLabel.integerValue = ceilingHeightTextField.integerValue - floorHeightTextField.integerValue
+	}
+	
+	@IBAction func floorStepperChanged(_ sender: NSStepper) {
+		
+		floorHeightTextField.integerValue = sender.integerValue
+		heightLabel.integerValue = ceilingHeightTextField.integerValue - floorHeightTextField.integerValue
+	}
+	
+	@IBAction func heightTextFieldChanged(_ sender: NSTextField) {
+		
+		heightLabel.integerValue = ceilingHeightTextField.integerValue - floorHeightTextField.integerValue
+	}
+	
 	
 }

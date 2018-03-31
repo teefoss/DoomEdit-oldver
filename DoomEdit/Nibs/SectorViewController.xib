@@ -12,9 +12,11 @@
                 <outlet property="ceilingHeightTextField" destination="WzW-bN-Guk" id="mFq-Rq-Fe6"/>
                 <outlet property="ceilingImageView" destination="7OT-zW-bVm" id="d3J-a3-qwa"/>
                 <outlet property="ceilingLabel" destination="8y1-Cm-ibO" id="H90-ba-BPD"/>
+                <outlet property="ceilingStepper" destination="X3M-8Y-7OL" id="6TS-iM-d76"/>
                 <outlet property="floorHeightTextField" destination="Rdz-PA-yy3" id="rfv-Pt-lhf"/>
                 <outlet property="floorImageView" destination="rbz-2P-dKM" id="XFw-E1-HYk"/>
                 <outlet property="floorLabel" destination="6U2-X9-bPM" id="RRG-Zo-KVg"/>
+                <outlet property="floorStepper" destination="bYb-qH-0Gd" id="7hK-2q-HgI"/>
                 <outlet property="heightLabel" destination="5up-V2-ELX" id="Vmm-mx-es8"/>
                 <outlet property="lightSlider" destination="6Tu-YK-P13" id="kTo-KY-95E"/>
                 <outlet property="lightTextField" destination="YsC-9l-mfc" id="NEI-nA-QZE"/>
@@ -41,7 +43,7 @@
                             <slider verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6Tu-YK-P13">
                                 <rect key="frame" x="67" y="18" width="319" height="24"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <sliderCell key="cell" state="on" alignment="left" maxValue="248" doubleValue="128" tickMarkPosition="above" numberOfTickMarks="32" allowsTickMarkValuesOnly="YES" sliderType="linear" id="54n-UE-yMZ"/>
+                                <sliderCell key="cell" continuous="YES" state="on" alignment="left" maxValue="248" doubleValue="128" tickMarkPosition="above" numberOfTickMarks="32" allowsTickMarkValuesOnly="YES" sliderType="linear" id="54n-UE-yMZ"/>
                                 <connections>
                                     <action selector="takeIntegerValueFrom:" target="YsC-9l-mfc" id="LNt-YI-9Mq"/>
                                 </connections>
@@ -71,20 +73,26 @@
                             <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="WzW-bN-Guk">
                                 <rect key="frame" x="76" y="90" width="59" height="22"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="N4V-8X-diw">
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" continuous="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="N4V-8X-diw">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
+                                <connections>
+                                    <action selector="heightTextFieldChanged:" target="-2" id="DCX-gP-oHo"/>
+                                </connections>
                             </textField>
                             <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Rdz-PA-yy3">
                                 <rect key="frame" x="76" y="58" width="59" height="22"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="dhv-sA-AVc">
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" continuous="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="dhv-sA-AVc">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
+                                <connections>
+                                    <action selector="heightTextFieldChanged:" target="-2" id="LXg-I9-DAO"/>
+                                </connections>
                             </textField>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="nhZ-0G-51d">
                                 <rect key="frame" x="24" y="92" width="46" height="17"/>
@@ -107,12 +115,18 @@
                             <stepper horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="X3M-8Y-7OL">
                                 <rect key="frame" x="140" y="88" width="19" height="27"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <stepperCell key="cell" continuous="YES" alignment="left" maxValue="100" id="M52-Tj-GgV"/>
+                                <stepperCell key="cell" continuous="YES" alignment="left" increment="8" minValue="-32768" maxValue="32767" id="M52-Tj-GgV"/>
+                                <connections>
+                                    <action selector="ceilingStepperChanged:" target="-2" id="ZXO-3D-z1g"/>
+                                </connections>
                             </stepper>
                             <stepper horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="bYb-qH-0Gd">
                                 <rect key="frame" x="140" y="55" width="19" height="27"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <stepperCell key="cell" continuous="YES" alignment="left" maxValue="100" id="hHj-9H-yfI"/>
+                                <stepperCell key="cell" continuous="YES" alignment="left" increment="8" minValue="-32768" maxValue="32767" id="hHj-9H-yfI"/>
+                                <connections>
+                                    <action selector="floorStepperChanged:" target="-2" id="1t0-f5-9SI"/>
+                                </connections>
                             </stepper>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="DkW-Rp-UO8">
                                 <rect key="frame" x="24" y="22" width="78" height="17"/>

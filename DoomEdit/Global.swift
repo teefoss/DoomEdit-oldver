@@ -156,4 +156,32 @@ func buttonState(for bool: Bool) -> NSButton.StateValue {
 	return bool ? .on : .off
 }
 
+/// Converts "E1M1" to "1 1" or "MAP01" to "1"
+/// Don't pass in string with extension
+func convertMapToArg(mapname: String) -> String? {
+	
+	var episode: Int = 0
+	var mission: Int = 0
+	let upper = mapname.uppercased()
+	let scanner = Scanner(string: upper)
+	
+	if upper.first == "E" {
+		if scanner.scanString("E", into: nil) && scanner.scanInt(&episode) &&
+			scanner.scanString("M", into: nil) && scanner.scanInt(&mission)
+		{
+			let ep = String(episode)
+			let m = String(mission)
+			return ep + " " + m
+		}
+	} else if upper.first == "M" {
+		if scanner.scanString("MAP", into: nil) && scanner.scanInt(&mission) {
+			return String(mission)
+		}
+	}
+	
+	print("Error. convertMapToArg")
+	return nil
+}
+
+
 

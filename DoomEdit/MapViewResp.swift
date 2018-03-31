@@ -61,6 +61,9 @@ extension MapView {
 				setMode(.draw)
 			}
 			return
+		case Keycode.r:
+			setMode(.test)
+			return
 		default:
 			break
 		}
@@ -70,9 +73,7 @@ extension MapView {
 	override func keyUp(with event: NSEvent) {
 		
 		switch event.keyCode {
-		case Keycode.l:
-			setMode(.edit)
-		case Keycode.t:
+		case Keycode.l, Keycode.t, Keycode.r:
 			setMode(.edit)
 		default:
 			break
@@ -182,6 +183,8 @@ extension MapView {
 			selectObject(at: event, rightClicked: false)
 		case .draw:
 			lineDragPoly(event)
+		case .test:
+			launchAtPoint(event)
 		default:
 			return
 		}
@@ -968,5 +971,33 @@ extension MapView {
 	}
 	
 	
+	
+	// ==================
+	// MARK: - Launch Map
+	// ==================
+	
+	func launchAtPoint(_ event: NSEvent) {
+		
+		var pt: NSPoint
+		var oldthing, newthing: Thing
+
+		pt = getPoint(from: event)
+		
+		for i in 0..<things.count {
+			if things[i].type == 1 {
+				newthing = things[i]
+				oldthing = things[i]
+				
+				newthing.origin = pt
+				editWorld.changeThing(i, to: &newthing)
+				editWorld.updateWindows()
+				editWorld.processBSPandLaunch()
+				editWorld.changeThing(i, to: &oldthing)
+				editWorld.updateWindows()
+				editWorld.saveWorld()
+				break
+			}
+		}
+	}
 	
 }

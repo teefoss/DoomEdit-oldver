@@ -14,7 +14,6 @@
         <customObject id="Voe-Tx-rLC" customClass="AppDelegate" customModule="DoomEdit" customModuleProvider="target">
             <connections>
                 <outlet property="preferencesMenuItem" destination="BOF-NM-1cW" id="SUO-dI-aKU"/>
-                <outlet property="runMapMenuItem" destination="aV5-vk-CBk" id="ArP-cu-3OQ"/>
             </connections>
         </customObject>
         <customObject id="YLy-65-1bz" customClass="NSFontManager"/>
@@ -108,7 +107,7 @@
                             </menuItem>
                             <menuItem title="Save and Run" keyEquivalent="r" id="aV5-vk-CBk" userLabel="Save and Run">
                                 <connections>
-                                    <action selector="runMap:" target="Voe-Tx-rLC" id="dbl-Si-pOA"/>
+                                    <action selector="runMap:" target="-1" id="TNf-Yb-oW1"/>
                                 </connections>
                             </menuItem>
                             <menuItem title="Revert to Saved" keyEquivalent="R" id="KaW-ft-85H">
@@ -259,6 +258,12 @@ Gw
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="setLineMode:" target="-1" id="Qdu-Ok-JMY"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Run Mode" keyEquivalent="r" id="a30-Xx-RkV">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="setRunMode:" target="-1" id="BkC-a2-ItE"/>
                                 </connections>
                             </menuItem>
                         </items>

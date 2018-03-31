@@ -599,9 +599,31 @@ class EditWorld {
 	
 	
 	
-	// ====================
-	// MARK: - Open / Close
-	// ====================
+	// ==========================
+	// MARK: - Open / Close / Run
+	// ==========================
+	
+	func processBSP() {
+		editWorld.saveWorld()
+		
+		if !blockWorld.connectSectors() {
+			return
+		}
+		
+		let url = Bundle.main.resourceURL?.appendingPathComponent("doombsp")
+		
+		let process = Process()
+		process.launchPath = url?.path
+		process.arguments = [(doomProject.currentMapURL?.path)!, doomProject.projectMapsURL.path]
+		process.launch()
+		process.waitUntilExit()
+	}
+	
+	func processBSPandLaunch() {
+		
+		processBSP()
+		doomProject.launchChocolateDoom()
+	}
 	
 	func loadWorldFile(_ dwd: String) {
 		dirtyRect = .zero
