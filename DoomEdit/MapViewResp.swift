@@ -64,6 +64,38 @@ extension MapView {
 		case Keycode.r:
 			setMode(.test)
 			return
+		case Keycode.rightArrow:
+			var newthing: Thing
+			for i in 0..<things.count {
+				if things[i].selected != 1 {
+					continue
+				}
+				newthing = things[i]
+				if newthing.angle == 0 {
+					newthing.angle = 315
+				} else {
+					newthing.angle -= 45
+				}
+				editWorld.changeThing(i, to: &newthing)
+				editWorld.updateWindows()
+			}
+			return
+		case Keycode.leftArrow:
+			var newthing: Thing
+			for i in 0..<things.count {
+				if things[i].selected != 1 {
+					continue
+				}
+				newthing = things[i]
+				if newthing.angle == 315 {
+					newthing.angle = 0
+				} else {
+					newthing.angle += 45
+				}
+				editWorld.changeThing(i, to: &newthing)
+				editWorld.updateWindows()
+			}
+			return
 		default:
 			break
 		}

@@ -44,19 +44,19 @@
                         <font key="font" metaFont="system"/>
                         <tabViewItems>
                             <tabViewItem label="General" identifier="" id="xZZ-N6-psb">
-                                <view key="view" ambiguous="YES" id="196-P7-LPa">
+                                <view key="view" id="196-P7-LPa">
                                     <rect key="frame" x="10" y="33" width="434" height="259"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <box fixedFrame="YES" title="Theme" translatesAutoresizingMaskIntoConstraints="NO" id="BfZ-Jv-2aZ">
-                                            <rect key="frame" x="6" y="159" width="94" height="97"/>
+                                            <rect key="frame" x="6" y="164" width="94" height="95"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <view key="contentView" id="vfY-s8-Tvh">
-                                                <rect key="frame" x="2" y="2" width="90" height="80"/>
+                                                <rect key="frame" x="2" y="2" width="90" height="78"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <button verticalHuggingPriority="750" fixedFrame="YES" tag="1" translatesAutoresizingMaskIntoConstraints="NO" id="BQe-gx-dfU">
-                                                        <rect key="frame" x="19" y="43" width="53" height="18"/>
+                                                        <rect key="frame" x="19" y="41" width="53" height="18"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                         <buttonCell key="cell" type="radio" title="Light" bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" inset="2" id="EmC-2P-kuX">
                                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -67,7 +67,7 @@
                                                         </connections>
                                                     </button>
                                                     <button verticalHuggingPriority="750" fixedFrame="YES" tag="2" translatesAutoresizingMaskIntoConstraints="NO" id="ww7-yA-2Nt">
-                                                        <rect key="frame" x="19" y="21" width="51" height="18"/>
+                                                        <rect key="frame" x="19" y="19" width="51" height="18"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                         <buttonCell key="cell" type="radio" title="Dark" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="Xah-Rj-DaC">
                                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -80,11 +80,45 @@
                                                 </subviews>
                                             </view>
                                         </box>
+                                        <box fixedFrame="YES" title="Panel Color" translatesAutoresizingMaskIntoConstraints="NO" id="bn0-9z-4dh">
+                                            <rect key="frame" x="6" y="42" width="139" height="118"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <view key="contentView" id="edX-Xx-hc9">
+                                                <rect key="frame" x="2" y="2" width="135" height="101"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <subviews>
+                                                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="7KY-eK-ch0">
+                                                        <rect key="frame" x="19" y="64" width="66" height="18"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                        <buttonCell key="cell" type="radio" title="Default" bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" inset="2" id="f2d-Ry-BDB">
+                                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                    </button>
+                                                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="mDz-oC-yvY">
+                                                        <rect key="frame" x="19" y="42" width="100" height="18"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                        <buttonCell key="cell" type="radio" title="Vibrant Light" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="MW8-Tx-oAy">
+                                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                    </button>
+                                                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="wTm-Jw-v8l">
+                                                        <rect key="frame" x="19" y="20" width="66" height="18"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                        <buttonCell key="cell" type="radio" title="Vibrant Dark" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="V5f-q2-gDb">
+                                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                    </button>
+                                                </subviews>
+                                            </view>
+                                        </box>
                                     </subviews>
                                 </view>
                             </tabViewItem>
                             <tabViewItem label="WADs" identifier="" id="evi-hr-Ss5">
-                                <view key="view" id="jEk-0K-U5c">
+                                <view key="view" ambiguous="YES" id="jEk-0K-U5c">
                                     <rect key="frame" x="10" y="33" width="434" height="259"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>

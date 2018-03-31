@@ -30,7 +30,6 @@ class SectorViewController: NSViewController, NSTextDelegate, FlatPanelDelegate 
 	@IBOutlet weak var ceilingLabel: NSTextField!
 	@IBOutlet weak var floorLabel: NSTextField!
 	@IBOutlet weak var specialButton: NSPopUpButton!
-	@IBOutlet weak var specialTextField: NSTextField!
 	@IBOutlet weak var ceilingStepper: NSStepper!
 	@IBOutlet weak var floorStepper: NSStepper!
 	
@@ -64,7 +63,6 @@ class SectorViewController: NSViewController, NSTextDelegate, FlatPanelDelegate 
 		lightSlider.integerValue = def.lightLevel
 		ceilingLabel.stringValue = def.ceilingFlat
 		floorLabel.stringValue = def.floorFlat
-		specialTextField.integerValue = def.special
 		specialButton.selectItem(withTag: def.special)
 		ceilingStepper.integerValue = def.ceilingHeight
 		floorStepper.integerValue = def.floorHeight
@@ -97,9 +95,9 @@ class SectorViewController: NSViewController, NSTextDelegate, FlatPanelDelegate 
 		def.floorHeight = floorHeightTextField.integerValue
 		def.tag = tagTextField.integerValue
 		def.lightLevel = lightTextField.integerValue
-		def.special = specialTextField.integerValue
 		def.ceilingFlat = ceilingLabel.stringValue
 		def.floorFlat = floorLabel.stringValue
+		def.special = specialButton.selectedTag()
 		
 		fillSector()
 	}
@@ -187,10 +185,6 @@ class SectorViewController: NSViewController, NSTextDelegate, FlatPanelDelegate 
 		}
 		
 		tagTextField.integerValue = maxTag + 1
-	}
-	
-	@IBAction func specialChanged(_ sender: NSPopUpButton) {
-		specialTextField.integerValue = sender.selectedItem?.tag ?? 0
 	}
 	
 	@IBAction func ceilingStepperChanged(_ sender: NSStepper) {
