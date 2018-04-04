@@ -373,14 +373,23 @@ class DoomProject {
 			wadfile.removeSubrange(range.lowerBound..<wadfile.endIndex)
 		}
 		
-		guard let warparg = convertMapToArg(mapname: level) else {
-			print("Error. warparg")
-			return
+		var episode: String = ""
+		var mission: String = ""
+		
+		if projectType == .doom1 {
+			if let doom1map = convertDoomMapToArg(mapname: level) {
+				(episode, mission) = doom1map
+			}
+		} else if projectType == .doom2 {
+			if let m = convertDoom2MapToArg(mapname: level) {
+				mission = m
+			}
 		}
+
+	
 		wadfile += ".wad"
 		
 		print(wadfile)
-		print(warparg)
 		
 		// Launch chocolate doom with appropriate iwad, level, and pwad
 		let process = Process()
@@ -398,10 +407,18 @@ class DoomProject {
 		}
 		print(appPath + bundlePath)
 		process.launchPath = appPath + bundlePath
-		var args = ["-iwad", doomProject.wadURL.path,
-					"-warp", warparg,
-					"-merge", doomProject.projectMapsURL.appendingPathComponent(wadfile).path
-		]
+		var args = ["-iwad", doomProject.wadURL.path]
+		args.append("-warp")
+
+		if projectType == .doom1 {
+			args.append(episode)
+			args.append(mission)
+		} else if projectType == .doom2 {
+			args.append(mission)
+		}
+		args.append("-merge")
+		args.append(doomProject.projectMapsURL.appendingPathComponent(wadfile).path)
+		
 		if let netgame = UserDefaults.standard.value(forKey: PrefKeys.netGame) as? Bool {
 			if netgame {
 				args.append("-solo-net")
@@ -431,6 +448,7 @@ class DoomProject {
 		}
 		
 		process.arguments = args
+		print(process.arguments)
 		process.launch()
 		process.waitUntilExit()
 	}

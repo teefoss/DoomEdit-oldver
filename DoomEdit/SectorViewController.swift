@@ -53,8 +53,6 @@ class SectorViewController: NSViewController, NSTextDelegate, FlatPanelDelegate 
 	override func viewWillAppear() {
 		super.viewWillAppear()
 		
-		// TODO: Get the sector number
-		sectorLabel.stringValue = "Sector Properties"
 		ceilingHeightTextField.integerValue = def.ceilingHeight
 		floorHeightTextField.integerValue = def.floorHeight
 		heightLabel.integerValue = def.ceilingHeight - def.floorHeight
@@ -76,16 +74,23 @@ class SectorViewController: NSViewController, NSTextDelegate, FlatPanelDelegate 
 		floorImageView.image = imageNamed(def.floorFlat)
 		
 		// Store the currently selected line so they can be set on viewWillDisappear
+		var sectornum: Int = -1 // get the sector number if there is one
 		selectedLineIndices = []
 		for i in 0..<lines.count {
 			if lines[i].selected < 1 {
 				continue
 			} else if lines[i].selected == 1 {
+				sectornum = lines[i].side[0]!.sector
 				selectedLineIndices.append(i)
 			} else if lines[i].selected == 2 {
+				sectornum = lines[i].side[1]!.sector
 				selectedLineIndices.append(i | SIDE_BIT)
 			}
 		}
+		
+		sectorLabel.stringValue = (sectornum == -1) ? "Sector Properties" : "Sector \(sectornum) Properties"
+
+		
 	}
 	
 	override func viewWillDisappear() {

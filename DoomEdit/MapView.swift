@@ -66,6 +66,7 @@ class MapView: NSView, EditWorldDelegate, NSPopoverDelegate {
 		case line
 		case thing
 		case test
+		case sector
 	}
 
 	var showAllLineLabels: Bool = false
@@ -90,6 +91,8 @@ class MapView: NSView, EditWorldDelegate, NSPopoverDelegate {
 				addThingImages()
 			case .test:
 				window?.title = levelInfo + ": Launch at Point"
+			case .sector:
+				window?.title = levelInfo + ": Sector Mode"
 			}
 			needsDisplay = true
 		}
@@ -447,8 +450,27 @@ class MapView: NSView, EditWorldDelegate, NSPopoverDelegate {
 		setMode(.test)
 	}
 	
+	@IBAction func setSectorMode(_ sender: Any) {
+		setMode(.sector)
+	}
 	
-
+	@IBAction func copyLineProperties(_ sender: Any) {
+		editWorld.storeLineProperties()
+	}
+	
+	@IBAction func pasteLineProperties(_ sender: Any) {
+		editWorld.pasteLineProperties()
+	}
+	
+	// MARK: - Tools Menu
+	
+	@IBAction func buildSectors(_ sender: Any) {
+		if blockWorld.newConnectSectors() {
+			runAlertPanel(title: "Build Sectors", message: "Success!")
+		}
+	}
+	
+	
 	/*
 	func zoom(from origin: NSPoint, to newScale: Float) {
 		

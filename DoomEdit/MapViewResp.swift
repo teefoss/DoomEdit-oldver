@@ -64,37 +64,19 @@ extension MapView {
 		case Keycode.r:
 			setMode(.test)
 			return
+		case Keycode.s:
+			setMode(.sector)
+			return
 		case Keycode.rightArrow:
-			var newthing: Thing
-			for i in 0..<things.count {
-				if things[i].selected != 1 {
-					continue
-				}
-				newthing = things[i]
-				if newthing.angle == 0 {
-					newthing.angle = 315
-				} else {
-					newthing.angle -= 45
-				}
-				editWorld.changeThing(i, to: &newthing)
-				editWorld.updateWindows()
-			}
+			rotateThing(clockwise: true)
 			return
 		case Keycode.leftArrow:
-			var newthing: Thing
-			for i in 0..<things.count {
-				if things[i].selected != 1 {
-					continue
-				}
-				newthing = things[i]
-				if newthing.angle == 315 {
-					newthing.angle = 0
-				} else {
-					newthing.angle += 45
-				}
-				editWorld.changeThing(i, to: &newthing)
-				editWorld.updateWindows()
-			}
+			rotateThing(clockwise: false)
+			return
+		case Keycode.x:
+			let pt = lines[5].checkNormal
+			blockWorld.floodFillSector(from: pt)
+			setNeedsDisplay(bounds)
 			return
 		default:
 			break
@@ -105,13 +87,36 @@ extension MapView {
 	override func keyUp(with event: NSEvent) {
 		
 		switch event.keyCode {
-		case Keycode.l, Keycode.t, Keycode.r:
+		case Keycode.l, Keycode.t, Keycode.r, Keycode.s:
 			setMode(.edit)
 		default:
 			break
 		}
 	}
 	
+	/// Called on right or left arrow key press.
+	func rotateThing(clockwise: Bool) {
+		
+		let change: Int = clockwise ? -45 : 45
+		let angle1 = clockwise ? 0 : 315
+		let angle2 = clockwise ? 315 : 0
+		
+		var newthing: Thing
+		
+		for i in 0..<things.count {
+			if things[i].selected != 1 {
+				continue
+			}
+			newthing = things[i]
+			if newthing.angle == angle1 {
+				newthing.angle = angle2
+			} else {
+				newthing.angle += change
+			}
+			editWorld.changeThing(i, to: &newthing)
+			editWorld.updateWindows()
+		}
+	}
 	
 	/// Grid lines get farther apart
 	func increaseGrid() {
@@ -217,6 +222,8 @@ extension MapView {
 			lineDragPoly(event)
 		case .test:
 			launchAtPoint(event)
+		case .sector:
+			selectSector(at: event)
 		default:
 			return
 		}
@@ -266,7 +273,11 @@ extension MapView {
 			placeThing(at: event)
 			editWorld.updateWindows()
 			return
-		}		
+		} else if currentMode == .sector {
+			editWorld.deselectAll()
+			openSectorPanel(at: event)
+			return
+		}
 		selectObject(at: event, rightClicked: true)
 		editWorld.updateWindows()
 	}
@@ -381,6 +392,15 @@ extension MapView {
 				editWorld.selectPoint(lines[i].pt1)
 				editWorld.selectPoint(lines[i].pt2)
 				editWorld.updateWindows()
+				
+				print("line \(i) =========")
+				
+				print("front sector: \(lines[i].side[0]!.sector)")
+				if lines[i].side[1] != nil {
+					print("back sector: \(lines[i].side[1]!.sector)")
+				} else {
+					print("no back sector")
+				}
 				
 				if !rightClicked {
 					dragObjects(with: event)

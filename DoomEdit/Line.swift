@@ -46,6 +46,8 @@ struct Line {
 	}
 	var midpoint:   NSPoint
 	var normal:     NSPoint	 // The point at the end of the 'tick mark' of a line
+	
+	var checkNormal: NSPoint // Used in connectSector
 	var backNormal: NSPoint  // The point on the opposite side from the normal (backside)
 
 	var color: NSColor {
@@ -67,6 +69,7 @@ struct Line {
 		midpoint = NSPoint()
 		normal = NSPoint()
 		backNormal = NSPoint()
+		checkNormal = NSPoint()
 	}
 
 	func hasOption(_ option: Int) -> Bool {

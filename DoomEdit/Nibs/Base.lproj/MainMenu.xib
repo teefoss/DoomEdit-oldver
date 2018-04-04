@@ -169,6 +169,17 @@ CA
                                     <action selector="delete:" target="-1" id="sNb-r5-A0e"/>
                                 </connections>
                             </menuItem>
+                            <menuItem isSeparatorItem="YES" id="qRT-v9-3kw"/>
+                            <menuItem title="Copy Line Properties" keyEquivalent="C" id="wKN-FD-96k">
+                                <connections>
+                                    <action selector="copyLineProperties:" target="-1" id="72f-V6-r83"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Paste Line Properties" keyEquivalent="V" id="kiO-Sa-qI8">
+                                <connections>
+                                    <action selector="pasteLineProperties:" target="-1" id="oEj-wQ-Mhu"/>
+                                </connections>
+                            </menuItem>
                             <menuItem isSeparatorItem="YES" id="uyl-h8-XO2"/>
                             <menuItem title="Flip Line" keyEquivalent="f" id="cNq-KU-62U">
                                 <connections>
@@ -242,16 +253,16 @@ Gw
                                     <action selector="setEditMode:" target="-1" id="dVm-SM-5dr"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Draw Mode" keyEquivalent=" " id="Nbq-hg-J0L">
-                                <modifierMask key="keyEquivalentModifierMask"/>
-                                <connections>
-                                    <action selector="setDrawMode:" target="-1" id="SC6-Ca-u5J"/>
-                                </connections>
-                            </menuItem>
                             <menuItem title="Line Mode" keyEquivalent="l" id="jEm-1Q-WeU">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="setLineMode:" target="-1" id="fWA-is-dPh"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Sector Mode" keyEquivalent="s" id="aAt-5G-RtX">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="setSectorMode:" target="-1" id="u9R-iF-gN6"/>
                                 </connections>
                             </menuItem>
                             <menuItem title="Thing Mode" keyEquivalent="t" id="lH7-yK-KnU">
@@ -260,10 +271,30 @@ Gw
                                     <action selector="setLineMode:" target="-1" id="Qdu-Ok-JMY"/>
                                 </connections>
                             </menuItem>
+                            <menuItem isSeparatorItem="YES" id="6yf-uq-R6y"/>
+                            <menuItem title="Draw Mode" keyEquivalent=" " id="Nbq-hg-J0L">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="setDrawMode:" target="-1" id="SC6-Ca-u5J"/>
+                                </connections>
+                            </menuItem>
                             <menuItem title="Run Mode" keyEquivalent="r" id="a30-Xx-RkV">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="setRunMode:" target="-1" id="BkC-a2-ItE"/>
+                                </connections>
+                            </menuItem>
+                        </items>
+                    </menu>
+                </menuItem>
+                <menuItem title="Tools" id="fLI-sD-R5c">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <menu key="submenu" title="Tools" id="Ouh-3E-86Y">
+                        <items>
+                            <menuItem title="Build Sectors" id="NKx-I6-ScR">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="buildSectors:" target="-1" id="6iO-Ka-aXE"/>
                                 </connections>
                             </menuItem>
                         </items>

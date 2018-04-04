@@ -39,16 +39,18 @@ Object that handles map properties and editing. Accessible via global instance `
 
 class EditWorld {
 	
-	var loaded: Bool = false
-	var bounds: NSRect = CGRect(x: 0, y: 0, width: 100, height: 100)
-	var dirty: Bool = true
-	var boundsDirty: Bool = false
-	var dirtyRect: NSRect = NSRect.zero
-	var dirtyPoints: Bool = false
-	var copyLines: [CopyLine] = []
-	var copyThings: [Thing] = []
-	var copyLoaded: Bool = false
-	var copyCoord = NSPoint()
+	var loaded: 		Bool = false
+	var bounds: 		NSRect = CGRect(x: 0, y: 0, width: 100, height: 100)
+	var dirty: 			Bool = true
+	var boundsDirty: 	Bool = false
+	var dirtyRect: 		NSRect = NSRect.zero
+	var dirtyPoints: 	Bool = false
+	var copyLines: 		[CopyLine] = []
+	var copyThings: 	[Thing] = []
+	var copyLoaded: 	Bool = false
+	var copyCoord = 	NSPoint()
+	
+	var copyLineProperties: Line?
 	
 	var delegate: EditWorldDelegate?
 	
@@ -104,18 +106,25 @@ class EditWorld {
 		let dx = p2.x - p1.x
 		let dy = p2.y - p1.y
 		let length = sqrt(dx*dx + dy*dy)/CGFloat(LINE_NORMAL_LENGTH)
+		let checklength = sqrt(dx*dx + dy*dy)
 		
+		
+		// FIXME
 		if length == 0 {
 			return
 		}
 
+		// The normal point used for the visible tick mark
 		lines[num].midpoint.x = p1.x + dx/2
 		lines[num].midpoint.y = p1.y + dy/2
 		lines[num].normal.x = lines[num].midpoint.x + dy/length
 		lines[num].normal.y = lines[num].midpoint.y - dx/length
-		lines[num].backNormal.x = lines[num].midpoint.x - dy/length
-		lines[num].backNormal.y = lines[num].midpoint.y + dx/length
 
+		// the points used in checking each sector
+		lines[num].checkNormal.x = lines[num].midpoint.x + dy/checklength
+		lines[num].checkNormal.y = lines[num].midpoint.y - dx/checklength
+		lines[num].backNormal.x = lines[num].midpoint.x - dy/checklength
+		lines[num].backNormal.y = lines[num].midpoint.y + dx/checklength
 	}
 	
 	func addPointToDirtyRect(_ point: NSPoint) {
@@ -603,11 +612,13 @@ class EditWorld {
 	// MARK: - Open / Close / Run
 	// ==========================
 	
-	func processBSP() {
+	func processBSP() -> Bool {
 		editWorld.saveWorld()
-		
-		if !blockWorld.connectSectors() {
-			return
+
+		// TODO
+//		if !blockWorld.connectSectors() {
+		if !blockWorld.newConnectSectors() {
+			return false
 		}
 		
 		let url = Bundle.main.resourceURL?.appendingPathComponent("doombsp")
@@ -617,12 +628,15 @@ class EditWorld {
 		process.arguments = [(doomProject.currentMapURL?.path)!, doomProject.projectMapsURL.path]
 		process.launch()
 		process.waitUntilExit()
+		
+		return true
 	}
 	
 	func processBSPandLaunch() {
 		
-		processBSP()
-		doomProject.launchChocolateDoom()
+		if processBSP() {
+			doomProject.launchChocolateDoom()
+		}
 	}
 	
 	func loadWorldFile(_ dwd: String) {
@@ -855,6 +869,46 @@ class EditWorld {
 		
 		doomProject.setDirtyMap(true)
 		updateWindows()
+	}
+	
+	func storeLineProperties() {
+		
+		var index: Int = -1
+		
+		// There might be multiple lines selected,
+		// assume they all have the same properties and store the first one.
+		for i in 0..<lines.count {
+			if lines[i].selected > 0 {
+				index = i
+				break
+			}
+		}
+		
+		copyLineProperties = lines[index]
+		deselectAll()
+	}
+	
+	func pasteLineProperties() {
+		
+		guard let props = copyLineProperties else { return }
+				
+		for i in 0..<lines.count {
+			
+			if lines[i].selected < 1 {
+				continue
+			}
+			lines[i].flags = props.flags
+			lines[i].special = props.special
+			lines[i].tag = props.tag
+			lines[i].side[0]?.lowerTexture = props.side[0]?.lowerTexture
+			lines[i].side[0]?.middleTexture = props.side[0]?.middleTexture
+			lines[i].side[0]?.upperTexture = props.side[0]?.upperTexture
+			if lines[i].side[1] != nil  && props.side[1] != nil {
+				lines[i].side[1]?.lowerTexture = props.side[1]?.lowerTexture
+				lines[i].side[1]?.middleTexture = props.side[1]?.middleTexture
+				lines[i].side[1]?.upperTexture = props.side[1]?.upperTexture
+			}
+		}
 	}
 
 }

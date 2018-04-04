@@ -376,6 +376,11 @@ class BlockWorld {
 			
 			let line = lines[i]
 
+			// sector has already been grouped
+//			if line.side[line.selected-1]!.sector != -1 {
+//				return true
+//			}
+			
 			if line.selected < 1 {  // unselected or deleted
 				continue
 			}
@@ -387,22 +392,21 @@ class BlockWorld {
 						
 			side = line.side[line.selected-1]!  // the selected side
 			
-			if frontline == -1 {
+			if frontline == -1 {  // have not got the sectordef yet
 				newSector.def = side.ends
-			} else if newSector.def != side.ends {
+			} else if newSector.def != side.ends {  // already got a sectordef, check if the current side has the same sectordef
 				newSector.lines = []
 				sectorError(message: "Line side sectordefs differ", line1: i, line2: frontline)
 				return false
 			}
-			
 			newSector.lines.append(i)
 			frontline = i
-			if side.sector != -1 {
+			if line.side[line.selected-1]!.sector != -1 {
 				newSector.lines = []
 				sectorError(message: "Line side grouped into multiple sectors", line1: i, line2: -1)
 				return false
 			} else {
-				lines[i].side[line.selected-1]?.sector = sectors.count
+				lines[i].side[line.selected-1]!.sector = sectors.count
 			}
 		}
 		
@@ -467,6 +471,38 @@ class BlockWorld {
 		}
 		
 		editWorld.deselectAll()
+		return true
+	}
+	
+	func newConnectSectors() -> Bool {
+		
+		// for each line, floodfill at normal point & back normal
+		// if !makesector, return false
+		
+		for i in 0..<lines.count {
+		
+			let line = lines[i]
+
+			if line.side[0]!.sector == -1 {
+				editWorld.deselectAll()
+				floodFillSector(from: line.checkNormal)
+				if !makeSector() {
+					return false
+				}
+			}
+			
+			if line.side[1] == nil {
+				continue
+			} else {
+				if line.side[1]!.sector == -1 {
+					editWorld.deselectAll()
+					floodFillSector(from: line.backNormal)
+					if !makeSector() {
+						return false
+					}
+				}
+			}
+		}
 		return true
 	}
 
