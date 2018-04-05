@@ -271,6 +271,9 @@ Gw
                                     <action selector="setLineMode:" target="-1" id="Qdu-Ok-JMY"/>
                                 </connections>
                             </menuItem>
+                            <menuItem title="Point Mode" keyEquivalent="p" id="PiZ-5m-6YD">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                            </menuItem>
                             <menuItem isSeparatorItem="YES" id="6yf-uq-R6y"/>
                             <menuItem title="Draw Mode" keyEquivalent=" " id="Nbq-hg-J0L">
                                 <modifierMask key="keyEquivalentModifierMask"/>

@@ -67,6 +67,7 @@ class MapView: NSView, EditWorldDelegate, NSPopoverDelegate {
 		case thing
 		case test
 		case sector
+		case point
 	}
 
 	var showAllLineLabels: Bool = false
@@ -93,6 +94,8 @@ class MapView: NSView, EditWorldDelegate, NSPopoverDelegate {
 				window?.title = levelInfo + ": Launch at Point"
 			case .sector:
 				window?.title = levelInfo + ": Sector Mode"
+			case .point:
+				window?.title = levelInfo + ": Point Mode"
 			}
 			needsDisplay = true
 		}
@@ -465,7 +468,7 @@ class MapView: NSView, EditWorldDelegate, NSPopoverDelegate {
 	// MARK: - Tools Menu
 	
 	@IBAction func buildSectors(_ sender: Any) {
-		if blockWorld.newConnectSectors() {
+		if blockWorld.connectSectors() {
 			runAlertPanel(title: "Build Sectors", message: "Success!")
 		}
 	}

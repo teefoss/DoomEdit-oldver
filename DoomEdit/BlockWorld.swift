@@ -363,7 +363,7 @@ class BlockWorld {
 	
 	/// Groups all selected sides into a sector.
 	/// Returns `false` and presents an alert panel if there is an error.
-	func makeSector() -> Bool {
+	private func makeSector() -> Bool {
 		
 		var side: Side
 		var backline, frontline: Int
@@ -375,11 +375,6 @@ class BlockWorld {
 		for i in 0..<lines.count {
 			
 			let line = lines[i]
-
-			// sector has already been grouped
-//			if line.side[line.selected-1]!.sector != -1 {
-//				return true
-//			}
 			
 			if line.selected < 1 {  // unselected or deleted
 				continue
@@ -424,10 +419,8 @@ class BlockWorld {
 		return true
 	}
 	
-	
-	func connectSectors() -> Bool {
-
-		var sector = Sector()
+	/// The original was buggy(?)
+	func DoomEDconnectSectors() -> Bool {
 		
 		sectors = []
 		
@@ -474,11 +467,20 @@ class BlockWorld {
 		return true
 	}
 	
-	func newConnectSectors() -> Bool {
+	/// For each line, floodfill at both normal points try to make a sector. Returns false if it couldn't.
+	func connectSectors() -> Bool {
+
+		// reset everything for new build
+		sectors = []
+		for i in 0..<lines.count {
+			lines[i].side[0]?.sector = -1
+			lines[i].side[1]?.sector = -1
+		}
 		
-		// for each line, floodfill at normal point & back normal
-		// if !makesector, return false
-		
+		for line in lines {
+			print(line.side[0]!.sector)
+		}
+
 		for i in 0..<lines.count {
 		
 			let line = lines[i]

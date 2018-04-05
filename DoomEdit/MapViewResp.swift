@@ -73,10 +73,8 @@ extension MapView {
 		case Keycode.leftArrow:
 			rotateThing(clockwise: false)
 			return
-		case Keycode.x:
-			let pt = lines[5].checkNormal
-			blockWorld.floodFillSector(from: pt)
-			setNeedsDisplay(bounds)
+		case Keycode.p:
+			setMode(.point)
 			return
 		default:
 			break
@@ -87,7 +85,7 @@ extension MapView {
 	override func keyUp(with event: NSEvent) {
 		
 		switch event.keyCode {
-		case Keycode.l, Keycode.t, Keycode.r, Keycode.s:
+		case Keycode.l, Keycode.t, Keycode.r, Keycode.s, Keycode.p:
 			setMode(.edit)
 		default:
 			break
@@ -216,7 +214,7 @@ extension MapView {
 		}
 		
 		switch currentMode {
-		case .edit, .line:
+		case .edit, .line, .point:
 			selectObject(at: event, rightClicked: false)
 		case .draw:
 			lineDragPoly(event)
@@ -277,6 +275,14 @@ extension MapView {
 			editWorld.deselectAll()
 			openSectorPanel(at: event)
 			return
+		} else if currentMode == .point {
+			let clickpoint = getGridPoint(from: event)
+			selectObject(at: event, rightClicked: true)
+			for i in 0..<lines.count {
+				if lines[i].selected == 1 {
+					editWorld.splitLine(i, at: clickpoint)
+				}
+			}
 		}
 		selectObject(at: event, rightClicked: true)
 		editWorld.updateWindows()
@@ -345,6 +351,10 @@ extension MapView {
 			return
 		}
 		
+		if currentMode == .point && !rightClicked {
+			return
+		}
+		
 		//
 		// didn't hit a point, check for a line
 		//
@@ -405,10 +415,16 @@ extension MapView {
 				if !rightClicked {
 					dragObjects(with: event)
 				} else {
-					openLinePanel(atLine: i)
+					if currentMode != .point {
+						openLinePanel(atLine: i)
+					}
 				}
 				return
 			}
+		}
+		
+		if currentMode == .point {
+			return
 		}
 		
 		

@@ -507,14 +507,14 @@ class EditWorld {
 	// MARK: - Selection Modification Methods
 	// ======================================
 
-	// FIXME: not working:
+	/// Reverses which way the lines' front side faces.
 	func flipSelectedLines() {
 		
 		var line: Line
 		var p1, p2: NSPoint
 		
 		for i in 0..<lines.count {
-			if lines[i].selected == 1 {
+			if lines[i].selected > 0 {
 				line = lines[i]
 				p1 = points[line.pt1].coord
 				p2 = points[line.pt2].coord
@@ -527,6 +527,14 @@ class EditWorld {
 				line.selected = 0
 				points[line.pt1].selected = 0
 				points[line.pt2].selected = 0
+				
+				// flip the sides & sectordefs if it's two-sided
+				if line.flags & TWO_SIDED != 0 {
+					let temp = line.side[0]!
+					line.side[0]! = line.side[1]!
+					line.side[1]! = temp
+				}
+
 				newLine(line: &line, from: p2, to: p1)
 			}
 		}
@@ -606,6 +614,20 @@ class EditWorld {
 		updateWindows()
 	}
 	
+	func splitLine(_ i: Int, at gridPoint: NSPoint) {
+		
+		let p1 = points[lines[i].pt1].coord
+		let p2 = points[lines[i].pt2].coord
+		
+		var line = lines[i]
+		line.selected = -1
+		changeLine(i, to: &line)
+		
+		line.selected = 0
+		newLine(line: &line, from: p1, to: gridPoint)
+		newLine(line: &line, from: gridPoint, to: p2)
+	}
+	
 	
 	
 	// ==========================
@@ -617,7 +639,7 @@ class EditWorld {
 
 		// TODO
 //		if !blockWorld.connectSectors() {
-		if !blockWorld.newConnectSectors() {
+		if !blockWorld.connectSectors() {
 			return false
 		}
 		
