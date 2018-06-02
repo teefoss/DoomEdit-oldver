@@ -42,6 +42,8 @@ class DoomProject {
 	var mapDirty = false
 	var projectDirty = false
 	
+	var progressWindow: ProgressWindowController?
+	
 	enum ProjectType: Int {
 		case doom1 = 1
 		case doom2 = 2
@@ -147,51 +149,63 @@ class DoomProject {
 		case .doom1:
 			let path = UserDefaults.standard.value(forKey: "DoomWADPath") as! String
 			wadURL = URL(fileURLWithPath: path)
-			wad.setWadLoation(wadURL)
+			wad.dataFromURL(wadURL)
 			doomData.loadLineSpecials(forResource: "linespecials", ofType: "doom1")
 		case .doom2:
 			let path = UserDefaults.standard.value(forKey: "Doom2WADPath") as! String
 			let wadURL = URL(fileURLWithPath: path)
-			wad.setWadLoation(wadURL)
+			wad.dataFromURL(wadURL)
 			doomData.loadLineSpecials(forResource: "linespecials", ofType: "dsp")
 		default:
 			break
 		}
+
+		var loading = "Loading "
+		let wadtitle = projectType == .doom1 ? "DOOM.WAD" : "DOOM2.WAD"
+		loading += wadtitle
 		
+		self.showProgressWindow(title: loading)
+
 		DispatchQueue.global(qos: .background).async {
 			wad.loadAssets()
-		}
-		
-		mapDirty = false
-		projectDirty = false
-		loaded = true
-		
-		loadRecents()
-		
-		var exists: Bool = false
-		if let recents = recentProjects {
-			for url in recents {
-				if url == projectFileURL {
-					exists = true
-					break
+			
+			DispatchQueue.main.async {
+				self.closeProgressWindow()
+				
+				self.mapDirty = false
+				self.projectDirty = false
+				self.loaded = true
+				
+				self.loadRecents()
+				
+				// check if the project is already in recent projects
+				var exists: Bool = false
+				if let recents = self.recentProjects {
+					for url in recents {
+						if url == self.projectFileURL {
+							exists = true
+							break
+						}
+					}
 				}
+				
+				// add to recents if needed
+				if !exists {
+					if self.recentProjects?.count == 50 {
+						self.recentProjects?.remove(at: 0)
+					}
+					self.recentProjects?.append(self.projectFileURL)
+					self.saveRecents()
+				}
+				
+				// Open the project window
+				let appDelegate = NSApplication.shared.delegate as! AppDelegate
+				let proj = ProjectWindowController()
+				proj.positionAtScreenTopRight()
+				proj.showWindow(self)
+				appDelegate.projectWindowController = proj
 			}
 		}
-
-		if !exists {
-			if recentProjects?.count == 50 {
-				recentProjects?.remove(at: 0)
-			}
-			recentProjects?.append(projectFileURL)
-			saveRecents()
-		}
-
-		// Open the project window
-		let appDelegate = NSApplication.shared.delegate as! AppDelegate
-		let proj = ProjectWindowController()
-		proj.positionAtScreenTopRight()
-		proj.showWindow(self)
-		appDelegate.projectWindowController = proj
 	}
 	
 	/// Opens a project file and sets project info
@@ -460,11 +474,12 @@ class DoomProject {
 	// MARK: - Progress Indicator Window
 	// =================================
 
-	/*
-	func showProgressWindow() {
+	func showProgressWindow(title: String) {
 		
 		let win = ProgressWindowController()
+		win.window?.title = title
 		win.showWindow(self)
+		win.window?.orderFront(nil)
 		self.progressWindow = win
 	}
 	
@@ -475,7 +490,7 @@ class DoomProject {
 
 		w.label.stringValue = labelText
 		w.progressBar.maxValue = Double(max)
-		w.progressBar.increment(by: Double(current))
+		w.progressBar.doubleValue = Double(current)
 		w.progressBar.display()
 	}
 	
@@ -485,5 +500,4 @@ class DoomProject {
 		progressWindow.close()
 		self.progressWindow = nil
 	}
-	*/
 }

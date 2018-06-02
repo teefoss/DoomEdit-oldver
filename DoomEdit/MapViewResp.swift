@@ -200,6 +200,25 @@ extension MapView {
 		}
 	}
 	
+	func scrollToLine(_ num: Int) {
+		
+		let line = lines[num]
+		var lineRect = NSRect()
+		
+		makeRect(&lineRect, with: points[line.pt1].coord, and: points[line.pt2].coord)
+		
+		let center = NSPoint(x: (lineRect.origin.x+lineRect.width/2), y: (lineRect.origin.y+lineRect.height/2))
+		
+		let xOffset = visibleRect.size.width/2
+		let yOffset = visibleRect.size.height/2
+		
+		var origin = center
+		origin.x -= xOffset
+		origin.y -= yOffset
+		
+		setOrigin(for: origin)
+	}
+
 	
 	
 	// =====================
@@ -221,7 +240,7 @@ extension MapView {
 		case .test:
 			launchAtPoint(event)
 		case .sector:
-			selectSector(at: event)
+			copySector(at: event)
 		default:
 			return
 		}
@@ -272,8 +291,9 @@ extension MapView {
 			editWorld.updateWindows()
 			return
 		} else if currentMode == .sector {
-			editWorld.deselectAll()
-			openSectorPanel(at: event)
+			pasteSector(at: event)
+//			editWorld.deselectAll()
+//			openSectorPanel(at: event)
 			return
 		} else if currentMode == .point {
 			let clickpoint = getGridPoint(from: event)
@@ -492,7 +512,7 @@ extension MapView {
 			if !event.modifierFlags.contains(.shift) {
 				openSectorPanel(at: event)
 			} else {
-				selectSector(at: event)
+				copySector(at: event)
 			}
 		} else {
 			// left checked
@@ -518,7 +538,7 @@ extension MapView {
 		var dragPoint = NSPoint()
 		var selectionBox = NSRect()
 		
-		var shapeLayer = CAShapeLayer()
+		let shapeLayer = CAShapeLayer()
 		shapeLayer.lineWidth = SELECTION_BOX_WIDTH
 		shapeLayer.fillColor = NSColor.clear.cgColor
 		shapeLayer.strokeColor = NSColor.gray.cgColor
@@ -900,10 +920,38 @@ extension MapView {
 	}
 	
 	/// Selects all the lines in the sector that encompasses the click point
-	func selectSector(at event: NSEvent) {
+	func copySector(at event: NSEvent) {
+		
+		editWorld.deselectAll()
 		
 		let clickpoint = getPoint(from: event)
 		blockWorld.floodFillSector(from: clickpoint)
+		for i in 0..<lines.count {
+			if lines[i].selected > 0 {
+				lines[i].sectorCopy = true
+			}
+		}
+		setNeedsDisplay(bounds)
+		displayIfNeeded()
+		editWorld.copySectordef = getSectorDef(from: event)
+	}
+	
+	func pasteSector(at event: NSEvent) {
+		
+		let clickpoint = getPoint(from: event)
+		blockWorld.floodFillSector(from: clickpoint)
+		
+		guard let def = editWorld.copySectordef else { return }
+		
+		for i in 0..<lines.count {
+			if lines[i].selected == 1 {
+				lines[i].sectorPaste = true
+				lines[i].side[0]!.ends = def
+			} else if lines[i].selected == 2 {
+				lines[i].sectorPaste = true
+				lines[i].side[1]!.ends = def
+			}
+		}
 		setNeedsDisplay(bounds)
 		displayIfNeeded()
 	}
@@ -917,7 +965,7 @@ extension MapView {
 	func addLine(from fixedpoint: NSPoint, to dragpoint: NSPoint) {
 		
 		var newline = 	lineViewController.baseline
-		var i, line: 		Int
+		var line: 		Int
 		
 		// set the new line to the most recent data but make sure it's not deleted
 		/*
@@ -940,6 +988,11 @@ extension MapView {
 		editWorld.selectPoint(lines[line].pt2)
 	}
 	
+	
+	
+	//
+	// lineDragPoly
+	//
 	/// Click to begin a poly-line or click-drag for a single line.
 	func lineDragPoly(_ event: NSEvent) {
 		

@@ -43,6 +43,7 @@ class BlockWorld {
 		editWorld.deselectAll()
 		if line1 != -1 {
 			editWorld.selectLine(line1)
+			editWorld.delegate?.scrollToLine(line1)
 		}
 		if line2 != -1 {
 			editWorld.selectLine(line2)
@@ -391,14 +392,14 @@ class BlockWorld {
 				newSector.def = side.ends
 			} else if newSector.def != side.ends {  // already got a sectordef, check if the current side has the same sectordef
 				newSector.lines = []
-				sectorError(message: "Line side sectordefs differ", line1: i, line2: frontline)
+				sectorError(message: "Line side sectordefs differ: Line \(i), Line \(frontline)", line1: i, line2: frontline)
 				return false
 			}
 			newSector.lines.append(i)
 			frontline = i
 			if line.side[line.selected-1]!.sector != -1 {
 				newSector.lines = []
-				sectorError(message: "Line side grouped into multiple sectors", line1: i, line2: -1)
+				sectorError(message: "Line side grouped into multiple sectors (Line \(i)", line1: i, line2: -1)
 				return false
 			} else {
 				lines[i].side[line.selected-1]!.sector = sectors.count
@@ -407,7 +408,7 @@ class BlockWorld {
 		
 		if backline > -1 && frontline > -1 {
 			newSector.lines = []
-			sectorError(message: "Inside and outside lines grouped together", line1: backline, line2: frontline)
+			sectorError(message: "Inside and outside lines grouped together: Line \(backline), Line \(frontline)", line1: backline, line2: frontline)
 			return false
 		}
 		if frontline > -1 {
@@ -419,18 +420,20 @@ class BlockWorld {
 		return true
 	}
 	
-	/// The original was buggy(?)
+	
+	
+	/**
+	The original was buggy(?)
+	*/
 	func DoomEDconnectSectors() -> Bool {
 		
 		sectors = []
-		
 		for i in 0..<lines.count {
 			lines[i].side[0]?.sector = -1
 			lines[i].side[1]?.sector = -1
 		}
 		
 		// flood fill everything
-		
 		createBlockMap()
 		// TODO: panel
 		var dest = 0
@@ -446,9 +449,8 @@ class BlockWorld {
 				dest += WLSIZE
 			}
 		}
-		
+	
 		// check to make sure all line sides were grouped
-		
 		for i in 0..<lines.count {
 			
 			if lines[i].selected < 1 {
@@ -467,7 +469,12 @@ class BlockWorld {
 		return true
 	}
 	
-	/// For each line, floodfill at both normal points try to make a sector. Returns false if it couldn't.
+
+	
+	/**
+	For each line, floodfill at both normal points try to make a sector.
+	Returns false if it couldn't.
+	*/
 	func connectSectors() -> Bool {
 
 		// reset everything for new build

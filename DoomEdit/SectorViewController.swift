@@ -133,7 +133,6 @@ class SectorViewController: NSViewController, NSTextDelegate, FlatPanelDelegate 
 	func fillSector() {
 		
 		var i: Int = 0
-		var side: Int = 0
 		
 		for index in selectedLineIndices {
 			i = index

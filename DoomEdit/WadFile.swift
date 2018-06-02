@@ -38,6 +38,10 @@ struct Sprite {
 
 var wad = WadFile()
 
+/**
+The DOOM or DOOM 2 WAD file used for texture, flat, and thing data by the editor.
+*/
+
 class WadFile {
 	
 	var url: URL!
@@ -49,12 +53,14 @@ class WadFile {
 	var flats: [Flat] = []
 	var pnames: [String] = []
 	var patches: [Patch] = []
-	var maptextures: [MapTexture] = []
-	var textures: [Texture] = []
+	var maptextures: [MapTexture] = []	// the data from the wad, used to make the image
+	var textures: [Texture] = []		// the image, index, etc used in the editor
 	var thingImages: [Thing] = []
 	var sprites: [Sprite] = []
 	
-	func setWadLoation(_ url: URL) {
+	var progressWindow: ProgressWindowController?
+	
+	func dataFromURL(_ url: URL) {
 		
 		do {
 			data = try Data(contentsOf: url, options: .alwaysMapped)
@@ -65,6 +71,8 @@ class WadFile {
 	
 	func loadAssets() {
 
+		//doomProject.showProgressWindow()
+		
 		self.readHeader()
 		self.readDirectory()
 		self.loadFlats()
@@ -81,6 +89,7 @@ class WadFile {
 	// MARK: - Wad Parsing
 	// ===================
 	
+	/// Check that it's an IWAD and get the number of lumps and offset of the directory.
 	func readHeader() {
 		
 		let headerSize = 12
@@ -112,6 +121,7 @@ class WadFile {
 		}
 	}
 	
+	/// Read through the directory and set the info for each lump
 	func readDirectory() {
 		
 		let entrySize = 16
@@ -119,6 +129,10 @@ class WadFile {
 		let directory = data.subdata(in: Int(dirOffset)..<Int(dirOffset)+Int(numOfLumps)*entrySize)
 		
 		for i in stride(from: 0, to: directory.count, by: entrySize) {
+			
+			DispatchQueue.main.async {
+				doomProject.updateProgressWindow(labelText: "Reading Directory…", current: i/entrySize, max: directory.count)
+			}
 			
 			let entry = directory.subdata(in: i..<i+entrySize)
 			let lumpOffset: Int32 = entry.scan(offset: 0, length: 4)
@@ -307,7 +321,9 @@ class WadFile {
 			}
 			
 			for i in flatStart..<flatEnd {
-				//doomProject.updateProgressWindow(labelText: "Loading Flats…", current: i-flatStart, max: flatEnd-flatStart)
+				DispatchQueue.main.async {
+					doomProject.updateProgressWindow(labelText: "Loading Flats…", current: i-flatStart, max: flatEnd-flatStart)
+				}
 				var fl = Flat()
 				let flat = loadLump(i)
 				let flatArray: [CUnsignedChar] = flat.elements()
@@ -343,7 +359,9 @@ class WadFile {
 			
 			for i in patchStart..<patchEnd {
 				
-				//doomProject.updateProgressWindow(labelText: "Loading Patches…", current: i-patchStart, max: patchEnd-patchStart)
+				DispatchQueue.main.async {
+					doomProject.updateProgressWindow(labelText: "Loading Patch Set \(wadIndex+1)…", current: i-patchStart, max: patchEnd-patchStart)
+				}
 				
 				let patch = loadLump(i)
 				let patchData: [CUnsignedChar] = patch.elements()
@@ -359,6 +377,7 @@ class WadFile {
 		} while wadIndex >= 0
 	}
 	
+	/// Get the texture data that's used to create the texture images from the patches.
 	func loadTextures() {
 		
 		var wadIndex = 0
@@ -375,6 +394,11 @@ class WadFile {
 			let info = readTextureHeader(of: textureLumpIndex)
 			
 			for i in 0..<Int(info.numTextures) {
+				
+				DispatchQueue.main.async {
+					doomProject.updateProgressWindow(labelText: "Getting Texture Data…", current: i, max: Int(info.numTextures))
+				}
+
 				let tex = readTexture(at: info.offsets[i], in: textureLumpIndex)
 				maptextures.append(tex)
 			}
@@ -392,6 +416,10 @@ class WadFile {
 		let lump = loadLump(pnames)
 		let numPatches: Int32 = lump.scan(offset: 0, length: 4)
 		for i in 0..<Int(numPatches) {
+			DispatchQueue.main.async {
+				doomProject.updateProgressWindow(labelText: "Getting Patch Names…", current: i, max: Int(numPatches))
+			}
+
 			let nameData = lump.subdata(in: 4+(i*8)..<4+(i*8)+8)
 			let name = makeString(from: nameData)
 			if let name = name {
@@ -406,6 +434,11 @@ class WadFile {
 	func createAllTextureImages() {
 		
 		for i in 0..<maptextures.count {
+			
+			DispatchQueue.main.async {
+				doomProject.updateProgressWindow(labelText: "Creating Textures…", current: i, max: self.maptextures.count)
+			}
+
 			var t = createTextureImage(for: i)
 			t.index = i
 			textures.append(t)
@@ -505,6 +538,11 @@ class WadFile {
 		}
 		
 		for i in 0..<spriteNames.count {
+			
+			DispatchQueue.main.async {
+				doomProject.updateProgressWindow(labelText: "Loading Sprites…", current: i, max: spriteNames.count)
+			}
+
 			
 			let index = lumpNamed(spriteNames[i])
 			if index == -1 {

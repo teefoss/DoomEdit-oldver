@@ -27,8 +27,8 @@ struct CopyLine {
 
 protocol EditWorldDelegate {
 	func displayDirty(_ dirtyRect: NSRect)
-	func redisplay(_ rect: NSRect)
 	func updatePanels()
+	func scrollToLine(_ num: Int)
 }
 
 var editWorld = EditWorld()
@@ -39,18 +39,22 @@ Object that handles map properties and editing. Accessible via global instance `
 
 class EditWorld {
 	
-	var loaded: 		Bool = false
-	var bounds: 		NSRect = CGRect(x: 0, y: 0, width: 100, height: 100)
-	var dirty: 			Bool = true
-	var boundsDirty: 	Bool = false
-	var dirtyRect: 		NSRect = NSRect.zero
-	var dirtyPoints: 	Bool = false
-	var copyLines: 		[CopyLine] = []
-	var copyThings: 	[Thing] = []
-	var copyLoaded: 	Bool = false
-	var copyCoord = 	NSPoint()
+	var loaded: 			Bool = false
+	var bounds: 			NSRect = CGRect(x: 0, y: 0, width: 100, height: 100)
+	var dirty: 				Bool = true
+	var boundsDirty: 		Bool = false
+	var dirtyRect: 			NSRect = NSRect.zero
+	var dirtyPoints: 		Bool = false
 	
+	var copyLines: 			[CopyLine] = []
+	var copyThings: 		[Thing] = []
+	var copyLoaded: 		Bool = false
+	var copyCoord = 		NSPoint()
 	var copyLineProperties: Line?
+	
+	// Sector Copy
+	var copySectordef: 		SectorDef?
+	var copySectorLines:	[Int] = []
 	
 	var delegate: EditWorldDelegate?
 	
@@ -433,6 +437,8 @@ class EditWorld {
 			return
 		}
 		data.selected = 0
+		data.sectorCopy = false
+		data.sectorPaste = false
 		changeLine(num, to: &data)
 		deselectPoint(lines[num].pt1)
 		deselectPoint(lines[num].pt2)
@@ -447,6 +453,17 @@ class EditWorld {
 				line.selected = 0
 				changeLine(i, to: &line)
 			}
+			if lines[i].sectorCopy {
+				var line = lines[i]
+				line.sectorCopy = false
+				changeLine(i, to: &line)
+			}
+			if lines[i].sectorPaste {
+				var line = lines[i]
+				line.sectorPaste = false
+				changeLine(i, to: &line)
+			}
+
 		}
 	}
 	
@@ -815,7 +832,7 @@ class EditWorld {
 	
 	func paste() {
 		
-		var xadd, yadd, max, index: Int
+		var xadd, yadd, index: Int
 		var r = NSRect()
 		var p1 = NSPoint()
 		var p2 = NSPoint()

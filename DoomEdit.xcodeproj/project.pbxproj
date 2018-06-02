@@ -12,6 +12,8 @@
 		301CC5B720119EB400E208FF /* PatchWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 301CC5B520119EB400E208FF /* PatchWindow.swift */; };
 		301CC5B820119EB400E208FF /* PatchWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 301CC5B620119EB400E208FF /* PatchWindow.xib */; };
 		301CC5BA201245B300E208FF /* Texture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 301CC5B9201245B300E208FF /* Texture.swift */; };
+		302D268120771AE600FB77E1 /* ProgressWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 302D267F20771AE600FB77E1 /* ProgressWindowController.swift */; };
+		302D268220771AE600FB77E1 /* ProgressWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 302D268020771AE600FB77E1 /* ProgressWindowController.xib */; };
 		30399CC11FCFAAAC00503DB4 /* EWLoad.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30399CC01FCFAAAC00503DB4 /* EWLoad.swift */; };
 		30399CC71FD06EEE00503DB4 /* dwd-format.txt in Resources */ = {isa = PBXBuildFile; fileRef = 30399CC61FD06EEE00503DB4 /* dwd-format.txt */; };
 		30399CC91FD1E8A600503DB4 /* Global.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30399CC81FD1E8A600503DB4 /* Global.swift */; };
@@ -89,6 +91,8 @@
 		301CC5B520119EB400E208FF /* PatchWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatchWindow.swift; sourceTree = "<group>"; };
 		301CC5B620119EB400E208FF /* PatchWindow.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PatchWindow.xib; sourceTree = "<group>"; };
 		301CC5B9201245B300E208FF /* Texture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Texture.swift; sourceTree = "<group>"; };
+		302D267F20771AE600FB77E1 /* ProgressWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressWindowController.swift; sourceTree = "<group>"; };
+		302D268020771AE600FB77E1 /* ProgressWindowController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ProgressWindowController.xib; sourceTree = "<group>"; };
 		30399CC01FCFAAAC00503DB4 /* EWLoad.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EWLoad.swift; sourceTree = "<group>"; };
 		30399CC61FD06EEE00503DB4 /* dwd-format.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "dwd-format.txt"; sourceTree = "<group>"; };
 		30399CC81FD1E8A600503DB4 /* Global.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Global.swift; sourceTree = "<group>"; };
@@ -323,6 +327,8 @@
 				30FBF63E1FC52D500035671D /* DoomEdit.entitlements */,
 				30714E9520532B01000D06BF /* Keycodes.swift */,
 				304B550E205BF99100863E93 /* MapScrollView.swift */,
+				302D267F20771AE600FB77E1 /* ProgressWindowController.swift */,
+				302D268020771AE600FB77E1 /* ProgressWindowController.xib */,
 			);
 			path = DoomEdit;
 			sourceTree = "<group>";
@@ -407,6 +413,7 @@
 				3060F2BB201FFF4000996FDB /* LaunchWindowController.xib in Resources */,
 				306C8B251FF9A17D00C2C47C /* TextureCollectionViewItem.xib in Resources */,
 				30B16B201FDE01CB0066DEC3 /* ThingViewController.xib in Resources */,
+				302D268220771AE600FB77E1 /* ProgressWindowController.xib in Resources */,
 				303D699C201D7C57009A8CA5 /* map15.dwd in Resources */,
 				30A00BAC1FD6F1AF00EBCA27 /* sectorspecials.dsp in Resources */,
 				30533AAA1FE45E620039DCFB /* SectorViewController.xib in Resources */,
@@ -441,6 +448,7 @@
 				30FBF65C1FC52F8A0035671D /* MapViewResp.swift in Sources */,
 				30FBF65A1FC52F8A0035671D /* MapViewDraw.swift in Sources */,
 				30399CCD1FD3050800503DB4 /* Thing.swift in Sources */,
+				302D268120771AE600FB77E1 /* ProgressWindowController.swift in Sources */,
 				3060F2C42021168000996FDB /* LoadDWDWindowController.swift in Sources */,
 				3060F2C720213E9E00996FDB /* StringExtension.swift in Sources */,
 				3060F2B4201FEE7800996FDB /* ProjectWindowController.swift in Sources */,

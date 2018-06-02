@@ -146,6 +146,7 @@ class MapView: NSView, EditWorldDelegate, NSPopoverDelegate {
 		}
 		
 		editWorld.delegate = self
+
 		initLineCross()
 		
 		// Set up the popovers and link their windows
@@ -178,9 +179,9 @@ class MapView: NSView, EditWorldDelegate, NSPopoverDelegate {
 
 	
 	
-	// ====================================
+	// ======================================
 	// MARK: - Line, Sector, and Thing Panels
-	// ====================================
+	// ======================================
 
 	func popoverShouldDetach(_ popover: NSPopover) -> Bool {
 		return true
@@ -234,7 +235,7 @@ class MapView: NSView, EditWorldDelegate, NSPopoverDelegate {
 		let pointView = NSView(frame: pointRect)
 		self.addSubview(pointView)
 		
-		selectSector(at: event)
+		copySector(at: event)
 		self.sectorViewController.def = def
 		
 		sectorPopover.show(relativeTo: pointView.bounds, of: pointView, preferredEdge: .maxX)
@@ -361,6 +362,7 @@ class MapView: NSView, EditWorldDelegate, NSPopoverDelegate {
 			setBoundsOrigin(newBounds.origin)
 		}		
 	}
+	
 	
 	
 	

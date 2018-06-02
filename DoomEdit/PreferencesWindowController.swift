@@ -171,7 +171,11 @@ class PreferencesWindowController: NSWindowController {
 	@IBAction func savePressed(_ sender: Any) {
 		
 		defaults.set(theme, forKey: PrefKeys.theme)
-		DoomEdit.setTheme()
+		
+		if let delegate = NSApp.delegate as? AppDelegate {
+			delegate.setTheme()
+		}
+		
 		defaults.set(doomTextField.stringValue, forKey: PrefKeys.doomWADPath)
 		defaults.set(doom2TextField.stringValue, forKey: PrefKeys.doom2WADPath)
 		defaults.set(chocDoomTextField.stringValue, forKey: PrefKeys.chocolateDoomPath)

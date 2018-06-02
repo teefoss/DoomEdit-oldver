@@ -267,7 +267,7 @@ class TexturePanel: NSViewController, NSCollectionViewDataSource, NSCollectionVi
 	
 	@IBAction func okClicked(_ sender: Any) {
 		
-		var name = (selectedTextureIndex != -1) ? wad.textures[selectedTextureIndex].name : "-"
+		let name = (selectedTextureIndex != -1) ? wad.textures[selectedTextureIndex].name : "-"
 		
 		setTexture()
 		window?.performClose(nil)

@@ -36,6 +36,8 @@ struct Line {
 	var special:  Int
 	var tag:      Int
 	var selected: Int = 0
+	var sectorCopy: Bool
+	var sectorPaste: Bool
 	
 	var length: Int {
 		var xlen = abs(points[pt2].coord.x - points[pt1].coord.x)
@@ -70,6 +72,8 @@ struct Line {
 		normal = NSPoint()
 		backNormal = NSPoint()
 		checkNormal = NSPoint()
+		sectorCopy = false
+		sectorPaste = false
 	}
 
 	func hasOption(_ option: Int) -> Bool {

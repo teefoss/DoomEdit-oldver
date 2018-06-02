@@ -86,10 +86,10 @@ func flatToImage(rawData: [CUnsignedChar], pal: [CUnsignedChar]) -> NSImage? {
 	
 	dest = flatToRGB(rawData, palette: pal)
 		
-	var allocatedBytes = UnsafeMutableRawPointer.allocate(bytes: dest.count, alignedTo: 1)
+	var allocatedBytes = UnsafeMutableRawPointer.allocate(byteCount: dest.count, alignment: 1)
 	
 	var pointer: UnsafeMutablePointer? = allocatedBytes.bindMemory(to: UInt8.self, capacity: dest.count)
-	pointer?.initialize(to: 0, count: dest.count)
+	pointer?.initialize(repeating: 0, count: dest.count)
 	
 	for i in 0..<dest.count {
 		pointer?.advanced(by: i).pointee = dest[i]
@@ -162,9 +162,9 @@ func patchToImage(_ patchData: [CUnsignedChar], patchInfo: PatchInfo, size: NSSi
 	
 	let destAlpha = addAlpha(to: dest)
 	
-	var allocatedBytes = UnsafeMutableRawPointer.allocate(bytes: destAlpha.count, alignedTo: 1)
+	var allocatedBytes = UnsafeMutableRawPointer.allocate(byteCount: destAlpha.count, alignment: 1)
 	var pointer: UnsafeMutablePointer? = allocatedBytes.bindMemory(to: UInt8.self, capacity: destAlpha.count)
-	pointer?.initialize(to: 0, count: destAlpha.count)
+	pointer?.initialize(repeating: 0, count: destAlpha.count)
 	
 	for i in 0..<destAlpha.count {
 		pointer?.advanced(by: i).pointee = destAlpha[i]

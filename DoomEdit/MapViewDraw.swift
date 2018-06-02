@@ -32,6 +32,8 @@ extension MapView {
 		if currentMode == .thing {
 			drawLines(in: dirtyRect)
 			drawThings(in: dirtyRect)
+		} else if currentMode == .sector {
+			drawLines(in: dirtyRect)
 		} else {
 			drawThings(in: dirtyRect)
 			drawLines(in: dirtyRect)
@@ -230,8 +232,12 @@ extension MapView {
 				continue
 			}
 			
-			if line.selected > 0 {
+			if currentMode != .sector && line.selected > 0 {
 				NSColor.red.set()
+			} else if currentMode == .sector && line.sectorCopy {
+				NSColor.blue.set()
+			} else if currentMode == .sector && line.sectorPaste {
+				NSColor.cyan.set()
 			} else {
 				line.color.set()
 			}
@@ -466,7 +472,7 @@ extension MapView {
 		
 		if thing.options & AMBUSH != 0 {
 			
-			var path = NSBezierPath()
+			let path = NSBezierPath()
 			let ul1 = NSPoint(x: rect.minX+3, y: rect.maxY-6)
 			let ul2 = NSPoint(x: rect.minX+3, y: rect.maxY-3)
 			let ul3 = NSPoint(x: rect.minX+6, y: rect.maxY-3)

@@ -53,37 +53,6 @@ enum Theme {
 	case dark
 }
 
-func setTheme() {
-	
-	if let t = UserDefaults.standard.value(forKey: PrefKeys.theme) as? Int {
-		switch t {
-		case 1:
-			THEME = .light
-		case 2:
-			THEME = .dark
-		default:
-			break
-		}
-	}
-	switch THEME {
-	case .light:
-		COLOR_BKG = NSColor.white
-		COLOR_LINE_ONESIDED = NSColor.black
-		COLOR_MONSTER = NSColor.black
-		COLOR_THINGINFO = NSColor.white
-		COLOR_GRID = NSColor.systemBlue.withAlphaComponent(0.1)
-		COLOR_TILE = NSColor.systemBlue.withAlphaComponent(0.3)
-	case .dark:
-		COLOR_BKG = NSColor.black
-		COLOR_LINE_ONESIDED = NSColor.yellow
-		COLOR_MONSTER = NSColor.white
-		COLOR_THINGINFO = NSColor.black
-		COLOR_GRID = NSColor.systemBlue.withAlphaComponent(0.2)
-		COLOR_TILE = NSColor.systemBlue.withAlphaComponent(0.4)
-	}
-	editWorld.delegate?.redisplay(editWorld.bounds)
-}
-
 // Color
 
 struct Color {
