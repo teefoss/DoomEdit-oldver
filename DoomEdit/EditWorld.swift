@@ -410,9 +410,12 @@ class EditWorld {
 			return
 		}
 		data = lines[num]
+
+		#if DEBUG
 		print("===============")
-		print("front \(data.side[0]?.ends)")
-		print("back \(data.side[1]?.ends)")
+		print("front \(String(describing: data.side[0]?.ends))")
+		print("back \(String(describing: data.side[1]?.ends))")
+		#endif
 		
 		if data.selected == -1 {
 			print("selectLine: deleted")
@@ -546,7 +549,7 @@ class EditWorld {
 				points[line.pt2].selected = 0
 				
 				// flip the sides & sectordefs if it's two-sided
-				if line.flags & TWO_SIDED != 0 {
+				if line.isFlagged(LineFlags.twoSided) {
 					let temp = line.side[0]!
 					line.side[0]! = line.side[1]!
 					line.side[1]! = temp

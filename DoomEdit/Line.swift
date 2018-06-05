@@ -8,15 +8,28 @@
 
 import Cocoa
 
-let BLOCKS_ALL = 1
-let BLOCKS_MONSTERS = 2
-let TWO_SIDED = 4
-let UPPER_UNPEGGED = 8
-let LOWER_UNPEGGED = 16
-let SECRET = 32
-let BLOCKS_SOUND = 64
-let NOT_ON_MAP = 128
-let SHOW_ON_MAP = 256
+//let BLOCKS_ALL		= 1
+//let BLOCKS_MONSTERS = 2
+//let TWO_SIDED		= 4
+//let UPPER_UNPEGGED	= 8
+//let LOWER_UNPEGGED	= 16
+//let SECRET			= 32
+//let BLOCKS_SOUND	= 64
+//let NOT_ON_MAP		= 128
+//let SHOW_ON_MAP		= 256
+
+enum LineFlags {
+
+	static let blocksAll		= 1
+	static let blocksMonsters 	= 2
+	static let twoSided			= 4
+	static let upperUnpegged	= 8
+	static let lowerUnpegged	= 16
+	static let secret			= 32
+	static let blocksSound		= 64
+	static let notOnMap			= 128
+	static let showOnMap		= 256
+}
 
 struct Side {
 	var x_offset: Int = 0
@@ -30,14 +43,14 @@ struct Side {
 
 struct Line {
 	
-	var pt1, pt2: Int
-	var side:     [Side?]	// side[0] front, side[1] back
-	var flags:    Int
-	var special:  Int
-	var tag:      Int
-	var selected: Int = 0
-	var sectorCopy: Bool
-	var sectorPaste: Bool
+	var pt1, pt2:		Int
+	var side:			[Side?]	 // side[0] front, side[1] back
+	var flags:			Int
+	var special:  		Int
+	var tag:			Int
+	var selected:		Int
+	var sectorCopy:		Bool
+	var sectorPaste:	Bool
 	
 	var length: Int {
 		var xlen = abs(points[pt2].coord.x - points[pt1].coord.x)
@@ -46,6 +59,7 @@ struct Line {
 		ylen = ylen * ylen
 		return Int(sqrt(xlen + ylen))
 	}
+	
 	var midpoint:   NSPoint
 	var normal:     NSPoint	 // The point at the end of the 'tick mark' of a line
 	
@@ -55,7 +69,7 @@ struct Line {
 	var color: NSColor {
 		if special != 0 {
 			return Color.lineSpecial
-		} else if flags & TWO_SIDED != 0 {
+		} else if isFlagged(LineFlags.twoSided) {
 			return Color.lineTwoSided
 		}
 		return COLOR_LINE_ONESIDED
@@ -68,6 +82,7 @@ struct Line {
 		flags = 0
 		special = 0
 		tag = 0
+		selected = 0
 		midpoint = NSPoint()
 		normal = NSPoint()
 		backNormal = NSPoint()
@@ -76,6 +91,10 @@ struct Line {
 		sectorPaste = false
 	}
 
+	func isFlagged(_ flag: Int) -> Bool {
+		return (flags & flag != 0) ? true : false
+	}
+	
 	func hasOption(_ option: Int) -> Bool {
 		return (flags & option != 0) ? true : false
 	}

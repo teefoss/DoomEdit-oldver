@@ -42,6 +42,7 @@ var COLOR_MONSTER = NSColor.black
 var COLOR_THINGINFO = NSColor.white
 var COLOR_GRID = NSColor.systemBlue
 var COLOR_TILE = NSColor.systemBlue
+var COLOR_HELP = NSColor(calibratedRed: 255, green: 212, blue: 121, alpha: 1.0)
 
 // Other
 let SIDE_BIT = 0x8000

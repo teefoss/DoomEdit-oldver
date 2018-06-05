@@ -36,7 +36,7 @@ extension EditWorld {
 		for fileLine in fileLines {
 			
 			if readLineData(from: fileLine, to: &line, p1: &p1, p2: &p2) {
-				if line.flags&TWO_SIDED == TWO_SIDED {
+				if line.isFlagged(LineFlags.twoSided) {
 					isTwoSided = true
 				}
 			} else if readSideData(from: fileLine, to: &side) {

@@ -10,7 +10,19 @@ import Cocoa
 
 protocol MapViewDelegate {
 	func zoom(to point: NSPoint, with scale: CGFloat)
+	func updateHelpText(for mode: Mode)
 }
+
+enum Mode {
+	case edit
+	case draw
+	case line
+	case thing
+	case test
+	case sector
+	case point
+}
+
 
 /**
 View that displays the map
@@ -60,16 +72,6 @@ class MapView: NSView, EditWorldDelegate, NSPopoverDelegate {
 	// MARK: - Modes
 	// =============
 	
-	enum Mode {
-		case edit
-		case draw
-		case line
-		case thing
-		case test
-		case sector
-		case point
-	}
-
 	var showAllLineLabels: Bool = false
 	var showAllThingImages: Bool = false
 	
@@ -105,6 +107,7 @@ class MapView: NSView, EditWorldDelegate, NSPopoverDelegate {
 	func setMode(_ mode: Mode) {
 		if currentMode != mode {
 			currentMode = mode
+			delegate?.updateHelpText(for: mode)
 		}
 		setModeCursor()
 	}

@@ -381,7 +381,8 @@ class BlockWorld {
 				continue
 			}
 			
-			if line.selected == 2 && !(line.flags & TWO_SIDED != 0) {
+			//if line.selected == 2 && !(line.flags & TWO_SIDED != 0) {
+			if line.selected == 2 && !line.isFlagged(LineFlags.twoSided) {
 				backline = i
 				continue
 			}
@@ -458,7 +459,7 @@ class BlockWorld {
 			}
 						
 			if lines[i].side[0]?.sector == -1 ||
-				((lines[i].flags & TWO_SIDED) != 0 && lines[i].side[1]?.sector == -1)
+				(lines[i].isFlagged(LineFlags.twoSided) && lines[i].side[1]?.sector == -1)
 			{
 				sectorError(message: "Line side not grouped", line1: i, line2: -1)
 				return false

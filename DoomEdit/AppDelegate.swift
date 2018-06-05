@@ -56,6 +56,16 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 		}
 	}
 	
+	/// FIXME: Is this right??
+	func updateHelpText(for mode: Mode) {
+		
+		for window in NSApp.windows {
+			if let wc = window.windowController as? HelpWindowController {
+				wc.updateText(for: mode)
+			}
+		}
+	}
+		
 	
 	/// Load the theme from defaults and set colors accordingly
 	func setTheme() {

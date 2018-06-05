@@ -962,6 +962,9 @@ extension MapView {
 	// MARK: - Create Stuff
 	// ====================
 	
+	/**
+	Create a new line from default, add to editWorld, and select it.
+	*/
 	func addLine(from fixedpoint: NSPoint, to dragpoint: NSPoint) {
 		
 		var newline = 	lineViewController.baseline
@@ -979,7 +982,7 @@ extension MapView {
 				i -= 1
 			} while i >= 0
 		}
-*/
+		*/
 		
 		line = editWorld.newLine(line: &newline, from: fixedpoint, to: dragpoint)
 		
@@ -990,10 +993,9 @@ extension MapView {
 	
 	
 	
-	//
-	// lineDragPoly
-	//
-	/// Click to begin a poly-line or click-drag for a single line.
+	/**
+	Click to begin a poly-line or click-drag for a single line.
+	*/
 	func lineDragPoly(_ event: NSEvent) {
 		
 		var fixedpoint, dragpoint: NSPoint
@@ -1008,8 +1010,8 @@ extension MapView {
 		var nextevent: NSEvent?
 		
 		//
-		// Dragging loop
-		//
+		// Dragging loop:
+		// - Single Line (L-click-drag)
 		repeat {
 			nextevent = window?.nextEvent(matching: NSEvent.EventTypeMask.leftMouseDragged.union(.leftMouseUp))
 			dragpoint = getGridPoint(from: nextevent!)
@@ -1022,7 +1024,9 @@ extension MapView {
 		
 		linelayer.path = nil
 		
-		// User dragged and ended in different spot, add a line and return
+		//
+		// Finish Single Line dragged
+		// - User dragged and ended in different spot, add a line and return
 		if dragpoint.x != fixedpoint.x || dragpoint.y != fixedpoint.y {
 			
 			linelayer.removeFromSuperlayer()
@@ -1037,33 +1041,50 @@ extension MapView {
 			return
 		}
 		
+		
 		//
-		// Poly line
-		//
+		// Poly-line loop
+		// - User clicked without dragging, start poly-line
+		var count = 0
 		repeat {
 			fixedpoint = getGridPoint(from: nextevent!)
 			
 			repeat {
-				nextevent = window?.nextEvent(matching: NSEvent.EventTypeMask.leftMouseDown.union(.leftMouseUp).union(.mouseMoved).union(.leftMouseDragged))
+				nextevent = window?.nextEvent(matching: NSEvent.EventTypeMask.leftMouseDown.union(.leftMouseUp).union(.mouseMoved).union(.leftMouseDragged).union(.keyDown))
 				dragpoint = getGridPoint(from: nextevent!)
+				
+				// user clicked, remove path and exit loop
 				if nextevent?.type == .leftMouseUp {
 					linelayer.path = nil
 					break
 				}
 				
-				let path = CGMutablePath()
+				if nextevent?.type == .keyDown {
+					linelayer.path = nil
+					return
+				}
+
+				
+				let path = CGMutablePath()  // animate it
 				path.move(to: fixedpoint)
 				path.addLine(to: dragpoint)
 				linelayer.path = path
 			} while true
 			
-			// add to the world
+			//
+			// add the new line
+			//
+			
+			// user clicked in the same spot, exit
 			if dragpoint.x == fixedpoint.x && dragpoint.y == fixedpoint.y {
 				linelayer.removeFromSuperlayer()
 				return
 			}
 			
+			count += 1  // keep track of how many lines were added
 			addLine(from: fixedpoint, to: dragpoint)
+			
+			// adjust bounds/frame if click point outside
 			if pointOutsideRect(fixedpoint, frame) || pointOutsideRect(dragpoint, frame) {
 				frame = editWorld.getBounds()
 				bounds = frame

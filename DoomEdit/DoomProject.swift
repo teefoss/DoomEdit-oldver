@@ -462,7 +462,6 @@ class DoomProject {
 		}
 		
 		process.arguments = args
-		print(process.arguments)
 		process.launch()
 		process.waitUntilExit()
 	}

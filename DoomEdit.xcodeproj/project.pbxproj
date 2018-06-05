@@ -47,6 +47,10 @@
 		30714E9620532B01000D06BF /* Keycodes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30714E9520532B01000D06BF /* Keycodes.swift */; };
 		3085C4541FD61A79001049A8 /* e5m1.dwd in Resources */ = {isa = PBXBuildFile; fileRef = 3085C4531FD61A79001049A8 /* e5m1.dwd */; };
 		3085C4561FD61BBA001049A8 /* e4m6.dwd in Resources */ = {isa = PBXBuildFile; fileRef = 3085C4551FD61BBA001049A8 /* e4m6.dwd */; };
+		3096859420C339D7004030EB /* HelpWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3096859220C339D7004030EB /* HelpWindowController.swift */; };
+		3096859520C339D7004030EB /* HelpWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3096859320C339D7004030EB /* HelpWindowController.xib */; };
+		3096859720C34407004030EB /* editmode.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 3096859620C34407004030EB /* editmode.rtf */; };
+		3096859920C35F2D004030EB /* drawmode.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 3096859820C35F2D004030EB /* drawmode.rtf */; };
 		30A00B9D1FD6EB4700EBCA27 /* NSWindowControllerExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30A00B9C1FD6EB4700EBCA27 /* NSWindowControllerExtension.swift */; };
 		30A00BAB1FD6F1AF00EBCA27 /* linespecials.dsp in Resources */ = {isa = PBXBuildFile; fileRef = 30A00BA41FD6F1AD00EBCA27 /* linespecials.dsp */; };
 		30A00BAC1FD6F1AF00EBCA27 /* sectorspecials.dsp in Resources */ = {isa = PBXBuildFile; fileRef = 30A00BA51FD6F1AD00EBCA27 /* sectorspecials.dsp */; };
@@ -126,6 +130,10 @@
 		30714E9520532B01000D06BF /* Keycodes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Keycodes.swift; sourceTree = "<group>"; };
 		3085C4531FD61A79001049A8 /* e5m1.dwd */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = e5m1.dwd; sourceTree = "<group>"; };
 		3085C4551FD61BBA001049A8 /* e4m6.dwd */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = e4m6.dwd; sourceTree = "<group>"; };
+		3096859220C339D7004030EB /* HelpWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelpWindowController.swift; sourceTree = "<group>"; };
+		3096859320C339D7004030EB /* HelpWindowController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = HelpWindowController.xib; sourceTree = "<group>"; };
+		3096859620C34407004030EB /* editmode.rtf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.rtf; path = editmode.rtf; sourceTree = "<group>"; };
+		3096859820C35F2D004030EB /* drawmode.rtf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.rtf; path = drawmode.rtf; sourceTree = "<group>"; };
 		30A00B9C1FD6EB4700EBCA27 /* NSWindowControllerExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSWindowControllerExtension.swift; sourceTree = "<group>"; };
 		30A00BA01FD6F0E600EBCA27 /* pnames.lmp */ = {isa = PBXFileReference; lastKnownFileType = file; path = pnames.lmp; sourceTree = "<group>"; };
 		30A00BA11FD6F0E700EBCA27 /* texture1.lmp */ = {isa = PBXFileReference; lastKnownFileType = file; path = texture1.lmp; sourceTree = "<group>"; };
@@ -185,6 +193,8 @@
 			isa = PBXGroup;
 			children = (
 				3044B7082048E6AE006492DB /* doombsp */,
+				3096859620C34407004030EB /* editmode.rtf */,
+				3096859820C35F2D004030EB /* drawmode.rtf */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -244,6 +254,7 @@
 			children = (
 				30C41A50200A701E000E3F9B /* FlatPanel.xib */,
 				30C41A57200A79DB000E3F9B /* FlatCollectionViewItem.xib */,
+				3096859320C339D7004030EB /* HelpWindowController.xib */,
 				30FBF63A1FC52D500035671D /* MainMenu.xib */,
 				30FBF6451FC52DB70035671D /* MapWindowController.xib */,
 				30533AA81FE45E620039DCFB /* SectorViewController.xib */,
@@ -252,6 +263,7 @@
 				3060F2C32021168000996FDB /* LoadDWDWindowController.xib */,
 				301CC5B620119EB400E208FF /* PatchWindow.xib */,
 				3042DC55201FD8C600D4434F /* PreferencesWindowController.xib */,
+				302D268020771AE600FB77E1 /* ProgressWindowController.xib */,
 				3060F2B3201FEE7800996FDB /* ProjectWindowController.xib */,
 				306C8B231FF9A17D00C2C47C /* TextureCollectionViewItem.xib */,
 				306C8B1F1FF9610D00C2C47C /* TexturePanel.xib */,
@@ -292,19 +304,23 @@
 				30C41A4F200A701E000E3F9B /* FlatPanel.swift */,
 				30C41A56200A79DB000E3F9B /* FlatCollectionViewItem.swift */,
 				30FBF64A1FC52F6A0035671D /* Geometry.swift */,
+				3096859220C339D7004030EB /* HelpWindowController.swift */,
 				30C421BA200FAF54000E3F9B /* ImageFunctions.swift */,
 				301CC5B32011032D00E208FF /* Junk.swift */,
+				30714E9520532B01000D06BF /* Keycodes.swift */,
 				3060F2B8201FFF4000996FDB /* LaunchWindowController.swift */,
 				30399CCA1FD3049E00503DB4 /* Line.swift */,
 				30B16B231FDE376A0066DEC3 /* LineViewController.swift */,
 				30714E9320519820000D06BF /* LinePanelUI.swift */,
 				3060F2C22021168000996FDB /* LoadDWDWindowController.swift */,
+				304B550E205BF99100863E93 /* MapScrollView.swift */,
 				30FBF6441FC52DB70035671D /* MapWindowController.swift */,
 				30FBF6531FC52F8A0035671D /* MapView.swift */,
 				30FBF6541FC52F8A0035671D /* MapViewDraw.swift */,
 				30FBF6561FC52F8A0035671D /* MapViewResp.swift */,
 				301CC5B520119EB400E208FF /* PatchWindow.swift */,
 				3042DC54201FD8C600D4434F /* PreferencesWindowController.swift */,
+				302D267F20771AE600FB77E1 /* ProgressWindowController.swift */,
 				3060F2B2201FEE7800996FDB /* ProjectWindowController.swift */,
 				30533AA71FE45E620039DCFB /* SectorViewController.swift */,
 				301CC5B9201245B300E208FF /* Texture.swift */,
@@ -325,10 +341,6 @@
 				30FBF6381FC52D500035671D /* Assets.xcassets */,
 				30FBF63D1FC52D500035671D /* Info.plist */,
 				30FBF63E1FC52D500035671D /* DoomEdit.entitlements */,
-				30714E9520532B01000D06BF /* Keycodes.swift */,
-				304B550E205BF99100863E93 /* MapScrollView.swift */,
-				302D267F20771AE600FB77E1 /* ProgressWindowController.swift */,
-				302D268020771AE600FB77E1 /* ProgressWindowController.xib */,
 			);
 			path = DoomEdit;
 			sourceTree = "<group>";
@@ -360,7 +372,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0920;
-				LastUpgradeCheck = 0920;
+				LastUpgradeCheck = 0940;
 				ORGANIZATIONNAME = "Thomas Foster";
 				TargetAttributes = {
 					30FBF6321FC52D500035671D = {
@@ -399,6 +411,7 @@
 			files = (
 				30E827E31FC9FC7B00992422 /* e4m1.dwd in Resources */,
 				3060F2C52021168000996FDB /* LoadDWDWindowController.xib in Resources */,
+				3096859720C34407004030EB /* editmode.rtf in Resources */,
 				3085C4561FD61BBA001049A8 /* e4m6.dwd in Resources */,
 				30B16B261FDE376A0066DEC3 /* LinePanel.xib in Resources */,
 				30A00BAD1FD6F1AF00EBCA27 /* sectorspecials.doom1 in Resources */,
@@ -407,10 +420,12 @@
 				30FBF65E1FC52F930035671D /* e1m1.dwd in Resources */,
 				3085C4541FD61A79001049A8 /* e5m1.dwd in Resources */,
 				30C41A59200A79DB000E3F9B /* FlatCollectionViewItem.xib in Resources */,
+				3096859920C35F2D004030EB /* drawmode.rtf in Resources */,
 				3042DC57201FD8C600D4434F /* PreferencesWindowController.xib in Resources */,
 				30A00BAF1FD6F1AF00EBCA27 /* texture1.dsp in Resources */,
 				3060F2B5201FEE7800996FDB /* ProjectWindowController.xib in Resources */,
 				3060F2BB201FFF4000996FDB /* LaunchWindowController.xib in Resources */,
+				3096859520C339D7004030EB /* HelpWindowController.xib in Resources */,
 				306C8B251FF9A17D00C2C47C /* TextureCollectionViewItem.xib in Resources */,
 				30B16B201FDE01CB0066DEC3 /* ThingViewController.xib in Resources */,
 				302D268220771AE600FB77E1 /* ProgressWindowController.xib in Resources */,
@@ -460,6 +475,7 @@
 				30399CC91FD1E8A600503DB4 /* Global.swift in Sources */,
 				30C41A58200A79DB000E3F9B /* FlatCollectionViewItem.swift in Sources */,
 				30C41A55200A7236000E3F9B /* FlatImageView.swift in Sources */,
+				3096859420C339D7004030EB /* HelpWindowController.swift in Sources */,
 				30F97CE02066B1A30073DC51 /* ThingPanelUI.swift in Sources */,
 				3060F2B7201FFE9B00996FDB /* DoomProject.swift in Sources */,
 				30B16B251FDE376A0066DEC3 /* LineViewController.swift in Sources */,
@@ -514,6 +530,7 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
@@ -521,6 +538,7 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
@@ -571,6 +589,7 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
@@ -578,6 +597,7 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;

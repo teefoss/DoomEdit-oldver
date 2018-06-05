@@ -19,6 +19,8 @@ class MapWindowController: NSWindowController, MapViewDelegate {
 	var oldScreenOrigin = NSPoint()
 	var preResizeOrigin = NSPoint()
 	let newSize = NSSize(width: 640.0, height: 640.0)
+	var helpWindow: HelpWindowController?
+	
 	
 	@IBOutlet weak var scrollView: NSScrollView!
 	@IBOutlet weak var clipView: NSClipView!
@@ -39,12 +41,10 @@ class MapWindowController: NSWindowController, MapViewDelegate {
 	override func windowDidLoad() {
         super.windowDidLoad()
 
-		
 		window?.title = "\(doomProject.openMap?.name ?? "") (\(doomProject.openMap?.level ?? "")) : Edit Mode"
 		
 		positionWindowTopLeft(leftOffset: 50, topOffset: 50)
 		delegate = self
-
 		
 		mapView.delegate = self
 		mapView.frame = editWorld.getBounds()
@@ -67,11 +67,21 @@ class MapWindowController: NSWindowController, MapViewDelegate {
 		mapView.setOrigin(for: origin, withScale: 1.0)
 		
 		window?.makeFirstResponder(mapView)
+		
+		// help window
+		let helpWindow = HelpWindowController()
+		helpWindow.showWindow(self)
+		self.helpWindow = helpWindow
+
     }
 	
 	// TODO: Animate zooming?
 	func zoom(to point: NSPoint, with scale: CGFloat) {
 		scrollView.setMagnification(scale, centeredAt: point)
+	}
+	
+	func updateHelpText(for mode: Mode) {
+		helpWindow?.updateText(for: mode)
 	}
 	
 	
@@ -124,6 +134,7 @@ extension MapWindowController: NSWindowDelegate {
 	// FIXME: Put everything in editworld save/close and just call from here
 	// FIXME: Put runmap in mapview or editworld so the menu item disables automatically
 	func windowWillClose(_ notification: Notification) {
+
 		if doomProject.mapDirty {
 			let val = runDialogPanel(question: "Hey!", text: "Your map has been modified! Save it?")
 			if val {
@@ -131,6 +142,12 @@ extension MapWindowController: NSWindowDelegate {
 				doomProject.openMap = nil
 				editWorld.loaded = false
 			}
+		}
+
+		// FIXME: Figure this out
+		if let win = helpWindow {
+			win.close()
+			helpWindow = nil
 		}
 		
 		let appDelegate = NSApplication.shared.delegate as! AppDelegate

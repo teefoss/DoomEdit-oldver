@@ -63,7 +63,7 @@ class LineViewController: NSViewController, TexturePanelDelegate, NSTabViewDeleg
 
 	init() {
 		baseline = Line()
-		baseline.flags = BLOCKS_ALL
+		baseline.flags = LineFlags.blocksAll
 		baseline.pt1 = -1
 		baseline.pt2 = -1
 		baseline.side[0]?.upperTexture = "-"
@@ -191,15 +191,15 @@ class LineViewController: NSViewController, TexturePanelDelegate, NSTabViewDeleg
 				updateSpecialButton(for: first)
 			}
 			
-			setButtonState(&blocksAllButton, option: BLOCKS_ALL)
-			setButtonState(&blocksMonstersButton, option: BLOCKS_MONSTERS)
-			setButtonState(&blocksSoundButton, option: BLOCKS_SOUND)
-			setButtonState(&twoSidedButton, option: TWO_SIDED)
-			setButtonState(&upperUnpeggedButton, option: UPPER_UNPEGGED)
-			setButtonState(&lowerUnpeggedButton, option: LOWER_UNPEGGED)
-			setButtonState(&onMapButton, option: SHOW_ON_MAP)
-			setButtonState(&notOnMapButton, option: NOT_ON_MAP)
-			setButtonState(&secretButton, option: SECRET)
+			setButtonState(&blocksAllButton, option: LineFlags.blocksAll)
+			setButtonState(&blocksMonstersButton, option: LineFlags.blocksMonsters)
+			setButtonState(&blocksSoundButton, option: LineFlags.blocksSound)
+			setButtonState(&twoSidedButton, option: LineFlags.twoSided)
+			setButtonState(&upperUnpeggedButton, option: LineFlags.upperUnpegged)
+			setButtonState(&lowerUnpeggedButton, option: LineFlags.lowerUnpegged)
+			setButtonState(&onMapButton, option: LineFlags.showOnMap)
+			setButtonState(&notOnMapButton, option: LineFlags.notOnMap)
+			setButtonState(&secretButton, option: LineFlags.secret)
 
 			let firsttag = lines[selectedLineIndices[0]].tag
 			var nexttag = 0
