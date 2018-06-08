@@ -126,11 +126,13 @@ func convertDoom2MapToArg(mapname: String) -> String? {
 	return nil
 }
 
+
+
 /**
 Adds a line to a preexisting NSBezierPath
 Does not stroke
 */
-func addLine(_ path: NSBezierPath,
+func addLineToPath(_ path: NSBezierPath,
 			 _ x1: Int, _ y1: Int,
 			 _ x2: Int, _ y2: Int) {
 	

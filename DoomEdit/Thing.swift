@@ -8,13 +8,13 @@
 
 import Cocoa
 
-// Flags
-
-let SKILL_EASY = 1
-let SKILL_NORMAL = 2
-let SKILL_HARD = 4
-let AMBUSH = 8
-let NETWORK = 16
+enum ThingFlags {
+	static let skillEasy 	= 1
+	static let skillNormal 	= 2
+	static let skillHard 	= 4
+	static let ambush		= 8
+	static let network		= 16
+}
 
 struct Thing {
 	

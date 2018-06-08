@@ -175,13 +175,13 @@ extension MapView {
 		
 		while y <= stopy {
 			if y&63 != 0 {
-				addLine(to: gridPath, Int(left), y, Int(right), y) }
+				addLineToPath(gridPath, Int(left), y, Int(right), y) }
 			y += gridSize
 		}
 		
 		while x <= stopx {
 			if x&63 != 0 {
-				addLine(to: gridPath, x, Int(top), x, Int(bottom)) }
+				addLineToPath(gridPath, x, Int(top), x, Int(bottom)) }
 			x += gridSize
 		}
 
@@ -212,12 +212,12 @@ extension MapView {
 		let tilePath = NSBezierPath()
 		
 		while y <= stopy {
-			addLine(to: tilePath, Int(left), y, Int(right), y)
+			addLineToPath(tilePath, Int(left), y, Int(right), y)
 			y += 64
 		}
 		
 		while x <= stopx {
-			addLine(to: tilePath, x, Int(top), x, Int(bottom))
+			addLineToPath(tilePath, x, Int(top), x, Int(bottom))
 			x += 64
 		}
 		
@@ -253,12 +253,12 @@ extension MapView {
 		for y in bottom...top {
 			if y % 64 == 0 { continue }
 			if y % gridSize == 0 {
-				addLine(to: gridPath, left, y, right, y) }
+				addLineToPath(gridPath, left, y, right, y) }
 		}
 		for x in left...right {
 			if x % 64 == 0 { continue }
 			if x % gridSize == 0 {
-				addLine(to: gridPath, x, top, x, bottom) }
+				addLineToPath(gridPath, x, top, x, bottom) }
 		}
 		
 		gridPath.stroke()
@@ -272,23 +272,21 @@ extension MapView {
 		
 		for y in bottom...top {
 			if y % 64 == 0 {
-				addLine(to: tilePath, left, y, right, y) }
+				addLineToPath(tilePath, left, y, right, y) }
 		}
 		for x in left...right {
 			if x % 64 == 0 {
-				addLine(to: tilePath, x, top, x, bottom) }
+				addLineToPath(tilePath, x, top, x, bottom) }
 		}
 		
 		tilePath.stroke()
 	}
 	
-	func addLine(to path: NSBezierPath, _ x1: Int, _ y1: Int, _ x2: Int, _ y2: Int) {
-		
-		path.move(to: NSPoint(x: x1, y: y1))
-		path.line(to: NSPoint(x: x2, y: y2))
-	}
 
-	///  Draw all world lines
+	
+	/**
+	Draw all world lines
+	*/
 	func drawLines(in rect: NSRect) {
 		
 		var xc = 0; var yc = 0
@@ -350,7 +348,11 @@ extension MapView {
 		}
 	}
 	
-	///  Draw all world things
+	
+	
+	/**
+	Draw all world things
+	*/
 	private func drawThings(in rect: NSRect) {
 
 		var r = NSRect()
@@ -403,7 +405,7 @@ extension MapView {
 				r.size.height = offset
 				NSBezierPath.fill(r)
 
-				drawAllThingMarks(thing, relativeTo: r)
+				drawThingMarks(thing, relativeTo: r)
 				if thing.def.hasDirection {
 					let path = thingArrow(in: r, direction: thing.angle)
 					currentStyle.thingInfo.set()
@@ -420,17 +422,8 @@ extension MapView {
 		}
 	}
 	
-	func drawAllThingMarks(_ thing: Thing, relativeTo rect: NSRect) {
-
-		currentStyle.thingInfo.setStroke()
-		NSBezierPath.defaultLineWidth = 2.0
-
-		strokeEasyMarker(thing, relativeTo: rect)
-		strokeMediumMarker(thing, relativeTo: rect)
-		strokeHardMarker(thing, relativeTo: rect)
-		strokeNetworkMarker(thing, relativeTo: rect)
-		strokeAmbushMarker(thing, relativeTo: rect)
-	}
+	
+	
 
 	// NSRectFillList and similar are extensions on Collection of NSRect: e.g. [rectA, rectB].fill().
 	///  Draw all world points
@@ -481,9 +474,9 @@ extension MapView {
 	}
 	
 	
-	// =================================
-	// MARK: - Thing Property Indicators
-	// =================================
+	// =======================================
+	// MARK: - Thing Direction Arrow and Marks
+	// =======================================
 	
 	/// Arrow indicating thing direction. Only on things where it matters
 	func thingArrow(in thingRect: NSRect, direction: Int) -> NSBezierPath {
@@ -527,77 +520,63 @@ extension MapView {
 		path.lineWidth = 2.0
 	}
 	
-	/// Make left side indicator - Present if thing is flagged EASY
-	func strokeEasyMarker(_ thing: Thing, relativeTo rect: NSRect) {
+	
+	func drawThingMarks(_ thing: Thing, relativeTo rect: NSRect) {
 		
-		if thing.options & SKILL_EASY != 0 {
+		currentStyle.thingInfo.setStroke()
+		NSBezierPath.defaultLineWidth = 2.0
+		
+		if thing.hasOption(ThingFlags.skillEasy) {
 			let p1 = NSPoint(x: rect.minX+3, y: rect.minY+8)
 			let p2 = NSPoint(x: rect.minX+3, y: rect.maxY-8)
 			NSBezierPath.strokeLine(from: p1, to: p2)
 		}
-	}
-
-	/// Make top indicator - Present if thing is flagged MEDIUM
-	func strokeMediumMarker(_ thing: Thing, relativeTo rect: NSRect) {
 		
-		if thing.options & SKILL_NORMAL != 0 {
+		if thing.hasOption(ThingFlags.skillNormal) {
 			let p1 = NSPoint(x: rect.minX+8, y: rect.maxY-3)
 			let p2 = NSPoint(x: rect.maxX-8, y: rect.maxY-3)
 			NSBezierPath.strokeLine(from: p1, to: p2)
 		}
-	}
-	
-	/// Make right side indicator - Present if thing is flagged HARD
-	func strokeHardMarker(_ thing: Thing, relativeTo rect: NSRect) {
 		
-		if thing.options & SKILL_HARD != 0 {
+		if thing.hasOption(ThingFlags.skillHard) {
 			let p1 = NSPoint(x: rect.maxX-3, y: rect.minY+8)
 			let p2 = NSPoint(x: rect.maxX-3, y: rect.maxY-8)
 			NSBezierPath.strokeLine(from: p1, to: p2)
 		}
-	}
-	
-	/// Make lower indicator - Present if thing is flagged NETWORK
-	func strokeNetworkMarker(_ thing: Thing, relativeTo rect: NSRect) {
 		
-		if thing.options & NETWORK != 0 {
+		if thing.hasOption(ThingFlags.network) {
 			let p1 = NSPoint(x: rect.minX+8, y: rect.minY+3)
 			let p2 = NSPoint(x: rect.maxX-8, y: rect.minY+3)
 			NSBezierPath.strokeLine(from: p1, to: p2)
 		}
-	}
-	
-	/// Make 4 corners indicators - Present if thing is flagged AMBUSH
-	func strokeAmbushMarker(_ thing: Thing, relativeTo rect: NSRect) {
 		
-		if thing.options & AMBUSH != 0 {
-			
+		if thing.hasOption(ThingFlags.ambush) {
 			let path = NSBezierPath()
 			let ul1 = NSPoint(x: rect.minX+3, y: rect.maxY-6)
 			let ul2 = NSPoint(x: rect.minX+3, y: rect.maxY-3)
 			let ul3 = NSPoint(x: rect.minX+6, y: rect.maxY-3)
 			path.move(to: ul1); path.line(to: ul2); path.line(to: ul3)
-			path.stroke()
 			
 			let ur1 = NSPoint(x: rect.maxX-6, y: rect.maxY-3)
 			let ur2 = NSPoint(x: rect.maxX-3, y: rect.maxY-3)
 			let ur3 = NSPoint(x: rect.maxX-3, y: rect.maxY-6)
 			path.move(to: ur1); path.line(to: ur2); path.line(to: ur3)
-			path.stroke()
 			
 			let lr1 = NSPoint(x: rect.maxX-6, y: rect.minY+3)
 			let lr2 = NSPoint(x: rect.maxX-3, y: rect.minY+3)
 			let lr3 = NSPoint(x: rect.maxX-3, y: rect.minY+6)
 			path.move(to: lr1); path.line(to: lr2); path.line(to: lr3)
-			path.stroke()
 			
 			let ll1 = NSPoint(x: rect.minX+6, y: rect.minY+3)
 			let ll2 = NSPoint(x: rect.minX+3, y: rect.minY+3)
 			let ll3 = NSPoint(x: rect.minX+3, y: rect.minY+6)
 			path.move(to: ll1); path.line(to: ll2); path.line(to: ll3)
+			
 			path.stroke()
 		}
+		
 	}
+
 }
 
 
