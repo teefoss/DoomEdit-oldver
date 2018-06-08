@@ -16,15 +16,15 @@
         <window title="Dynamic Help" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" hidesOnDeactivate="YES" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" frameAutosaveName="" animationBehavior="default" id="bq6-dH-PXx" customClass="NSPanel">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" utility="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="196" y="112" width="276" height="512"/>
+            <rect key="contentRect" x="196" y="112" width="296" height="512"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1058"/>
             <value key="minSize" type="size" width="276" height="512"/>
             <view key="contentView" id="PGi-dx-q2f">
-                <rect key="frame" x="0.0" y="0.0" width="276" height="512"/>
+                <rect key="frame" x="0.0" y="0.0" width="296" height="512"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="yrd-LW-IsD">
-                        <rect key="frame" x="18" y="475" width="240" height="17"/>
+                        <rect key="frame" x="18" y="475" width="260" height="17"/>
                         <textFieldCell key="cell" controlSize="mini" sendsActionOnEndEditing="YES" title="Multiline Label" allowsEditingTextAttributes="YES" id="lLA-fn-77R">
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>

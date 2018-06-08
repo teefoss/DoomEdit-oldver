@@ -172,8 +172,10 @@ class ProjectWindowController: NSWindowController {
 			} catch {
 				print("Error! Could not delete dwd file.")
 			}
+
 			// remove from doomProject.maps
 			doomProject.maps.remove(at: tableView.selectedRow)
+
 			// rewrite project file
 			doomProject.writeProjectFile(at: doomProject.projectFileURL)
 

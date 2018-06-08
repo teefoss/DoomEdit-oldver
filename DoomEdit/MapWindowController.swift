@@ -70,6 +70,7 @@ class MapWindowController: NSWindowController, MapViewDelegate {
 		
 		// help window
 		let helpWindow = HelpWindowController()
+		helpWindow.positionAtScreenBottomRight()
 		helpWindow.showWindow(self)
 		self.helpWindow = helpWindow
 

@@ -32,4 +32,14 @@ extension NSWindowController {
 			window.setFrameOrigin(p)
 		}
 	}
+	
+	func positionAtScreenBottomRight() {
+		
+		if let window = window, let screen = window.screen {
+			var p = NSPoint()
+			p.x = screen.visibleFrame.origin.x + screen.visibleFrame.size.width - window.frame.size.width
+			p.y = screen.visibleFrame.origin.y
+			window.setFrameOrigin(p)
+		}
+	}
 }
