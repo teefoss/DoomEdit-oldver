@@ -127,10 +127,13 @@ class ProjectWindowController: NSWindowController {
 		editWorld.loadWorldFile(map.dwd)
 		
 		let appDelegate = NSApplication.shared.delegate as! AppDelegate
-		let mapWC = MapWindowController()
-		mapWC.showWindow(self)
-		appDelegate.mapWindowController = mapWC
-		
+		if appDelegate.mapWindowController == nil {
+			let mapWC = MapWindowController()
+			mapWC.showWindow(self)
+			appDelegate.mapWindowController = mapWC
+		} else {
+			appDelegate.redraw()
+		}
 	}
 	
 	@IBAction func addMap(_ sender: Any) {

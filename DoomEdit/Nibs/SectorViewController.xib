@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="13771" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14113" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="13771"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14113"/>
         <capability name="box content view" minToolsVersion="7.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
         <capability name="system font weights other than Regular or Bold" minToolsVersion="7.0"/>
@@ -181,7 +181,7 @@
                     </constraints>
                 </box>
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="8I4-c9-Dat">
-                    <rect key="frame" x="6" y="302" width="366" height="21"/>
+                    <rect key="frame" x="14" y="302" width="350" height="21"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Label" id="Kg2-6o-WR5">
                         <font key="font" metaFont="system" size="17"/>
                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -307,8 +307,8 @@
                 <constraint firstItem="fab-1W-pXy" firstAttribute="leading" secondItem="Lpg-mD-T6X" secondAttribute="trailing" constant="8" id="O09-AX-EDx"/>
                 <constraint firstItem="fab-1W-pXy" firstAttribute="top" secondItem="8I4-c9-Dat" secondAttribute="bottom" constant="8" id="V5d-Hk-dgN"/>
                 <constraint firstItem="h4F-zn-RAK" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="8" id="XIz-r4-lcz"/>
-                <constraint firstAttribute="trailing" secondItem="8I4-c9-Dat" secondAttribute="trailing" constant="8" id="b2U-Rt-rnA"/>
-                <constraint firstItem="8I4-c9-Dat" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="8" id="mo6-nP-Hq6"/>
+                <constraint firstAttribute="trailing" secondItem="8I4-c9-Dat" secondAttribute="trailing" constant="16" id="b2U-Rt-rnA"/>
+                <constraint firstItem="8I4-c9-Dat" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="16" id="mo6-nP-Hq6"/>
                 <constraint firstItem="h4F-zn-RAK" firstAttribute="top" secondItem="Lpg-mD-T6X" secondAttribute="bottom" constant="8" id="nps-77-211"/>
                 <constraint firstItem="BUm-Wu-Hu3" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="8" id="ppC-N9-XoB"/>
                 <constraint firstItem="Lpg-mD-T6X" firstAttribute="top" secondItem="8I4-c9-Dat" secondAttribute="bottom" constant="8" id="rMD-On-wUX"/>

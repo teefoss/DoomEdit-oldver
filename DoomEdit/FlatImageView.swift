@@ -29,7 +29,8 @@ class FlatImageView: NSImageView, NSPopoverDelegate {
 	func initPopover(_ popover: inout NSPopover, with viewController: NSViewController) {
 		popover = NSPopover.init()
 		popover.contentViewController = viewController
-		popover.appearance = (THEME == .light) ? NSAppearance(named: .vibrantLight) : NSAppearance(named: .vibrantDark)
+//		popover.appearance = (currentStyle.index == 1) ? NSAppearance(named: .light) : NSAppearance(named: .dark)
+		popover.appearance = NSAppearance(named: .aqua)
 		popover.animates = false
 		popover.behavior = .semitransient
 		popover.delegate = self

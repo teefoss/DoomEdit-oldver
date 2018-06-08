@@ -21,49 +21,15 @@ let LINE_WIDTH: CGFloat = 1.0
 let LINE_NORMAL_LENGTH = 6
 let SELECTION_BOX_WIDTH: CGFloat = 4.0
 
-// Keys
-let KEY_MINUS: 			UInt16 = 27
-let KEY_EQUALS: 		UInt16 = 24
-let KEY_LEFTBRACKET: 	UInt16 = 33
-let KEY_RIGHTBRACKET: 	UInt16 = 30
-let KEY_I: 				UInt16 = 34
-let KEY_SPACE:			UInt16 = 49
-let KEY_1:				UInt16 = 18
-let KEY_F:				UInt16 = 3
-let KEY_S:				UInt16 = 1
-let KEY_DELETE:			UInt16 = 51
-let KEY_L:				UInt16 = 37
-
-// Colors
-var COLOR_BKG = NSColor.white
-var COLOR_LINE_ONESIDED = NSColor.black
-let COLOR_LINE_TWOSIDED = NSColor.gray
-var COLOR_MONSTER = NSColor.black
-var COLOR_THINGINFO = NSColor.white
-var COLOR_GRID = NSColor.systemBlue
-var COLOR_TILE = NSColor.systemBlue
-var COLOR_HELP = NSColor(calibratedRed: 255, green: 212, blue: 121, alpha: 1.0)
-
-// Other
-let SIDE_BIT = 0x8000
-
-var THEME: Theme = .light
-
-enum Theme {
-	case light
-	case dark
-}
-
-// Color
-
+// Constant Colors
 struct Color {
 	static let lineTwoSided = NSColor.lightGray
 	static let lineSpecial = NSColor.green
-	static let textColor: NSColor = (THEME == .light) ? .black : .white
+	static let helpWindow = NSColor(calibratedRed: 255, green: 212, blue: 121, alpha: 1.0)
 }
 
 struct Settings {
-	static let knobStyle: NSScroller.KnobStyle = (THEME == .light) ? .dark : .light
+	static var knobStyle: NSScroller.KnobStyle = (currentStyle.index == 1) ? .dark : .light
 }
 
 
@@ -158,6 +124,18 @@ func convertDoom2MapToArg(mapname: String) -> String? {
 	}
 	print("Error. convertDoom2MapToArg")
 	return nil
+}
+
+/**
+Adds a line to a preexisting NSBezierPath
+Does not stroke
+*/
+func addLine(_ path: NSBezierPath,
+			 _ x1: Int, _ y1: Int,
+			 _ x2: Int, _ y2: Int) {
+	
+	path.move(to: NSPoint(x: x1, y: y1))
+	path.line(to: NSPoint(x: x2, y: y2))
 }
 
 

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="13771" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14113" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="13771"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14113"/>
         <capability name="box content view" minToolsVersion="7.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
         <capability name="system font weights other than Regular or Bold" minToolsVersion="7.0"/>
@@ -50,7 +50,7 @@
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="lgH-gu-Sbp">
-                    <rect key="frame" x="6" y="379" width="401" height="21"/>
+                    <rect key="frame" x="14" y="379" width="385" height="21"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Label" id="fz4-JI-iaB">
                         <font key="font" metaFont="system" size="17"/>
                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -507,9 +507,9 @@
             <constraints>
                 <constraint firstItem="eO3-1X-DLB" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="8" id="3oY-Qh-M0S"/>
                 <constraint firstItem="hw5-Ej-yWd" firstAttribute="leading" secondItem="eO3-1X-DLB" secondAttribute="trailing" constant="8" id="5bp-Xr-fVY"/>
-                <constraint firstItem="lgH-gu-Sbp" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="8" id="Lbz-T3-3Dr"/>
+                <constraint firstItem="lgH-gu-Sbp" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="16" id="Lbz-T3-3Dr"/>
                 <constraint firstItem="hw5-Ej-yWd" firstAttribute="top" secondItem="lgH-gu-Sbp" secondAttribute="bottom" constant="12" id="VFe-cu-nNE"/>
-                <constraint firstAttribute="trailing" secondItem="lgH-gu-Sbp" secondAttribute="trailing" constant="8" id="aOH-HI-Pgj"/>
+                <constraint firstAttribute="trailing" secondItem="lgH-gu-Sbp" secondAttribute="trailing" constant="16" id="aOH-HI-Pgj"/>
                 <constraint firstItem="eO3-1X-DLB" firstAttribute="top" secondItem="lgH-gu-Sbp" secondAttribute="bottom" constant="8" id="lcu-e1-h6t"/>
                 <constraint firstItem="lgH-gu-Sbp" firstAttribute="top" secondItem="Hz6-mo-xeY" secondAttribute="top" constant="20" id="uuc-Kz-x8B"/>
             </constraints>

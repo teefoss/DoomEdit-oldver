@@ -12,6 +12,8 @@ protocol FlatPanelDelegate {
 	func updateFromFlatPanel(for position: Int, with index: Int)
 }
 
+fileprivate let SIDE_BIT = 0x8000
+
 class SectorViewController: NSViewController, NSTextDelegate, FlatPanelDelegate {
 	
 	var def = SectorDef()

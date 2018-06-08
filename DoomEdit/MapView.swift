@@ -193,7 +193,8 @@ class MapView: NSView, EditWorldDelegate, NSPopoverDelegate {
 	func initPopover(_ popover: inout NSPopover, with viewController: NSViewController, and window: inout NSPanel) {
 		popover = NSPopover.init()
 		popover.contentViewController = viewController
-		popover.appearance = (THEME == .light) ? (NSAppearance(named: .vibrantLight)) :(NSAppearance(named: .vibrantDark))
+		//popover.appearance = (currentStyle.index == 1) ? (NSAppearance(named: .vibrantLight)) :(NSAppearance(named: .vibrantDark))
+		popover.appearance = NSAppearance(named: .aqua)
 		popover.animates = false
 		popover.behavior = .transient
 		popover.delegate = self
@@ -364,6 +365,10 @@ class MapView: NSView, EditWorldDelegate, NSPopoverDelegate {
 			setFrameOrigin(newBounds.origin)
 			setBoundsOrigin(newBounds.origin)
 		}		
+	}
+	
+	func updateFrame() {
+		frame = editWorld.getBounds()
 	}
 	
 	

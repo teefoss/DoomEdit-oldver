@@ -8,6 +8,41 @@
 
 import Cocoa
 
+struct UIStyle {
+	var background: 	NSColor
+	var oneSidedLines: 	NSColor
+	var twoSidedLines: 	NSColor
+	var monsters: 		NSColor
+	var thingInfo: 		NSColor
+	var grid: 			NSColor
+	var tile: 			NSColor
+	var textColor:		NSColor
+	var index:			Int
+}
+
+var currentStyle: UIStyle = lightStyle
+
+let lightStyle = UIStyle(background: .white,
+						 oneSidedLines: .black,
+						 twoSidedLines: .gray,
+						 monsters: .black,
+						 thingInfo: .white,
+						 grid: NSColor.systemBlue.withAlphaComponent(0.1),
+						 tile: NSColor.systemBlue.withAlphaComponent(0.3),
+						 textColor: NSColor.black,
+						 index: 1)
+
+let darkStyle = UIStyle(background: .black,
+						oneSidedLines: .yellow,
+						twoSidedLines: .gray,
+						monsters: .white,
+						thingInfo: .black,
+						grid: NSColor.systemBlue.withAlphaComponent(0.2),
+						tile: NSColor.systemBlue.withAlphaComponent(0.4),
+						textColor: NSColor.white,
+						index: 2)
+
+
 struct PrefKeys {
 	static let doomWADPath = "DoomWADPath"
 	static let doom2WADPath = "Doom2WADPath"
@@ -176,8 +211,19 @@ class PreferencesWindowController: NSWindowController {
 			delegate.setTheme()
 		}
 		
-		defaults.set(doomTextField.stringValue, forKey: PrefKeys.doomWADPath)
-		defaults.set(doom2TextField.stringValue, forKey: PrefKeys.doom2WADPath)
+		// Save WAD Paths
+		if doomTextField.stringValue == "" {
+			defaults.removeObject(forKey: PrefKeys.doomWADPath)
+		} else {
+			defaults.set(doomTextField.stringValue, forKey: PrefKeys.doomWADPath)
+		}
+		
+		if doom2TextField.stringValue == "" {
+			defaults.removeObject(forKey: PrefKeys.doom2WADPath)
+		} else {
+			defaults.set(doom2TextField.stringValue, forKey: PrefKeys.doom2WADPath)
+		}
+
 		defaults.set(chocDoomTextField.stringValue, forKey: PrefKeys.chocolateDoomPath)
 		defaults.set((netGameButton.state == .on), forKey: PrefKeys.netGame)
 		defaults.set((deathmatchButton.state == .on), forKey: PrefKeys.deathmatch)

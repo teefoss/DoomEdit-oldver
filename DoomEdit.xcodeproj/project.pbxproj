@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		300E0DFE1FDADDC00066134A /* NSPointExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300E0DFD1FDADDC00066134A /* NSPointExtension.swift */; };
+		300EE57920CAC5DD00212ED9 /* NSBezierPathExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300EE57820CAC5DD00212ED9 /* NSBezierPathExtension.swift */; };
 		301CC5B42011032D00E208FF /* Junk.swift in Sources */ = {isa = PBXBuildFile; fileRef = 301CC5B32011032D00E208FF /* Junk.swift */; };
 		301CC5B720119EB400E208FF /* PatchWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 301CC5B520119EB400E208FF /* PatchWindow.swift */; };
 		301CC5B820119EB400E208FF /* PatchWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 301CC5B620119EB400E208FF /* PatchWindow.xib */; };
@@ -91,6 +92,7 @@
 
 /* Begin PBXFileReference section */
 		300E0DFD1FDADDC00066134A /* NSPointExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSPointExtension.swift; sourceTree = "<group>"; };
+		300EE57820CAC5DD00212ED9 /* NSBezierPathExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSBezierPathExtension.swift; sourceTree = "<group>"; };
 		301CC5B32011032D00E208FF /* Junk.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Junk.swift; sourceTree = "<group>"; };
 		301CC5B520119EB400E208FF /* PatchWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatchWindow.swift; sourceTree = "<group>"; };
 		301CC5B620119EB400E208FF /* PatchWindow.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PatchWindow.xib; sourceTree = "<group>"; };
@@ -208,6 +210,7 @@
 				30C41A4D2009B339000E3F9B /* DataExtension.swift */,
 				3060F2C620213E9E00996FDB /* StringExtension.swift */,
 				304B5510205C459C00863E93 /* NSWindowExtension.swift */,
+				300EE57820CAC5DD00212ED9 /* NSBezierPathExtension.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -497,6 +500,7 @@
 				3042DC56201FD8C600D4434F /* PreferencesWindowController.swift in Sources */,
 				30714E9620532B01000D06BF /* Keycodes.swift in Sources */,
 				30FBF6591FC52F8A0035671D /* MapView.swift in Sources */,
+				300EE57920CAC5DD00212ED9 /* NSBezierPathExtension.swift in Sources */,
 				304B550F205BF99100863E93 /* MapScrollView.swift in Sources */,
 				30B16B1C1FDCBF930066DEC3 /* DoomData.swift in Sources */,
 			);

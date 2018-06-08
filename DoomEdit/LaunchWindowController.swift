@@ -87,8 +87,9 @@ class LaunchWindowController: NSWindowController {
 	@IBAction func openRecent(_ sender: Any) {
 		
 		if let recents = doomProject.recentProjects {
-			doomProject.openProject(from: recents[tableView.selectedRow])
-			window?.close()
+			if doomProject.openProject(from: recents[tableView.selectedRow]) {
+				window?.close()
+			}
 		}
 	}
 	

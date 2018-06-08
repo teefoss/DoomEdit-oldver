@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="13771" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14113" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="13771"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14113"/>
         <capability name="box content view" minToolsVersion="7.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
         <capability name="stacking Non-gravity area distributions on NSStackView" minToolsVersion="7.0" minSystemVersion="10.11"/>
@@ -173,7 +173,7 @@
                     </constraints>
                 </box>
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="TIH-OZ-sKg">
-                    <rect key="frame" x="6" y="204" width="349" height="21"/>
+                    <rect key="frame" x="14" y="204" width="333" height="21"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Label" id="e6m-5K-LeT">
                         <font key="font" metaFont="system" size="17"/>
                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -313,14 +313,14 @@
             <constraints>
                 <constraint firstItem="l39-K9-xZw" firstAttribute="top" secondItem="TIH-OZ-sKg" secondAttribute="bottom" constant="8" id="4eC-7P-JbG"/>
                 <constraint firstItem="l39-K9-xZw" firstAttribute="leading" secondItem="WeB-ed-2Ll" secondAttribute="trailing" constant="8" id="BoQ-K3-5d3"/>
-                <constraint firstItem="TIH-OZ-sKg" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="8" id="G1I-6n-2Sq"/>
+                <constraint firstItem="TIH-OZ-sKg" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="16" id="G1I-6n-2Sq"/>
                 <constraint firstItem="WeB-ed-2Ll" firstAttribute="top" secondItem="TIH-OZ-sKg" secondAttribute="bottom" constant="8" id="HbA-I2-pCg"/>
                 <constraint firstItem="eAJ-xS-GwX" firstAttribute="top" secondItem="WeB-ed-2Ll" secondAttribute="bottom" constant="8" id="JSJ-mK-Zcs"/>
                 <constraint firstItem="eAJ-xS-GwX" firstAttribute="leading" secondItem="7SI-q2-zK8" secondAttribute="trailing" constant="8" id="RXn-2Y-LlW"/>
                 <constraint firstItem="TIH-OZ-sKg" firstAttribute="top" secondItem="Hz6-mo-xeY" secondAttribute="top" constant="20" id="daG-Nb-nCW"/>
                 <constraint firstItem="WeB-ed-2Ll" firstAttribute="leading" secondItem="7SI-q2-zK8" secondAttribute="trailing" constant="8" id="iI0-8F-lhk"/>
                 <constraint firstItem="7SI-q2-zK8" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="8" id="nxB-0h-D0H"/>
-                <constraint firstAttribute="trailing" secondItem="TIH-OZ-sKg" secondAttribute="trailing" constant="8" id="slY-0g-nAR"/>
+                <constraint firstAttribute="trailing" secondItem="TIH-OZ-sKg" secondAttribute="trailing" constant="16" id="slY-0g-nAR"/>
                 <constraint firstItem="7SI-q2-zK8" firstAttribute="top" secondItem="TIH-OZ-sKg" secondAttribute="bottom" constant="8" id="yPe-MO-HhT"/>
             </constraints>
             <point key="canvasLocation" x="33.5" y="156.5"/>

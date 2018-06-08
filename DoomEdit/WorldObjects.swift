@@ -11,17 +11,24 @@
 import Cocoa
 
 struct Point {
+	
 	var coord = NSPoint()
+	
 	/// -1: deleted, 0: unselected, 1: selected
 	var selected: Int = 0
+	
 	/// The number of lines connected to this point
 	var refcount: Int = 0	// when 0, remove it
 }
+
+
 
 struct Sector {
 	var def = SectorDef()
 	var lines: [Int] = []
 }
+
+
 
 struct SectorDef: Equatable {
 	var ceilingFlat, floorFlat: String

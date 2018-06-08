@@ -27,8 +27,9 @@ extension MapView {
 		getRectsBeingDrawn(&rects, count: &count)
 		*/
 		
-		drawGrid(in: dirtyRect)
-
+		//drawGrid(in: dirtyRect)
+		doomEdGrid(in: dirtyRect)
+		
 		if currentMode == .thing {
 			drawLines(in: dirtyRect)
 			drawThings(in: dirtyRect)
@@ -82,7 +83,7 @@ extension MapView {
 					
 					let label = NSTextField(frame: NSRect(x: mid.x, y: mid.y, width: 0, height: 0))
 					label.isBordered = false
-					label.textColor = (THEME == .light) ? .black : .white
+					label.textColor = currentStyle.textColor
 					label.backgroundColor = NSColor.clear
 					label.integerValue = line.length
 					label.sizeToFit()
@@ -130,11 +131,108 @@ extension MapView {
 
 	}
 	
+	
+	private func doomEdGrid(in rect: NSRect) {
+		
+		if let context = NSGraphicsContext.current?.cgContext {
+			currentStyle.background.setFill()
+			context.fill(rect)
+			context.flush()
+		}
+
+		var x,y,stopx,stopy: Int
+		var top,bottom,right,left: CGFloat
+		
+		left = rect.origin.x-1
+		bottom = rect.origin.y-1
+		right = rect.origin.x+rect.size.width+2
+		top = rect.origin.x+rect.size.height+2
+		
+		let gridSize_f = CGFloat(gridSize)
+		
+		// define the limits for the loop
+		y = Int(bottom/gridSize_f)
+		stopy = Int(top/gridSize_f)
+		x = Int(left/gridSize_f)
+		stopx = Int(right/gridSize_f)
+		
+		y *= gridSize
+		stopy *= gridSize
+		x *= gridSize
+		stopx *= gridSize
+		
+		// adjust if starting or ending x, y is not inside rect
+		if CGFloat(y) < bottom {
+			y += gridSize }
+		if CGFloat(x) < left {
+			x += gridSize }
+		if CGFloat(stopx) >= right {
+			stopx -= gridSize }
+		if CGFloat(stopy) >= top {
+			stopy -= gridSize }
+		
+		let gridPath = NSBezierPath()
+		
+		while y <= stopy {
+			if y&63 != 0 {
+				addLine(to: gridPath, Int(left), y, Int(right), y) }
+			y += gridSize
+		}
+		
+		while x <= stopx {
+			if x&63 != 0 {
+				addLine(to: gridPath, x, Int(top), x, Int(bottom)) }
+			x += gridSize
+		}
+
+		currentStyle.grid.setStroke()
+		gridPath.stroke()
+		
+		//
+		// 64 x 64 tiles
+		//
+		y = Int(bottom/64)
+		stopy = Int(top/64)
+		x = Int(left/64)
+		stopx = Int(right/64)
+		
+		y *= 64
+		stopy *= 64
+		x *= 64
+		stopx *= 64
+		if CGFloat(y) < bottom {
+			y += 64 }
+		if CGFloat(x) < left {
+			x += 64 }
+		if CGFloat(stopx) >= right {
+			stopx -= 64 }
+		if CGFloat(stopy) >= top {
+			stopy -= 64 }
+		
+		let tilePath = NSBezierPath()
+		
+		while y <= stopy {
+			addLine(to: tilePath, Int(left), y, Int(right), y)
+			y += 64
+		}
+		
+		while x <= stopx {
+			addLine(to: tilePath, x, Int(top), x, Int(bottom))
+			x += 64
+		}
+		
+		currentStyle.tile.setStroke()
+		tilePath.stroke()
+	}
+	
+	
+	
 	/// Draws the 64x64 fixed tiles and the adjustable grid
 	private func drawGrid(in rect: NSRect) {
 
 		if let context = NSGraphicsContext.current?.cgContext {
-			COLOR_BKG.setFill()
+			//COLOR_BKG.setFill()
+			currentStyle.background.setFill()
 			context.fill(rect)
 			context.flush()
 		}
@@ -150,7 +248,7 @@ extension MapView {
 		// Grid
 		//
 		let gridPath = NSBezierPath()
-		COLOR_GRID.setStroke()
+		currentStyle.grid.setStroke()
 
 		for y in bottom...top {
 			if y % 64 == 0 { continue }
@@ -170,7 +268,7 @@ extension MapView {
 		// 64 x 64 Tiles
 		//
 		let tilePath = NSBezierPath()
-		COLOR_TILE.setStroke()
+		currentStyle.tile.setStroke()
 		
 		for y in bottom...top {
 			if y % 64 == 0 {
@@ -288,10 +386,12 @@ extension MapView {
 			}
 			
 			if currentMode == .line {
-				if THEME == .light {
+				if currentStyle.index == 1 {
 					NSColor.black.withAlphaComponent(0.1).set()
-				} else {
+				} else if currentStyle.index == 2 {
 					NSColor.white.withAlphaComponent(0.2).set()
+				} else {
+					NSColor.black.withAlphaComponent(0.1).set()
 				}
 			}
 //			if currentMode != .thing {
@@ -306,7 +406,7 @@ extension MapView {
 				drawAllThingMarks(thing, relativeTo: r)
 				if thing.def.hasDirection {
 					let path = thingArrow(in: r, direction: thing.angle)
-					COLOR_THINGINFO.set()
+					currentStyle.thingInfo.set()
 					path.stroke()
 
 				}
@@ -322,7 +422,7 @@ extension MapView {
 	
 	func drawAllThingMarks(_ thing: Thing, relativeTo rect: NSRect) {
 
-		COLOR_THINGINFO.setStroke()
+		currentStyle.thingInfo.setStroke()
 		NSBezierPath.defaultLineWidth = 2.0
 
 		strokeEasyMarker(thing, relativeTo: rect)
@@ -370,7 +470,7 @@ extension MapView {
 		}
 		
 		if unselected.count != 0 {
-			COLOR_LINE_ONESIDED.set()
+			currentStyle.oneSidedLines.set()
 			unselected.fill()
 		}
 		

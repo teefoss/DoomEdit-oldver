@@ -30,6 +30,35 @@ struct Sprite {
 	var image = NSImage()
 }
 
+func checkWADPaths() -> Int {
+	
+	let defaults = UserDefaults.standard
+	var doom1set = false
+	var doom2set = false
+	
+	if (defaults.value(forKey: PrefKeys.doomWADPath) as? String) != nil {
+		doom1set = true
+	}
+	if (defaults.value(forKey: PrefKeys.doom2WADPath) as? String) != nil {
+		doom2set = true
+	}
+	
+	if !doom1set && !doom2set {
+		return 0
+	}
+	if doom1set && doom2set {
+		return 3
+	}
+	if doom1set && !doom2set {
+		return 1
+	}
+	if doom2set && !doom1set {
+		return 2
+	}
+	
+	return 3 // should never reach here
+}
+
 
 
 // ===============

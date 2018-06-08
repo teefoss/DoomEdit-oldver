@@ -124,7 +124,6 @@ extension LineViewController {
 	func setTitle() {
 		
 		if selectedLineIndices.count == 1 {
-			titleLabel.textColor = (THEME == .light) ? NSColor.black : NSColor.white
 			titleLabel.stringValue = "Line \(selectedLineIndices[0]) Properties"
 		} else if selectedLineIndices.count > 1 {
 			titleLabel.textColor = NSColor.red

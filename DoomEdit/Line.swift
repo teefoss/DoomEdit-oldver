@@ -72,7 +72,7 @@ struct Line {
 		} else if isFlagged(LineFlags.twoSided) {
 			return Color.lineTwoSided
 		}
-		return COLOR_LINE_ONESIDED
+		return currentStyle.oneSidedLines
 	}
 	
 	init() {

@@ -27,6 +27,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 	func applicationDidFinishLaunching(_ aNotification: Notification) {
 
 		setTheme()
+		if checkWADPaths() == 0 {
+			runAlertPanel(title: "Warning", message: "No WAD Paths are set. Go to File > Preferences and set where your DOOM or DOOM 2 WADs are located.")
+		}
 		
 		// Display the launch window
 		let launch = LaunchWindowController()
@@ -70,35 +73,19 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 	/// Load the theme from defaults and set colors accordingly
 	func setTheme() {
 		
-		if let t = UserDefaults.standard.value(forKey: PrefKeys.theme) as? Int {
-			switch t {
+		if let theme = UserDefaults.standard.value(forKey: PrefKeys.theme) as? Int {
+			switch theme {
 			case 1:
-				THEME = .light
+				currentStyle = lightStyle
 			case 2:
-				THEME = .dark
+				currentStyle = darkStyle
 			default:
-				break
+				currentStyle = lightStyle
 			}
 		}
-		switch THEME {
-		case .light:
-			COLOR_BKG = NSColor.white
-			COLOR_LINE_ONESIDED = NSColor.black
-			COLOR_MONSTER = NSColor.black
-			COLOR_THINGINFO = NSColor.white
-			COLOR_GRID = NSColor.systemBlue.withAlphaComponent(0.1)
-			COLOR_TILE = NSColor.systemBlue.withAlphaComponent(0.3)
-		case .dark:
-			COLOR_BKG = NSColor.black
-			COLOR_LINE_ONESIDED = NSColor.yellow
-			COLOR_MONSTER = NSColor.white
-			COLOR_THINGINFO = NSColor.black
-			COLOR_GRID = NSColor.systemBlue.withAlphaComponent(0.2)
-			COLOR_TILE = NSColor.systemBlue.withAlphaComponent(0.4)
-		}
-		//editWorld.delegate?.redisplay(editWorld.bounds)
 		redraw()
 	}
+	
 
 }
 

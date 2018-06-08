@@ -136,6 +136,7 @@ class LineViewController: NSViewController, TexturePanelDelegate, NSTabViewDeleg
 	
 	func clearPanel() {
 
+		titleLabel.textColor = .black
 		titleLabel.stringValue = "Line Properties (No Selection)"
 		for button in flagButtons {
 			button.state = .off
@@ -297,22 +298,16 @@ class LineViewController: NSViewController, TexturePanelDelegate, NSTabViewDeleg
 		
 		switch position {
 		case 1:
-			frontLowerLabel.textColor = Color.textColor
 			frontLowerLabel.stringValue = name
 		case 2:
-			frontMiddleLabel.textColor = Color.textColor
 			frontMiddleLabel.stringValue = name
 		case 3:
-			frontUpperLabel.textColor = Color.textColor
 			frontUpperLabel.stringValue = name
 		case -1:
-			backLowerLabel.textColor = Color.textColor
 			backLowerLabel.stringValue = name
 		case -2:
-			backLowerLabel.textColor = Color.textColor
 			backMiddleLabel.stringValue = name
 		case -3:
-			backLowerLabel.textColor = Color.textColor
 			backUpperLabel.stringValue = name
 		default: return
 		}
@@ -324,7 +319,6 @@ class LineViewController: NSViewController, TexturePanelDelegate, NSTabViewDeleg
 			frontUpperLabel.textColor = NSColor.red
 			frontUpperLabel.stringValue = "Multiple"
 		} else {
-			frontUpperLabel.textColor = Color.textColor
 			frontUpperLabel.stringValue = lines[selectedLineIndices[0]].side[0]?.upperTexture ?? "-"
 		}
 		
@@ -332,7 +326,6 @@ class LineViewController: NSViewController, TexturePanelDelegate, NSTabViewDeleg
 			frontMiddleLabel.textColor = NSColor.red
 			frontMiddleLabel.stringValue = "Multiple"
 		} else {
-			frontMiddleLabel.textColor = Color.textColor
 			frontMiddleLabel.stringValue = lines[selectedLineIndices[0]].side[0]?.middleTexture ?? "-"
 		}
 
@@ -340,7 +333,6 @@ class LineViewController: NSViewController, TexturePanelDelegate, NSTabViewDeleg
 			frontLowerLabel.textColor = NSColor.red
 			frontLowerLabel.stringValue = "Multiple"
 		} else {
-			frontLowerLabel.textColor = Color.textColor
 			frontLowerLabel.stringValue = lines[selectedLineIndices[0]].side[0]?.lowerTexture ?? "-"
 		}
 
@@ -348,7 +340,6 @@ class LineViewController: NSViewController, TexturePanelDelegate, NSTabViewDeleg
 			backUpperLabel.textColor = NSColor.red
 			backUpperLabel.stringValue = "Multiple"
 		} else {
-			backUpperLabel.textColor = Color.textColor
 			backUpperLabel.stringValue = lines[selectedLineIndices[0]].side[1]?.upperTexture ?? "-"
 		}
 		
@@ -356,7 +347,6 @@ class LineViewController: NSViewController, TexturePanelDelegate, NSTabViewDeleg
 			backMiddleLabel.textColor = NSColor.red
 			backMiddleLabel.stringValue = "Multiple"
 		} else {
-			backMiddleLabel.textColor = Color.textColor
 			backMiddleLabel.stringValue = lines[selectedLineIndices[0]].side[1]?.middleTexture ?? "-"
 		}
 		
@@ -364,7 +354,6 @@ class LineViewController: NSViewController, TexturePanelDelegate, NSTabViewDeleg
 			backLowerLabel.textColor = NSColor.red
 			backLowerLabel.stringValue = "Multiple"
 		} else {
-			backLowerLabel.textColor = Color.textColor
 			backLowerLabel.stringValue = lines[selectedLineIndices[0]].side[1]?.lowerTexture ?? "-"
 		}
 	}

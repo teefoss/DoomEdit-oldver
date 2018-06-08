@@ -1004,7 +1004,7 @@ extension MapView {
 		fixedpoint = getGridPoint(from: event)
 		linelayer.lineWidth = 1.0
 		linelayer.fillColor = NSColor.clear.cgColor
-		linelayer.strokeColor = COLOR_LINE_ONESIDED.cgColor
+		linelayer.strokeColor = currentStyle.oneSidedLines.cgColor
 		layer?.addSublayer(linelayer)
 
 		var nextevent: NSEvent?

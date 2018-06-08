@@ -40,24 +40,12 @@ class DoomProject {
 	var openMap: Map?
 	
 	var mapDirty = false
-	var projectDirty = false
 	
 	var progressWindow: ProgressWindowController?
 	
 	enum ProjectType: Int {
 		case doom1 = 1
 		case doom2 = 2
-	}
-	
-	func checkDirtyProject() {
-		
-		if projectDirty == false {
-			return
-		}
-		let val = runDialogPanel(question: "Important", text: "Do you wish to save your project before exiting?")
-		if val {
-			saveProject()
-		}
 	}
 	
 	func closeProject() {
@@ -71,14 +59,12 @@ class DoomProject {
 		maps = []
 		openMap = nil
 		mapDirty = false
-		projectDirty = false
 		wadURL = nil
 	}
 	
 	func quit() {
 		
 		editWorld.closeWorld()
-		checkDirtyProject()
 	}
 	
 	func setDirtyMap(_ bool: Bool) {
@@ -90,6 +76,9 @@ class DoomProject {
 		}
 	}
 	
+	/**
+	Rewrites the project file and reloads maps
+	*/
 	func saveProject() {
 		
 		if !loaded {
@@ -97,7 +86,6 @@ class DoomProject {
 		}
 		writeProjectFile(at: projectFileURL)
 		loadMaps()  // update the maps array in case a dwd has changed
-		projectDirty = false
 	}
 	
 	func createProject() {
@@ -173,7 +161,6 @@ class DoomProject {
 				self.closeProgressWindow()
 				
 				self.mapDirty = false
-				self.projectDirty = false
 				self.loaded = true
 				
 				self.loadRecents()
@@ -209,9 +196,8 @@ class DoomProject {
 	}
 	
 	/// Opens a project file and sets project info
-	func openProject(from url: URL) {
-		
-		checkDirtyProject()
+	@discardableResult
+	func openProject(from url: URL) -> Bool {
 		
 		// Set URLs
 		projectFileURL = url
@@ -221,18 +207,33 @@ class DoomProject {
 		// Get the project info from the project file
 		readProjectFile(from: url)
 		
-		// No maps, just load
-		if maps.count == 0 {
-			loadProject()
-			return
+		// Check the right WAD Path is set
+		switch projectType {
+		case .doom1:
+			if checkWADPaths() == 0 || checkWADPaths() == 2 {
+				runAlertPanel(title: "Error!", message: "I cannot open a DOOM project if the DOOM.WAD path is not set. Set it in File > Preferences!")
+				return false
+			}
+		case .doom2:
+			if checkWADPaths() == 0 || checkWADPaths() == 1 {
+				runAlertPanel(title: "Error!", message: "I cannot open a DOOM 2 project if the DOOM2.WAD path is not set. Set it in File > Preferences!")
+				return false
+			}
+		default:
+			break
 		}
 		
 		loadMaps()
 		loadProject()
+		
+		return true
 	}
 	
+	/**
+	Load in dwd data from each map into the
+	*/
 	func loadMaps() {
-		
+				
 		for m in 0..<maps.count {
 			let url = projectMapsURL.appendingPathComponent(maps[m].name)
 			do {
@@ -284,6 +285,11 @@ class DoomProject {
 		}
 	}
 	
+	/**
+	Reads each line of the project file.
+	Sets map information, project name, and type.
+	Called by readProjectFile
+	*/
 	func readProjectFileLine(_ fileLine: String) {
 		
 		let scanner = Scanner(string: fileLine)

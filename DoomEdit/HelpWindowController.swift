@@ -44,7 +44,7 @@ class HelpWindowController: NSWindowController, HelpWindowDelegate {
     override func windowDidLoad() {
         super.windowDidLoad()
 		
-		window?.backgroundColor = COLOR_HELP
+		window?.backgroundColor = Color.helpWindow
 		
 		let messages = HelpMessages()
 		label.attributedStringValue = messages.editmode

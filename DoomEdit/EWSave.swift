@@ -23,23 +23,24 @@ extension EditWorld {
 			return
 		}
 		
-		saveDWD()
-		doomProject.saveProject()
+		let dwd = makeDWD() // generate a string in dwd format from level data
 		
-		dirty = false
-	}
-	
-	private func saveDWD() {
-		
-		let dwd = makeDWD()
-		
+		//Write the dwd to current map url
 		do {
 			try dwd.write(to: doomProject.currentMapURL!, atomically: false, encoding: .ascii)
 		} catch {
 			print("Error. Could not save map as dwd at path \(doomProject.currentMapURL?.path ?? "")!")
 		}
-	}
 
+		doomProject.saveProject()
+		
+		dirty = false
+	}
+	
+
+	/**
+	Returns a string in dwd format
+	*/
 	private func makeDWD() -> String {
 		
 		var dwd: String = ""

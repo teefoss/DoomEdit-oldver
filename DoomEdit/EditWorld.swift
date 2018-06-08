@@ -29,6 +29,7 @@ protocol EditWorldDelegate {
 	func displayDirty(_ dirtyRect: NSRect)
 	func updatePanels()
 	func scrollToLine(_ num: Int)
+	func updateFrame()
 }
 
 var editWorld = EditWorld()
@@ -688,12 +689,18 @@ class EditWorld {
 		points = []; lines = []; things = []
 		
 		loadDWDFile(dwd)
+		delegate?.updateFrame()
 		
 		dirty = false
+		doomProject.setDirtyMap(false)
 		dirtyPoints = true
 		loaded = true
 	}
 	
+	/**
+	Called by window delegate (windowWillClose) or app delegate (appWillTerminate)
+	Checks if dirty, saves accordingly
+	*/
 	func closeWorld() {
 		
 		if doomProject.mapDirty {
@@ -701,13 +708,13 @@ class EditWorld {
 			if val {
 				saveWorld()
 			}
-			doomProject.setDirtyMap(false)
 		}
 		
 		points = []; lines = []; things = []
-		let appd = NSApplication.shared.delegate as! AppDelegate
-		appd.mapWindowController?.close()
+//		let appd = NSApplication.shared.delegate as! AppDelegate
+//		appd.mapWindowController?.close()
 		loaded = false
+		doomProject.openMap = nil
 	}
 	
 	func saveWorld() {

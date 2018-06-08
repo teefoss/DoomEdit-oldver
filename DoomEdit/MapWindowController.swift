@@ -47,7 +47,8 @@ class MapWindowController: NSWindowController, MapViewDelegate {
 		delegate = self
 		
 		mapView.delegate = self
-		mapView.frame = editWorld.getBounds()
+		let mapBounds = editWorld.getBounds()
+		mapView.frame = mapBounds
 		
 		// Set up the scroll view
 		scrollView.documentView = mapView
@@ -59,7 +60,6 @@ class MapWindowController: NSWindowController, MapViewDelegate {
 		scrollView.scrollerKnobStyle = Settings.knobStyle
 		
 		// Scroll to center of map
-		let mapBounds = editWorld.getBounds()
 		var origin = NSPoint()
 		origin.x = mapBounds.origin.x + (mapBounds.size.width / 2) - (newSize.width / 2)
 		origin.y = mapBounds.origin.y + (mapBounds.size.height / 2) - (newSize.width / 2)
@@ -131,20 +131,11 @@ extension MapWindowController: NSWindowDelegate {
 	}
 	
 	
-	// FIXME: Put everything in editworld save/close and just call from here
-	// FIXME: Put runmap in mapview or editworld so the menu item disables automatically
 	func windowWillClose(_ notification: Notification) {
 
-		if doomProject.mapDirty {
-			let val = runDialogPanel(question: "Hey!", text: "Your map has been modified! Save it?")
-			if val {
-				editWorld.saveWorld()
-				doomProject.openMap = nil
-				editWorld.loaded = false
-			}
-		}
+		editWorld.closeWorld()
 
-		// FIXME: Figure this out
+		// kill help window if open
 		if let win = helpWindow {
 			win.close()
 			helpWindow = nil
@@ -152,7 +143,6 @@ extension MapWindowController: NSWindowDelegate {
 		
 		let appDelegate = NSApplication.shared.delegate as! AppDelegate
 		appDelegate.mapWindowController = nil
-		//appDelegate.runMapMenuItem.isEnabled = false
 	}
 }
 
