@@ -13,13 +13,6 @@ let fileName = "e1m1"
 let fileExt = "dwd"
 let fullFileName = fileName + "." + fileExt
 
-// Visual Sizes
-let POINT_SELECT_SIZE: CGFloat = 14 // Area around point for detecting click
-let POINT_DRAW_SIZE = 4
-let THING_DRAW_SIZE = 32
-let LINE_WIDTH: CGFloat = 1.0
-let LINE_NORMAL_LENGTH = 6
-let SELECTION_BOX_WIDTH: CGFloat = 4.0
 
 // Constant Colors
 struct Color {

@@ -10,6 +10,14 @@ import Cocoa
 
 let DRAWOFFSET: CGFloat = 0.5
 
+// Visual Sizes
+let POINT_SELECT_SIZE: CGFloat = 14 // Area around point for detecting click
+let POINT_DRAW_SIZE = 4
+let THING_DRAW_SIZE = 32
+let LINE_WIDTH: CGFloat = 0.0	// minimum so lines are still thin on zoom
+let LINE_NORMAL_LENGTH = 6
+let SELECTION_BOX_WIDTH: CGFloat = 4.0
+
 /**
 MapView Drawing-related Methods
 */
@@ -27,8 +35,7 @@ extension MapView {
 		getRectsBeingDrawn(&rects, count: &count)
 		*/
 		
-		//drawGrid(in: dirtyRect)
-		doomEdGrid(in: dirtyRect)
+		drawGrid(in: dirtyRect)
 		
 		if currentMode == .thing {
 			drawLines(in: dirtyRect)
@@ -132,7 +139,7 @@ extension MapView {
 	}
 	
 	
-	private func doomEdGrid(in rect: NSRect) {
+	private func drawGrid(in rect: NSRect) {
 		
 		if let context = NSGraphicsContext.current?.cgContext {
 			currentStyle.background.setFill()
@@ -146,140 +153,94 @@ extension MapView {
 		left = rect.origin.x-1
 		bottom = rect.origin.y-1
 		right = rect.origin.x+rect.size.width+2
-		top = rect.origin.x+rect.size.height+2
+		top = rect.origin.y+rect.size.height+2
 		
 		let gridSize_f = CGFloat(gridSize)
 		
-		// define the limits for the loop
-		y = Int(bottom/gridSize_f)
-		stopy = Int(top/gridSize_f)
-		x = Int(left/gridSize_f)
-		stopx = Int(right/gridSize_f)
+		//
+		// grid
+		//
 		
-		y *= gridSize
-		stopy *= gridSize
-		x *= gridSize
-		stopx *= gridSize
-		
-		// adjust if starting or ending x, y is not inside rect
-		if CGFloat(y) < bottom {
-			y += gridSize }
-		if CGFloat(x) < left {
-			x += gridSize }
-		if CGFloat(stopx) >= right {
-			stopx -= gridSize }
-		if CGFloat(stopy) >= top {
-			stopy -= gridSize }
-		
-		let gridPath = NSBezierPath()
-		
-		while y <= stopy {
-			if y&63 != 0 {
-				addLineToPath(gridPath, Int(left), y, Int(right), y) }
-			y += gridSize
+		if gridSize_f*scale >= 4 {
+			
+			// define the limits for the loop
+			y = Int(bottom/gridSize_f)
+			stopy = Int(top/gridSize_f)
+			x = Int(left/gridSize_f)
+			stopx = Int(right/gridSize_f)
+			
+			y *= gridSize
+			stopy *= gridSize
+			x *= gridSize
+			stopx *= gridSize
+			
+			// adjust if starting or ending x, y is not inside rect
+			if CGFloat(y) < bottom {
+				y += gridSize }
+			if CGFloat(x) < left {
+				x += gridSize }
+			if CGFloat(stopx) >= right {
+				stopx -= gridSize }
+			if CGFloat(stopy) >= top {
+				stopy -= gridSize }
+			
+			let gridPath = NSBezierPath()
+			
+			while y <= stopy {
+				if y&63 != 0 {
+					addLineToPath(gridPath, Int(left), y, Int(right), y) }
+				y += gridSize
+			}
+			
+			while x <= stopx {
+				if x&63 != 0 {
+					addLineToPath(gridPath, x, Int(top), x, Int(bottom)) }
+				x += gridSize
+			}
+			
+			currentStyle.grid.setStroke()
+			gridPath.lineWidth = LINE_WIDTH
+			gridPath.stroke()
 		}
-		
-		while x <= stopx {
-			if x&63 != 0 {
-				addLineToPath(gridPath, x, Int(top), x, Int(bottom)) }
-			x += gridSize
-		}
-
-		currentStyle.grid.setStroke()
-		gridPath.stroke()
 		
 		//
 		// 64 x 64 tiles
 		//
-		y = Int(bottom/64)
-		stopy = Int(top/64)
-		x = Int(left/64)
-		stopx = Int(right/64)
-		
-		y *= 64
-		stopy *= 64
-		x *= 64
-		stopx *= 64
-		if CGFloat(y) < bottom {
-			y += 64 }
-		if CGFloat(x) < left {
-			x += 64 }
-		if CGFloat(stopx) >= right {
-			stopx -= 64 }
-		if CGFloat(stopy) >= top {
-			stopy -= 64 }
-		
-		let tilePath = NSBezierPath()
-		
-		while y <= stopy {
-			addLineToPath(tilePath, Int(left), y, Int(right), y)
-			y += 64
+		if scale > 4.0/64 {
+			y = Int(bottom/64)
+			stopy = Int(top/64)
+			x = Int(left/64)
+			stopx = Int(right/64)
+			
+			y *= 64
+			stopy *= 64
+			x *= 64
+			stopx *= 64
+			if CGFloat(y) < bottom {
+				y += 64 }
+			if CGFloat(x) < left {
+				x += 64 }
+			if CGFloat(stopx) >= right {
+				stopx -= 64 }
+			if CGFloat(stopy) >= top {
+				stopy -= 64 }
+			
+			let tilePath = NSBezierPath()
+			
+			while y <= stopy {
+				addLineToPath(tilePath, Int(left), y, Int(right), y)
+				y += 64
+			}
+			
+			while x <= stopx {
+				addLineToPath(tilePath, x, Int(top), x, Int(bottom))
+				x += 64
+			}
+			
+			currentStyle.tile.setStroke()
+			tilePath.lineWidth = LINE_WIDTH
+			tilePath.stroke()
 		}
-		
-		while x <= stopx {
-			addLineToPath(tilePath, x, Int(top), x, Int(bottom))
-			x += 64
-		}
-		
-		currentStyle.tile.setStroke()
-		tilePath.stroke()
-	}
-	
-	
-	
-	/// Draws the 64x64 fixed tiles and the adjustable grid
-	private func drawGrid(in rect: NSRect) {
-
-		if let context = NSGraphicsContext.current?.cgContext {
-			//COLOR_BKG.setFill()
-			currentStyle.background.setFill()
-			context.fill(rect)
-			context.flush()
-		}
-		
-		let left = Int(rect.origin.x - 1)
-		let bottom = Int(rect.origin.y - 1)
-		let right = Int(rect.origin.x + rect.size.width + 2)
-		let top = Int(rect.origin.y + rect.size.height + 2)
-		
-		NSBezierPath.defaultLineWidth = LINE_WIDTH
-
-		//
-		// Grid
-		//
-		let gridPath = NSBezierPath()
-		currentStyle.grid.setStroke()
-
-		for y in bottom...top {
-			if y % 64 == 0 { continue }
-			if y % gridSize == 0 {
-				addLineToPath(gridPath, left, y, right, y) }
-		}
-		for x in left...right {
-			if x % 64 == 0 { continue }
-			if x % gridSize == 0 {
-				addLineToPath(gridPath, x, top, x, bottom) }
-		}
-		
-		gridPath.stroke()
-		
-		
-		//
-		// 64 x 64 Tiles
-		//
-		let tilePath = NSBezierPath()
-		currentStyle.tile.setStroke()
-		
-		for y in bottom...top {
-			if y % 64 == 0 {
-				addLineToPath(tilePath, left, y, right, y) }
-		}
-		for x in left...right {
-			if x % 64 == 0 {
-				addLineToPath(tilePath, x, top, x, bottom) }
-		}
-		
-		tilePath.stroke()
 	}
 	
 
@@ -434,7 +395,16 @@ extension MapView {
 		var offset: CGFloat
 		var r = NSRect()
 		
-		offset = CGFloat(POINT_DRAW_SIZE)
+		var drawsize: CGFloat
+		
+		if scale >= 1.0 {
+			drawsize = CGFloat(POINT_DRAW_SIZE)/scale
+		} else {
+			drawsize = CGFloat(POINT_DRAW_SIZE)
+		}
+
+		
+		offset = CGFloat(drawsize)
 		
 		left = rect.origin.x - offset
 		right = rect.origin.x + rect.size.width + offset

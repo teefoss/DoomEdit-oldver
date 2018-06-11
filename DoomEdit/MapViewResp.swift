@@ -173,6 +173,34 @@ extension MapView {
 		} while true
 	}
 	
+	func zoom(fromOrigin origin: NSPoint, toScale newScale: CGFloat) {
+
+		var neworg, orgnow: NSPoint
+		
+		window?.disableFlushing()
+		
+		// find where the point is now
+		
+		neworg = origin
+		convert(neworg, to: nil)
+		
+		// change scale
+		let bounds = editWorld.getBounds()
+		setFrameSize(NSSize(width: bounds.width*newScale, height: bounds.height*newScale))
+		setBoundsSize(bounds.size)
+		
+		// convert the point back
+		convert(neworg, from: nil)
+		orgnow = currentOrigin()
+		orgnow.x += origin.x - neworg.x
+		orgnow.y += origin.y - neworg.y
+		setOrigin(for: orgnow)
+		
+		//redraw
+		window?.enableFlushing()
+		superview?.superview?.display()
+	}
+	
 	// FIXME: When mouse is outside window?
 	/// Zooms in on mouse location
 	func zoomIn(to event: NSEvent) {
@@ -181,7 +209,7 @@ extension MapView {
 			print("scale = \(scale*100)%")
 			let mouseLoc = getPoint(from: event)
 			delegate?.zoom(to: mouseLoc, with: scale)
-			frame = editWorld.getBounds()
+			adjustFrame(for: mouseLoc, with: scale)
 		} else {
 			NSSound.beep()
 		}
@@ -194,7 +222,7 @@ extension MapView {
 			print("scale = \(scale*100)%")
 			let mouseLoc = getPoint(from: event)
 			delegate?.zoom(to: mouseLoc, with: scale)
-			frame = editWorld.getBounds()
+			adjustFrame(for: mouseLoc, with: scale)
 		} else {
 			NSSound.beep()
 		}

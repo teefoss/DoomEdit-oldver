@@ -145,10 +145,13 @@ class LineViewController: NSViewController, TexturePanelDelegate, NSTabViewDeleg
 		tagTextField.stringValue = ""
 		tabView.selectTabViewItem(at: 0)
 		frontUpperImageView.image = nil
+		frontUpperLabel.textColor = .black
 		frontUpperLabel.stringValue = "--"
 		frontMiddleImageView.image = nil
+		frontMiddleLabel.textColor = .black
 		frontMiddleLabel.stringValue = "--"
 		frontLowerImageView.image = nil
+		frontLowerLabel.textColor = .black
 		frontLowerLabel.stringValue = "--"
 		frontXOffsetTextField.stringValue = ""
 		frontYOffsetTextField.stringValue = ""
@@ -222,7 +225,7 @@ class LineViewController: NSViewController, TexturePanelDelegate, NSTabViewDeleg
 		setTitle()
 		tabView.selectTabViewItem(at: 0)  // Open with front side tab selected
 		
-		if flagButtons[2].state == .off {
+		if flagButtons[2].state == .off || flagButtons[2].state == .mixed {
 			tabView.tabViewItems[1].label = "-"
 		} else {
 			tabView.tabViewItems[1].label = "Back"
