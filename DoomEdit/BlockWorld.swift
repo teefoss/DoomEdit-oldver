@@ -14,6 +14,8 @@ var numSectors: Int {
 	return sectors.count
 }
 
+fileprivate let SHOWFILL = true
+
 class BlockWorld {
 	
 	var wbounds = NSRect()
@@ -315,12 +317,23 @@ class BlockWorld {
 		x1 = Int(point.x - wbounds.origin.x)/8
 		y1 = Int(point.y - wbounds.origin.y)/8
 		
+		if SHOWFILL {
+			displayBlockMap()
+			blockView.lockFocus()
+		}
 		floodLine(startx: x1, y: bheight-1-y1)
+		if SHOWFILL {
+			blockView.unlockFocus()
+		}
 	}
 	
-	/// Displays the block map visually in a window for testing purposes.
-	/*
+	/**
+	Displays the block map visually in a window for testing purposes.
+	*/
+
 	func displayBlockMap() {
+		
+		/*
 		
 		var aRect: NSRect
 		var window: NSWindow
@@ -349,8 +362,10 @@ class BlockWorld {
 				
 			}
 		}
+*/
 	}
-	*/
+
+	
 	
 	// bcmp()
 	//
@@ -362,8 +377,10 @@ class BlockWorld {
 	
 	// FIXME: makeSector() : get it working
 	
-	/// Groups all selected sides into a sector.
-	/// Returns `false` and presents an alert panel if there is an error.
+	/**
+	Groups all selected sides into a sector.
+	Returns `false` and presents an alert panel if there is an error.
+	*/
 	private func makeSector() -> Bool {
 		
 		var side: Side

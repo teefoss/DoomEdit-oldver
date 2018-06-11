@@ -86,24 +86,32 @@ extension LineViewController {
 		menu.addItem(item)
 	}
 	
-	/// Call to set up checkbox buttons when multiple lines are selected
+	
+	
+	/**
+	Call to set up checkbox buttons when multiple lines are selected
+	*/
 	func setButtonState(_ button: inout NSButton!, option: Int) {
+		
 		let first = lines[selectedLineIndices[0]].hasOption(option)
 		var next = false
-		loop: for i in 1..<selectedLineIndices.count {
+
+		for i in 1..<selectedLineIndices.count {
 			next = lines[selectedLineIndices[i]].hasOption(option)
 			if next != first {
-				break loop
+				button.state = .mixed
+				return
 			}
 		}
-		if next != first {
-			button.state = .mixed
-		} else {
-			first ? (button.state = .on) : (button.state = .off)
-		}
+		
+		first ? (button.state = .on) : (button.state = .off)
 	}
 
-	/// Store indices lines that are currently selected
+	
+	
+	/**
+	Stores indices of currently selected lines in `selectedLineIndices`
+	*/
 	func initSelectedLines() {
 		
 		selectedLineIndices = []
@@ -129,7 +137,8 @@ extension LineViewController {
 			titleLabel.textColor = NSColor.red
 			titleLabel.stringValue = "Line Properties (multiple)"
 		} else {
-			print("Error")
+			print("LinePanelUI Error: setTitle")
+			titleLabel.stringValue = "Line Properties"
 		}
 	}
 	

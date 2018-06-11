@@ -160,22 +160,32 @@ class LineViewController: NSViewController, TexturePanelDelegate, NSTabViewDeleg
 	func updatePanel() {
 		
 		initSelectedLines()  // Store indices of currently selected lines
+		setAllowedButtonState()
+		clearPanel()
 		
 		print("num selected lines: \(selectedLineIndices.count)")
-		// Add an nsmenuitem if there are multiple specials
+		// TODO: Add an nsmenuitem if there are multiple specials
+		
 		if selectedLineIndices.count == 0 {
-			clearPanel()
 			return
-		} else if selectedLineIndices.count == 1 {
+		}
+		
+		if selectedLineIndices.count == 1 {
 			updateSpecialButton(for: lines[selectedLineIndices[0]].special)
 			
+			// set the flag buttons
 			for i in 0..<flagButtons.count {
 				lines[selectedLineIndices[0]].flags & (1 << i) == (1 << i) ? (flagButtons[i].state = .on) : (flagButtons[i].state = .off)
 			}
 
-			lines[selectedLineIndices[0]].tag == 0 ? (tagTextField.stringValue = "") : (tagTextField.integerValue = lines[selectedLineIndices[0]].tag)
+			// set the tag field
+			if lines[selectedLineIndices[0]].tag == 0 {
+				tagTextField.stringValue = "" }
+			else {
+				tagTextField.integerValue = lines[selectedLineIndices[0]].tag }
 
-		} else {
+		} else {	// multiple lines selected
+			
 			let first = lines[selectedLineIndices[0]].special
 			var next = -1
 			loop: for i in 1..<selectedLineIndices.count {
@@ -195,16 +205,18 @@ class LineViewController: NSViewController, TexturePanelDelegate, NSTabViewDeleg
 				updateSpecialButton(for: first)
 			}
 			
-			setButtonState(&blocksAllButton, option: LineFlags.blocksAll)
-			setButtonState(&blocksMonstersButton, option: LineFlags.blocksMonsters)
-			setButtonState(&blocksSoundButton, option: LineFlags.blocksSound)
-			setButtonState(&twoSidedButton, option: LineFlags.twoSided)
-			setButtonState(&upperUnpeggedButton, option: LineFlags.upperUnpegged)
-			setButtonState(&lowerUnpeggedButton, option: LineFlags.lowerUnpegged)
-			setButtonState(&onMapButton, option: LineFlags.showOnMap)
-			setButtonState(&notOnMapButton, option: LineFlags.notOnMap)
-			setButtonState(&secretButton, option: LineFlags.secret)
+			// set the flag buttons
+			setButtonState(&blocksAllButton, 		option: LineFlags.blocksAll)
+			setButtonState(&blocksMonstersButton, 	option: LineFlags.blocksMonsters)
+			setButtonState(&blocksSoundButton, 		option: LineFlags.blocksSound)
+			setButtonState(&twoSidedButton, 		option: LineFlags.twoSided)
+			setButtonState(&upperUnpeggedButton, 	option: LineFlags.upperUnpegged)
+			setButtonState(&lowerUnpeggedButton, 	option: LineFlags.lowerUnpegged)
+			setButtonState(&onMapButton, 			option: LineFlags.showOnMap)
+			setButtonState(&notOnMapButton, 		option: LineFlags.notOnMap)
+			setButtonState(&secretButton, 			option: LineFlags.secret)
 
+			// set the tag
 			let firsttag = lines[selectedLineIndices[0]].tag
 			var nexttag = 0
 			loop: for i in 1..<selectedLineIndices.count {
@@ -221,11 +233,10 @@ class LineViewController: NSViewController, TexturePanelDelegate, NSTabViewDeleg
 
 		}
 		
-		setAllowedButtonState()
 		setTitle()
 		tabView.selectTabViewItem(at: 0)  // Open with front side tab selected
 		
-		if flagButtons[2].state == .off || flagButtons[2].state == .mixed {
+		if flagButtons[2].state != .on {
 			tabView.tabViewItems[1].label = "-"
 		} else {
 			tabView.tabViewItems[1].label = "Back"
@@ -368,48 +379,53 @@ class LineViewController: NSViewController, TexturePanelDelegate, NSTabViewDeleg
 			frontYOffsetTextField.integerValue = lines[selectedLineIndices[0]].side[0]!.y_offset
 			backXOffset.integerValue = lines[selectedLineIndices[0]].side[1]?.x_offset ?? 0
 			backYOffset.integerValue = lines[selectedLineIndices[0]].side[1]?.y_offset ?? 0
-		} else {
-			var frontXOffsets: [Int] = []
-			var frontYOffsets: [Int] = []
-			var backXOffsets: [Int] = []
-			var backYOffsets: [Int] = []
-			
-			for index in selectedLineIndices {
-				frontXOffsets.append(lines[index].side[0]!.x_offset)
-				frontYOffsets.append(lines[index].side[0]!.y_offset)
-				if let side = lines[index].side[1] {
-					backXOffsets.append(side.x_offset)
-					backYOffsets.append(side.y_offset)
-				}
-			}
 
-			if hasMultiple(array: frontXOffsets) {
-				frontXOffsetTextField.stringValue = ""
-			} else {
-				frontXOffsetTextField.integerValue = frontXOffsets[0]
+			return
+		}
+		
+		// multiple lines selected:
+		
+		var frontXOffsets: [Int] = []
+		var frontYOffsets: [Int] = []
+		var backXOffsets: [Int] = []
+		var backYOffsets: [Int] = []
+		
+		for index in selectedLineIndices {
+			frontXOffsets.append(lines[index].side[0]!.x_offset)
+			frontYOffsets.append(lines[index].side[0]!.y_offset)
+			if let side = lines[index].side[1] {
+				backXOffsets.append(side.x_offset)
+				backYOffsets.append(side.y_offset)
 			}
-			if hasMultiple(array: frontYOffsets) {
-				frontYOffsetTextField.stringValue = ""
+		}
+		
+		if hasMultiple(array: frontXOffsets) {
+			frontXOffsetTextField.stringValue = "" }
+		else {
+			frontXOffsetTextField.integerValue = frontXOffsets[0] }
+		
+		if hasMultiple(array: frontYOffsets) {
+			frontYOffsetTextField.stringValue = "" }
+		else {
+			frontYOffsetTextField.integerValue = frontYOffsets[0] }
+		
+		if hasMultiple(array: backXOffsets) && (backXOffsets.count > 1) {
+			backXOffset.stringValue = ""
+		} else {
+			if !backXOffsets.isEmpty {
+				backXOffset.integerValue = backXOffsets[0]
 			} else {
-				frontYOffsetTextField.integerValue = frontYOffsets[0]
+				backXOffset.integerValue = 0
 			}
-			if hasMultiple(array: backXOffsets) && (backXOffsets.count > 1) {
-				backXOffset.stringValue = ""
+		}
+		
+		if hasMultiple(array: backYOffsets) && (backYOffsets.count > 1) {
+			backYOffset.stringValue = ""
+		} else {
+			if !backYOffsets.isEmpty{
+				backYOffset.integerValue = backYOffsets[0]
 			} else {
-				if !backXOffsets.isEmpty {
-					backXOffset.integerValue = backXOffsets[0]
-				} else {
-					backXOffset.integerValue = 0
-				}
-			}
-			if hasMultiple(array: backYOffsets) && (backYOffsets.count > 1) {
-				backYOffset.stringValue = ""
-			} else {
-				if !backYOffsets.isEmpty{
-					backYOffset.integerValue = backYOffsets[0]
-				} else {
-					backYOffset.integerValue = 0
-				}
+				backYOffset.integerValue = 0
 			}
 		}
 	}

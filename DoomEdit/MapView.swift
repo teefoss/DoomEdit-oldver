@@ -250,12 +250,15 @@ class MapView: NSView, EditWorldDelegate, NSPopoverDelegate {
 		// FIXME: Only update if detached panel is visible
 		
 		if let line = lineWindow.contentViewController as? LineViewController {
+			print("updatePanels: line")
 			line.updatePanel()
 		}
 		if let thing = thingWindow.contentViewController as? ThingViewController {
+			print("updatePanels: thing")
 			thing.updatePanel()
 		}
 		if let sector = sectorWindow.contentViewController as? SectorViewController {
+			print("updatePanels: sector")
 			sector.updatePanel()
 		}
 	}
